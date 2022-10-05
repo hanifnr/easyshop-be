@@ -11,7 +11,7 @@ CREATE TABLE public.cust(
   created_at TIMESTAMP, 
   updated_at TIMESTAMP, 
   deleted_at TIMESTAMP, 
-  CONSTRAINT cust_pk PRIMARY KEY (id, country_code, phone_number)
+  CONSTRAINT cust_pk PRIMARY KEY (id)
 );
 
 CREATE SEQUENCE public.shop_category_id_seq;
@@ -125,7 +125,7 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
-  
+
 CREATE TABLE public.purcd(
   purc_id BIGINT, 
   dno INT, 
