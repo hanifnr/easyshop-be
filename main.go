@@ -6,6 +6,9 @@ import (
 	"os"
 	"sync"
 
+	c "easyshop/controller"
+	u "easyshop/utils"
+
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -17,10 +20,15 @@ var (
 
 func main() {
 	port := os.Getenv("APP_PORT")
+	u.SetAuthSecret("1GN1T3CH")
+	u.SetNoAuth([]string{"/basictoken"})
 
 	router := mux.NewRouter()
 	router.HandleFunc("/", handlerIndex)
 	router.HandleFunc("/index", handlerIndex)
+	router.HandleFunc("/basictoken", c.BasicTokenController).Methods("GET")
+
+	router.Use(u.JwtAuthentication)
 	err := http.ListenAndServe(":"+port, router)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -30,6 +38,6 @@ func main() {
 }
 
 func handlerIndex(w http.ResponseWriter, r *http.Request) {
-	var message = "Welcome"
+	var message = "Welcomee"
 	w.Write([]byte(message))
 }
