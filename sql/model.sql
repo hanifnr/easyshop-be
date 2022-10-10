@@ -9,8 +9,7 @@ CREATE TABLE public.cust(
   status VARCHAR(1), 
   isactive boolean DEFAULT TRUE, 
   created_at TIMESTAMP, 
-  updated_at TIMESTAMP, 
-  deleted_at TIMESTAMP, 
+  updated_at TIMESTAMP,
   CONSTRAINT cust_pk PRIMARY KEY (id)
 );
 
