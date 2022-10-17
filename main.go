@@ -4,29 +4,26 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sync"
 
 	c "easyshop/controller"
 	u "easyshop/utils"
 
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
-)
-
-var (
-	db   *gorm.DB
-	once sync.Once
 )
 
 func main() {
 	port := os.Getenv("APP_PORT")
 	u.SetAuthSecret("1GN1T3CH")
-	u.SetNoAuth([]string{"/basictoken"})
+	u.SetNoAuth([]string{
+		"/basictoken",
+		"/cust/create",
+	})
 
 	router := mux.NewRouter()
 	router.HandleFunc("/", handlerIndex)
 	router.HandleFunc("/index", handlerIndex)
 	router.HandleFunc("/basictoken", c.BasicTokenController).Methods("GET")
+	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
 
 	router.Use(u.JwtAuthentication)
 	err := http.ListenAndServe(":"+port, router)

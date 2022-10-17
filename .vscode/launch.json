@@ -14,7 +14,7 @@
                 "INSTANCE_UNIX_SOCKET": "localhost",
                 "DB_USER": "bits",
                 "DB_PASS": "help1milBsnsBEEFR33",
-                "DB_NAME": "db-sample",
+                "DB_NAME": "easy-shop",
                 "APP_PORT": "8080"
             }
         }
