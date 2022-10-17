@@ -16,6 +16,7 @@ func main() {
 	u.SetAuthSecret("1GN1T3CH")
 	u.SetNoAuth([]string{
 		"/basictoken",
+		"/cust",
 		"/cust/create",
 	})
 
@@ -23,6 +24,7 @@ func main() {
 	router.HandleFunc("/", handlerIndex)
 	router.HandleFunc("/index", handlerIndex)
 	router.HandleFunc("/basictoken", c.BasicTokenController).Methods("GET")
+	router.HandleFunc("/cust", c.ListCust).Methods("GET")
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
 
 	router.Use(u.JwtAuthentication)

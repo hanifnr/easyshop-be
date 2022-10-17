@@ -45,3 +45,12 @@ func (cust Cust) CreateModel() map[string]interface{} {
 	}
 	return utils.MessageData(true, "Saved succesfully!", cust)
 }
+
+func GetListCust() map[string]interface{} {
+	db := utils.GetDB()
+	listCust := make([]*Cust, 0)
+	if err := db.Find(&listCust).Error; err != nil {
+		return utils.Message(false, err.Error())
+	}
+	return utils.MessageData(true, "List customer", listCust)
+}
