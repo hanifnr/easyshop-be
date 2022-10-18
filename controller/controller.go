@@ -13,7 +13,7 @@ import (
 type Controller interface {
 	Model() model.Model
 	CreateModel() map[string]interface{}
-	SPNew() functions.SP
+	FNew() functions.SQLFunction
 }
 
 func Save(controller Controller) utils.StatusReturn {
@@ -28,14 +28,14 @@ func Save(controller Controller) utils.StatusReturn {
 }
 
 func CreateModel(controller Controller, db *gorm.DB) utils.StatusReturn {
-	spNew := controller.SPNew()
+	fNew := controller.FNew()
 	model := controller.Model()
 	if err := model.Validate(); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
 	}
-	if spNew != nil {
-		if retval := spNew.Run(model, db); retval.ErrCode != 0 {
+	if fNew != nil {
+		if retval := fNew.Run(model, db); retval.ErrCode != 0 {
 			return retval
 		}
 	}

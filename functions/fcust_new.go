@@ -8,9 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type SPCustNew struct{}
+type FCustNew struct{}
 
-func (sp SPCustNew) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
+func (f FCustNew) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 	cust := m.(*model.Cust)
 	var exist int
 	if rows := db.Select("1").Table("cust").Where("UPPER(email) = ?", strings.ToUpper(cust.Email)).Scan(&exist).RowsAffected; rows > 0 {

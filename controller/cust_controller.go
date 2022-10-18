@@ -16,8 +16,8 @@ func (cust *CustController) Model() model.Model {
 	return &cust.Cust
 }
 
-func (cust *CustController) SPNew() functions.SP {
-	return &functions.SPCustNew{}
+func (cust *CustController) FNew() functions.SQLFunction {
+	return &functions.FCustNew{}
 }
 
 func (custController *CustController) CreateModel() map[string]interface{} {

@@ -7,6 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type SP interface {
+type SQLFunction interface {
 	Run(m model.Model, db *gorm.DB) utils.StatusReturn
 }
