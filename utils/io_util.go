@@ -5,6 +5,15 @@ import (
 	"net/http"
 )
 
+type StatusReturn struct {
+	ErrCode int
+	Message string
+}
+
+func StatusReturnOK() StatusReturn {
+	return StatusReturn{ErrCode: 0, Message: "OK"}
+}
+
 func MessageData(status bool, message string, data interface{}) map[string]interface{} {
 	resp := Message(status, message)
 	resp["data"] = data
@@ -13,6 +22,10 @@ func MessageData(status bool, message string, data interface{}) map[string]inter
 
 func Message(status bool, message string) map[string]interface{} {
 	return map[string]interface{}{"status": status, "message": message}
+}
+
+func MessageErr(status bool, code int, message string) map[string]interface{} {
+	return map[string]interface{}{"status": status, "code": code, "message": message}
 }
 
 func Respond(w http.ResponseWriter, data map[string]interface{}) {
@@ -25,3 +38,7 @@ func RespondError(w http.ResponseWriter, data map[string]interface{}, errcode in
 	w.WriteHeader(errcode)
 	json.NewEncoder(w).Encode(data)
 }
+
+const ErrValidate = 1001
+const ErrSQLCreate = 1002
+const ErrExist = 1003

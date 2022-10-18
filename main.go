@@ -8,11 +8,11 @@ import (
 	c "easyshop/controller"
 	u "easyshop/utils"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	port := os.Getenv("APP_PORT")
 	u.SetAuthSecret("1GN1T3CH")
 	u.SetNoAuth([]string{
 		"/basictoken",
@@ -26,14 +26,22 @@ func main() {
 	router.HandleFunc("/basictoken", c.BasicTokenController).Methods("GET")
 	router.HandleFunc("/cust", c.ListCust).Methods("GET")
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
-
 	router.Use(u.JwtAuthentication)
-	err := http.ListenAndServe(":"+port, router)
+
+	port := os.Getenv("APP_PORT")
+
+	optionsCode := handlers.OptionStatusCode(204)
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "X-CSRF-Token", "Content-Length", "Accept-Encoding", "Accept"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "DELETE", "POST", "PUT", "OPTIONS"})
+
+	fmt.Printf("listening to port %s", port)
+
+	err := http.ListenAndServe(":"+port, handlers.CORS(optionsCode, originsOk, headersOk, methodsOk)(router))
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	fmt.Printf("listening to port %s", port)
 }
 
 func handlerIndex(w http.ResponseWriter, r *http.Request) {

@@ -26,31 +26,11 @@ func (Cust) TableName() string {
 
 func (cust Cust) Validate() error {
 	err := validation.Errors{
-		"Name":         validation.Validate(cust.Name, validation.Required.Error(FIELD_REQUIRED)),
-		"Email":        validation.Validate(cust.Email, validation.Required.Error(FIELD_REQUIRED)),
-		"Country Code": validation.Validate(cust.CountryCode, validation.Required.Error(FIELD_REQUIRED)),
-		"Phone Number": validation.Validate(cust.PhoneNumber, validation.Required.Error(FIELD_REQUIRED)),
+		"Name":         validation.Validate(cust.Name, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Email":        validation.Validate(cust.Email, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Country Code": validation.Validate(cust.CountryCode, validation.Required.Error(utils.FIELD_REQUIRED), utils.ValidateNumeric()),
+		"Phone Number": validation.Validate(cust.PhoneNumber, validation.Required.Error(utils.FIELD_REQUIRED), utils.ValidateNumeric()),
 	}.Filter()
 
 	return err
-}
-
-func (cust Cust) CreateModel() map[string]interface{} {
-	currentTime := time.Now()
-	cust.Status = "W"
-	cust.CreatedAt = currentTime
-	cust.UpdatedAt = currentTime
-	if err := Save(&cust); err != nil {
-		return utils.Message(false, err.Error())
-	}
-	return utils.MessageData(true, "Saved succesfully!", cust)
-}
-
-func GetListCust() map[string]interface{} {
-	db := utils.GetDB()
-	listCust := make([]*Cust, 0)
-	if err := db.Find(&listCust).Error; err != nil {
-		return utils.Message(false, err.Error())
-	}
-	return utils.MessageData(true, "List customer", listCust)
 }
