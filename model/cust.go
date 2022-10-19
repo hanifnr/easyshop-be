@@ -15,7 +15,7 @@ type Cust struct {
 	PhoneNumber string    `json:"phone_number"`
 	Passport    string    `json:"passport"`
 	Status      string    `json:"status"`
-	Isactive    *bool     `json:"isactive" gorm:"DEFAULT:TRUE"`
+	Isactive    bool      `json:"isactive" gorm:"DEFAULT:TRUE"`
 	CreatedAt   time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 }

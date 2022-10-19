@@ -25,6 +25,7 @@ func main() {
 	router.HandleFunc("/index", handlerIndex)
 	router.HandleFunc("/basictoken", c.BasicTokenController).Methods("GET")
 	router.HandleFunc("/cust", c.ListCust).Methods("GET")
+	router.HandleFunc("/cust/{id}", c.ViewCust).Methods("GET")
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
 	router.Use(u.JwtAuthentication)
 
