@@ -84,7 +84,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 		authorizationHeader := r.Header.Get("Authorization")
 		if !strings.Contains(authorizationHeader, "Bearer") {
-			response := Message(false, "Missing auth token")
+			response := MessageErr(false, 0000, "Missing auth token")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Header().Add("Content-Type", "application/json")
 			Respond(w, response)
@@ -93,7 +93,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 		splitted := strings.Split(authorizationHeader, " ")
 		if len(splitted) != 2 {
-			response := Message(false, "Invalid/Malformed auth token")
+			response := MessageErr(false, 0000, "Invalid/Malformed auth token")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Header().Add("Content-Type", "application/json")
 			Respond(w, response)
@@ -116,26 +116,26 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 		if !ok || !token.Valid {
 			if ve, ok := err.(*jwt.ValidationError); ok {
 				if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-					response := Message(false, "Token is not valid")
+					response := MessageErr(false, 0000, "Token is not valid")
 					w.WriteHeader(http.StatusUnauthorized)
 					w.Header().Add("Content-Type", "application/json")
 					Respond(w, response)
 					return
 				} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-					response := Message(false, "Token Expired")
+					response := MessageErr(false, 0000, "Token Expired")
 					w.WriteHeader(http.StatusUnauthorized)
 					w.Header().Add("Content-Type", "application/json")
 					Respond(w, response)
 					return
 				} else {
-					response := Message(false, "Malformed authentication token")
+					response := MessageErr(false, 0000, "Malformed authentication token")
 					w.WriteHeader(http.StatusUnauthorized)
 					w.Header().Add("Content-Type", "application/json")
 					Respond(w, response)
 					return
 				}
 			} else {
-				response := Message(false, "Malformed authentication token")
+				response := MessageErr(false, 0000, "Malformed authentication token")
 				w.WriteHeader(http.StatusUnauthorized)
 				w.Header().Add("Content-Type", "application/json")
 				Respond(w, response)

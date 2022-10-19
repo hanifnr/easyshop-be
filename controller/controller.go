@@ -17,6 +17,7 @@ type Controller interface {
 	Model() model.Model
 	CreateModel() map[string]interface{}
 	ViewModel(id int64) map[string]interface{}
+	ListModel(page int) map[string]interface{}
 	FNew() functions.SQLFunction
 }
 
@@ -81,5 +82,20 @@ func ViewModelAction(controller Controller, w http.ResponseWriter, r *http.Reque
 		return
 	}
 	resp := controller.ViewModel(int64(id))
+	utils.Respond(w, resp)
+}
+
+func ListModelAction(controller Controller, w http.ResponseWriter, r *http.Request) {
+	paramPage := r.URL.Query().Get("page")
+	if paramPage == "" || paramPage == "0" {
+		paramPage = "1"
+	}
+	page, err := strconv.Atoi(paramPage)
+	if err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	resp := controller.ListModel(page)
 	utils.Respond(w, resp)
 }

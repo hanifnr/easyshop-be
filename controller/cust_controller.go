@@ -19,7 +19,8 @@ var ViewCust = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var ListCust = func(w http.ResponseWriter, r *http.Request) {
-	utils.Respond(w, GetListCust())
+	custController := &CustController{}
+	ListModelAction(custController, w, r)
 }
 
 type CustController struct {
@@ -43,7 +44,7 @@ func (custController *CustController) CreateModel() map[string]interface{} {
 	if retval := Save(custController); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
-	return utils.MessageData(true, "Saved succesfully!", custController.Cust)
+	return utils.MessageData(true, custController.Cust)
 }
 
 func (custController *CustController) ViewModel(id int64) map[string]interface{} {
@@ -51,14 +52,22 @@ func (custController *CustController) ViewModel(id int64) map[string]interface{}
 	if retval := View(id, cust, custController); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
-	return utils.MessageData(true, "View data", cust)
+	return utils.MessageData(true, cust)
 }
 
-func GetListCust() map[string]interface{} {
+func (custController *CustController) ListModel(page int) map[string]interface{} {
 	db := utils.GetDB()
-	listCust := make([]*model.Cust, 0)
-	if err := db.Find(&listCust).Error; err != nil {
+
+	var totalRow int64
+	if err := db.Select("count(id)").Table("cust").Scan(&totalRow).Error; err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
-	return utils.MessageData(true, "List customer", listCust)
+
+	listCust := make([]*model.Cust, 0)
+	offset, limit := utils.GetOffsetLimit(page)
+	if err := db.Debug().Offset(offset).Limit(limit).Find(&listCust).Error; err != nil {
+		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
+	}
+	respPage := utils.RespPage(page, int(totalRow))
+	return utils.MessageListData(true, listCust, respPage)
 }

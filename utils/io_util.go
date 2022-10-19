@@ -14,14 +14,21 @@ func StatusReturnOK() StatusReturn {
 	return StatusReturn{ErrCode: 0, Message: "OK"}
 }
 
-func MessageData(status bool, message string, data interface{}) map[string]interface{} {
-	resp := Message(status, message)
+func MessageListData(status bool, data, page interface{}) map[string]interface{} {
+	resp := Message(status)
+	resp["data"] = data
+	resp["page"] = page
+	return resp
+}
+
+func MessageData(status bool, data interface{}) map[string]interface{} {
+	resp := Message(status)
 	resp["data"] = data
 	return resp
 }
 
-func Message(status bool, message string) map[string]interface{} {
-	return map[string]interface{}{"status": status, "message": message}
+func Message(status bool) map[string]interface{} {
+	return map[string]interface{}{"status": status}
 }
 
 func MessageErr(status bool, code int, message string) map[string]interface{} {
