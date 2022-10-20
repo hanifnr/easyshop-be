@@ -6,7 +6,7 @@ const PAGE_LIMIT = 2
 
 func GetOffsetLimit(page int) (int, int) {
 	if page == 1 {
-		return 1, PAGE_LIMIT
+		return 0, PAGE_LIMIT
 	} else {
 		return (page - 1) * PAGE_LIMIT, PAGE_LIMIT
 	}

@@ -18,3 +18,7 @@ type Shop struct {
 func (Shop) TableName() string {
 	return "shop"
 }
+
+func (Shop) Validate() error {
+	return nil
+}

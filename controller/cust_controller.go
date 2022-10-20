@@ -6,6 +6,8 @@ import (
 	"easyshop/utils"
 	"net/http"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var CreateCust = func(w http.ResponseWriter, r *http.Request) {
@@ -27,11 +29,11 @@ type CustController struct {
 	Cust model.Cust
 }
 
-func (cust *CustController) Model() model.Model {
-	return &cust.Cust
+func (custController *CustController) Model() model.Model {
+	return &custController.Cust
 }
 
-func (cust *CustController) FNew() functions.SQLFunction {
+func (custController *CustController) FNew() functions.SQLFunction {
 	return &functions.FCustNew{}
 }
 
@@ -64,8 +66,14 @@ func (custController *CustController) ListModel(page int) map[string]interface{}
 	}
 
 	listCust := make([]*model.Cust, 0)
-	offset, limit := utils.GetOffsetLimit(page)
-	if err := db.Debug().Offset(offset).Limit(limit).Find(&listCust).Error; err != nil {
+	var query *gorm.DB
+	if page == 0 {
+		query = db.Find(&listCust)
+	} else {
+		offset, limit := utils.GetOffsetLimit(page)
+		query = db.Offset(offset).Limit(limit).Find(&listCust)
+	}
+	if err := query.Error; err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
 	respPage := utils.RespPage(page, int(totalRow))

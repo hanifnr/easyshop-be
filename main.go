@@ -18,6 +18,7 @@ func main() {
 		"/basictoken",
 		"/cust",
 		"/cust/create",
+		"/shop",
 	})
 
 	router := mux.NewRouter()
@@ -27,6 +28,9 @@ func main() {
 	router.HandleFunc("/cust", c.ListCust).Methods("GET")
 	router.HandleFunc("/cust/{id}", c.ViewCust).Methods("GET")
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
+	router.HandleFunc("/shop", c.ListShop).Methods("GET")
+	router.HandleFunc("/shop/{id}", c.ViewShop).Methods("GET")
+
 	router.Use(u.JwtAuthentication)
 
 	port := os.Getenv("APP_PORT")
