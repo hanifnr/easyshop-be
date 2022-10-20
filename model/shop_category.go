@@ -12,3 +12,7 @@ type ShopCategory struct {
 func (ShopCategory) TableName() string {
 	return "shop_category"
 }
+
+func (ShopCategory) Validate() error {
+	return nil
+}

@@ -87,8 +87,8 @@ func ViewModelAction(controller Controller, w http.ResponseWriter, r *http.Reque
 
 func ListModelAction(controller Controller, w http.ResponseWriter, r *http.Request) {
 	paramPage := r.URL.Query().Get("page")
-	if paramPage == "" || paramPage == "0" {
-		paramPage = "1"
+	if paramPage == "" {
+		paramPage = "0"
 	}
 	page, err := strconv.Atoi(paramPage)
 	if err != nil {

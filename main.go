@@ -30,6 +30,8 @@ func main() {
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/{id}", c.ViewShop).Methods("GET")
+	router.HandleFunc("/shopcategory", c.ListShopCategory).Methods("GET")
+	router.HandleFunc("/shopcategory/{id}", c.ViewShopCategory).Methods("GET")
 
 	router.Use(u.JwtAuthentication)
 
