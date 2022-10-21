@@ -15,6 +15,10 @@ type Shop struct {
 	UpdatedAt      time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 }
 
+func (shop Shop) ID() int64 {
+	return shop.Id
+}
+
 func (Shop) TableName() string {
 	return "shop"
 }

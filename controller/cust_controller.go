@@ -15,6 +15,11 @@ var CreateCust = func(w http.ResponseWriter, r *http.Request) {
 	CreateModelAction(custController, w, r)
 }
 
+var UpdateCust = func(w http.ResponseWriter, r *http.Request) {
+	custController := &CustController{}
+	UpdateModelAction(custController, w, r)
+}
+
 var ViewCust = func(w http.ResponseWriter, r *http.Request) {
 	custController := &CustController{}
 	ViewModelAction(custController, w, r)
@@ -39,11 +44,13 @@ func (custController *CustController) FNew() functions.SQLFunction {
 
 func (custController *CustController) CreateModel() map[string]interface{} {
 	currentTime := time.Now()
-	cust := &custController.Cust
-	cust.Status = "W"
-	cust.CreatedAt = currentTime
-	cust.UpdatedAt = currentTime
-	if retval := Save(custController); retval.ErrCode != 0 {
+
+	if retval := CreateModel(custController, func(m model.Model) {
+		cust := m.(*model.Cust)
+		cust.Status = "W"
+		cust.CreatedAt = currentTime
+		cust.UpdatedAt = currentTime
+	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, custController.Cust)
@@ -51,10 +58,28 @@ func (custController *CustController) CreateModel() map[string]interface{} {
 
 func (custController *CustController) ViewModel(id int64) map[string]interface{} {
 	cust := &model.Cust{}
-	if retval := View(id, cust, custController); retval.ErrCode != 0 {
+	if retval := ViewModel(id, cust); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, cust)
+}
+
+func (custController *CustController) UpdateModel() map[string]interface{} {
+	retval, retModel := UpdateModel(custController, &model.Cust{}, func(modelSrc, modelTemp model.Model) {
+		custSrc := modelSrc.(*model.Cust)
+		custTemp := modelTemp.(*model.Cust)
+
+		custSrc.Name = custTemp.Name
+		custSrc.Email = custTemp.Email
+		custSrc.CountryCode = custTemp.CountryCode
+		custSrc.PhoneNumber = custTemp.PhoneNumber
+		custSrc.Passport = custTemp.Passport
+		custSrc.UpdatedAt = time.Now()
+	})
+	if retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.MessageData(true, retModel)
 }
 
 func (custController *CustController) ListModel(page int) map[string]interface{} {

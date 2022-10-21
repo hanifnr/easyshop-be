@@ -48,6 +48,7 @@ func RespondError(w http.ResponseWriter, data map[string]interface{}, errcode in
 
 const ErrValidate = 1001
 const ErrSQLCreate = 1002
-const ErrSQLView = 1003
+const ErrSQLLoad = 1003
 const ErrSQLList = 1004
-const ErrExist = 1005
+const ErrSQLSave = 1005
+const ErrExist = 1006

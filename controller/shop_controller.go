@@ -37,10 +37,14 @@ func (shopController *ShopController) CreateModel() map[string]interface{} {
 
 func (shopController *ShopController) ViewModel(id int64) map[string]interface{} {
 	shop := &model.Shop{}
-	if retval := View(id, shop, shopController); retval.ErrCode != 0 {
+	if retval := ViewModel(id, shop); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, shop)
+}
+
+func (shopController *ShopController) UpdateModel() map[string]interface{} {
+	return nil
 }
 
 func (shopController *ShopController) ListModel(page int) map[string]interface{} {

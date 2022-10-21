@@ -37,10 +37,14 @@ func (shopCategoryController *ShopCategoryController) CreateModel() map[string]i
 
 func (shopCategoryController *ShopCategoryController) ViewModel(id int64) map[string]interface{} {
 	shopCategory := &model.ShopCategory{}
-	if retval := View(id, shopCategory, shopCategoryController); retval.ErrCode != 0 {
+	if retval := ViewModel(id, shopCategory); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, shopCategory)
+}
+
+func (shopCategoryController *ShopCategoryController) UpdateModel() map[string]interface{} {
+	return nil
 }
 
 func (shopCategoryController *ShopCategoryController) ListModel(page int) map[string]interface{} {

@@ -20,6 +20,10 @@ type Cust struct {
 	UpdatedAt   time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 }
 
+func (cust Cust) ID() int64 {
+	return cust.Id
+}
+
 func (Cust) TableName() string {
 	return "cust"
 }

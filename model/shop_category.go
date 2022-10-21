@@ -9,6 +9,10 @@ type ShopCategory struct {
 	UpdatedAt time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 }
 
+func (shopCategory ShopCategory) ID() int64 {
+	return shopCategory.Id
+}
+
 func (ShopCategory) TableName() string {
 	return "shop_category"
 }
