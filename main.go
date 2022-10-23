@@ -29,6 +29,7 @@ func main() {
 	router.HandleFunc("/cust/{id}", c.ViewCust).Methods("GET")
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
 	router.HandleFunc("/cust/update", c.UpdateCust).Methods("POST")
+	router.HandleFunc("/cust/handle", c.HandleCust).Methods("POST")
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/{id}", c.ViewShop).Methods("GET")
 	router.HandleFunc("/shopcategory", c.ListShopCategory).Methods("GET")

@@ -1,6 +1,11 @@
 package model
 
-import "time"
+import (
+	"easyshop/utils"
+	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+)
 
 type Order struct {
 	Id              int64     `json:"id"`
@@ -18,4 +23,20 @@ type Order struct {
 
 func (Order) TableName() string {
 	return "order"
+}
+
+func (order Order) Validate() error {
+	err := validation.Errors{
+		"Trxno":     validation.Validate(order.Trxno, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Date":      validation.Validate(order.Date, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Cust Id":   validation.Validate(order.Cust_id, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Pick Date": validation.Validate(order.Pick_date, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Total":     validation.Validate(order.Total, validation.NotNil.Error(utils.FIELD_NOTNIL), utils.ValidateNumeric()),
+	}.Filter()
+
+	return err
+}
+
+func (order Order) ID() int64 {
+	return order.Id
 }

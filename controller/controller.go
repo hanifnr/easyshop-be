@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -31,11 +32,8 @@ func CreateModelAction(controller Controller, w http.ResponseWriter, r *http.Req
 }
 
 func ViewModelAction(controller Controller, w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["id"])
+	id, err := GetInt64Param("id", w, r)
 	if err != nil {
-		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
-		utils.RespondError(w, data, http.StatusBadRequest)
 		return
 	}
 	resp := controller.ViewModel(int64(id))
@@ -65,4 +63,35 @@ func UpdateModelAction(controller Controller, w http.ResponseWriter, r *http.Req
 	}
 	resp := controller.UpdateModel()
 	utils.Respond(w, resp)
+}
+
+func GetInt64Param(param string, w http.ResponseWriter, r *http.Request) (int64, error) {
+	params := mux.Vars(r)
+	value, err := strconv.Atoi(params[param])
+	if err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return -1, err
+	}
+	return int64(value), err
+}
+
+func GetStringQuery(param string, isRequired bool, w http.ResponseWriter, r *http.Request) (string, error) {
+	return GetStringQueryCheck(param, isRequired, func(result string) error { return nil }, w, r)
+}
+
+func GetStringQueryCheck(param string, isRequired bool, fCheck func(result string) error, w http.ResponseWriter, r *http.Request) (string, error) {
+	result := r.URL.Query().Get(param)
+	if isRequired && result == "" {
+		err := fmt.Errorf("param %s required", param)
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return "", err
+	}
+	if err := fCheck(result); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return "", err
+	}
+	return result, nil
 }

@@ -5,8 +5,6 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"net/http"
-
-	"gorm.io/gorm"
 )
 
 var ViewShopCategory = func(w http.ResponseWriter, r *http.Request) {
@@ -48,24 +46,5 @@ func (shopCategoryController *ShopCategoryController) UpdateModel() map[string]i
 }
 
 func (shopCategoryController *ShopCategoryController) ListModel(page int) map[string]interface{} {
-	db := utils.GetDB()
-
-	var totalRow int64
-	if err := db.Select("count(id)").Table("shop").Scan(&totalRow).Error; err != nil {
-		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
-	}
-
-	listShopCategory := make([]*model.ShopCategory, 0)
-	var query *gorm.DB
-	if page == 0 {
-		query = db.Find(&listShopCategory)
-	} else {
-		offset, limit := utils.GetOffsetLimit(page)
-		query = db.Offset(offset).Limit(limit).Find(&listShopCategory)
-	}
-	if err := query.Error; err != nil {
-		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
-	}
-	respPage := utils.RespPage(page, int(totalRow))
-	return utils.MessageListData(true, listShopCategory, respPage)
+	return ListModel(page, "shop_category", make([]*model.ShopCategory, 0))
 }

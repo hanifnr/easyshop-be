@@ -1,5 +1,11 @@
 package model
 
+import (
+	"easyshop/utils"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+)
+
 type Orderd struct {
 	Id        int64   `json:"id"`
 	OrderId   int64   `json:"order_id"`
@@ -16,4 +22,26 @@ type Orderd struct {
 
 func (Orderd) TableName() string {
 	return "orderd"
+}
+
+func (orderd Orderd) Validate() error {
+	err := validation.Errors{
+		"Dno":        validation.Validate(orderd.Dno, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Shop Id":    validation.Validate(orderd.ShopId, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Product Id": validation.Validate(orderd.ProductId, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Name":       validation.Validate(orderd.Name, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Qty":        validation.Validate(orderd.Qty, validation.Required.Error(utils.FIELD_REQUIRED), utils.ValidateNumeric()),
+		"Price":      validation.Validate(orderd.Price, validation.NotNil.Error(utils.FIELD_NOTNIL), utils.ValidateNumeric()),
+		"Subtotal":   validation.Validate(orderd.Subtotal, validation.NotNil.Error(utils.FIELD_NOTNIL), utils.ValidateNumeric()),
+	}.Filter()
+
+	return err
+}
+
+func (orderd Orderd) ID() int64 {
+	return orderd.Id
+}
+
+func (orderd Orderd) SetMasterId(id int64) {
+	orderd.OrderId = id
 }

@@ -14,5 +14,5 @@ func GetOffsetLimit(page int) (int, int) {
 
 func RespPage(page, totalRow int) map[string]interface{} {
 	totalPage := int(math.Ceil(float64(totalRow) / float64(PAGE_LIMIT)))
-	return map[string]interface{}{"page": page, "total_page": totalPage}
+	return map[string]interface{}{"page": page, "total_page": totalPage, "total_row": totalRow}
 }

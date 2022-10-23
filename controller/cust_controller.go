@@ -4,10 +4,10 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 var CreateCust = func(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +28,22 @@ var ViewCust = func(w http.ResponseWriter, r *http.Request) {
 var ListCust = func(w http.ResponseWriter, r *http.Request) {
 	custController := &CustController{}
 	ListModelAction(custController, w, r)
+}
+
+var HandleCust = func(w http.ResponseWriter, r *http.Request) {
+	type CustStatus struct {
+		Id     int64
+		Status string
+	}
+	custStatus := &CustStatus{}
+	if err := json.NewDecoder(r.Body).Decode(&custStatus); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	custController := &CustController{}
+	resp := custController.HandleCust(custStatus.Id, custStatus.Status)
+	utils.Respond(w, resp)
 }
 
 type CustController struct {
@@ -83,24 +99,20 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 }
 
 func (custController *CustController) ListModel(page int) map[string]interface{} {
-	db := utils.GetDB()
+	return ListModel(page, "cust", make([]*model.Cust, 0))
+}
 
-	var totalRow int64
-	if err := db.Select("count(id)").Table("cust").Scan(&totalRow).Error; err != nil {
-		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
+func (custController *CustController) HandleCust(id int64, status string) map[string]interface{} {
+	db := utils.GetDB().Begin()
+	cust := &model.Cust{}
+	if retval := ViewModel(id, cust); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
-
-	listCust := make([]*model.Cust, 0)
-	var query *gorm.DB
-	if page == 0 {
-		query = db.Find(&listCust)
-	} else {
-		offset, limit := utils.GetOffsetLimit(page)
-		query = db.Offset(offset).Limit(limit).Find(&listCust)
+	cust.Status = strings.ToUpper(status)
+	if err := model.Save(cust, db); err != nil {
+		db.Rollback()
+		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
 	}
-	if err := query.Error; err != nil {
-		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
-	}
-	respPage := utils.RespPage(page, int(totalRow))
-	return utils.MessageListData(true, listCust, respPage)
+	db.Commit()
+	return utils.MessageData(true, cust)
 }

@@ -5,3 +5,7 @@ type Model interface {
 	TableName() string
 	Validate() error
 }
+
+type Detail interface {
+	SetMasterId(id int64)
+}
