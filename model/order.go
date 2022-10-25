@@ -31,7 +31,7 @@ func (order Order) Validate() error {
 		"Date":      validation.Validate(order.Date, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Cust Id":   validation.Validate(order.Cust_id, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Pick Date": validation.Validate(order.Pick_date, validation.Required.Error(utils.FIELD_REQUIRED)),
-		"Total":     validation.Validate(order.Total, validation.NotNil.Error(utils.FIELD_NOTNIL), utils.ValidateNumeric()),
+		"Total":     validation.Validate(order.Total, validation.Required.Error(utils.FIELD_NOTNIL)),
 	}.Filter()
 
 	return err
@@ -39,4 +39,12 @@ func (order Order) Validate() error {
 
 func (order Order) ID() int64 {
 	return order.Id
+}
+
+func (order *Order) GetTrxno() string {
+	return order.Trxno
+}
+
+func (order *Order) SetTrxno(trxno string) {
+	order.Trxno = trxno
 }

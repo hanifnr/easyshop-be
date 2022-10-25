@@ -1,6 +1,7 @@
 TRUNCATE shop_category CASCADE;
 SELECT setval('public.shop_category_id_seq', 1, false);
 SELECT setval('public.shop_id_seq', 1, false);
+TRUNCATE ncount CASCADE;
 
 
 INSERT INTO shop_category(name, created_at, updated_at) 
@@ -175,3 +176,12 @@ VALUES
     NOW(),
     NOW()
   );
+
+  INSERT INTO ncount (code,name,number,length)
+  VALUES
+  (
+    'OD',
+    'ORDER',
+    1000,
+    8
+  )

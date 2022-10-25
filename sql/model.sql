@@ -202,3 +202,11 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
+
+CREATE TABLE public.ncount(
+  code VARCHAR,
+  name VARCHAR,
+  number INTEGER,
+  length INTEGER,
+CONSTRAINT ncount_pk PRIMARY KEY (code)
+);

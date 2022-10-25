@@ -3,7 +3,9 @@ package controllers
 import (
 	"easyshop/functions"
 	"easyshop/model"
+	"easyshop/utils"
 	"net/http"
+	"time"
 )
 
 var CreateOrder = func(w http.ResponseWriter, r *http.Request) {
@@ -12,13 +14,13 @@ var CreateOrder = func(w http.ResponseWriter, r *http.Request) {
 }
 
 type OrderController struct {
-	model.Order
+	Order   model.Order    `json:"order"`
 	Orderd  []model.Orderd `json:"detail"`
 	Details []model.Model  `json:"-"`
 }
 
 func (orderController *OrderController) MasterModel() model.Model {
-	return orderController.Order
+	return &orderController.Order
 }
 
 func (orderController *OrderController) DetailsModel() []model.Model {
@@ -26,7 +28,21 @@ func (orderController *OrderController) DetailsModel() []model.Model {
 }
 
 func (orderController *OrderController) CreateTrans() map[string]interface{} {
-	return nil
+	if retval := CreateTrans(orderController, func(m model.Model) {
+		currentTime := time.Now()
+
+		order := m.(*model.Order)
+		order.Status = "W"
+		order.CreatedAt = currentTime
+		order.UpdatedAt = currentTime
+
+		for i := range orderController.Orderd {
+			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
+		}
+	}); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.MessageData(true, orderController)
 }
 func (orderController *OrderController) ViewTrans(id int64) map[string]interface{} {
 	return nil

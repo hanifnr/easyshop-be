@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
 )
@@ -10,6 +11,11 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 	db := utils.GetDB().Begin()
 	fNew := controller.FNew()
 	m := controller.MasterModel()
+	master := m.(model.Master)
+	if master.GetTrxno() == "AUTO" {
+		trxno := functions.FGetNewNo(m.TableName(), db)
+		master.SetTrxno(trxno)
+	}
 	if err := m.Validate(); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}

@@ -19,6 +19,7 @@ func main() {
 		"/cust",
 		"/cust/create",
 		"/shop",
+		"/order",
 	})
 
 	router := mux.NewRouter()
@@ -34,6 +35,7 @@ func main() {
 	router.HandleFunc("/shop/{id}", c.ViewShop).Methods("GET")
 	router.HandleFunc("/shopcategory", c.ListShopCategory).Methods("GET")
 	router.HandleFunc("/shopcategory/{id}", c.ViewShopCategory).Methods("GET")
+	router.HandleFunc("/order/create", c.CreateOrder).Methods("POST")
 
 	router.Use(u.JwtAuthentication)
 

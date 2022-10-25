@@ -59,9 +59,10 @@ func (custController *CustController) FNew() functions.SQLFunction {
 }
 
 func (custController *CustController) CreateModel() map[string]interface{} {
-	currentTime := time.Now()
 
 	if retval := CreateModel(custController, func(m model.Model) {
+		currentTime := time.Now()
+
 		cust := m.(*model.Cust)
 		cust.Status = "W"
 		cust.CreatedAt = currentTime
