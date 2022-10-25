@@ -15,7 +15,7 @@ var CreateOrder = func(w http.ResponseWriter, r *http.Request) {
 
 type OrderController struct {
 	Order   model.Order    `json:"order"`
-	Orderd  []model.Orderd `json:"detail"`
+	Orderd  []model.Orderd `json:"orderd"`
 	Details []model.Model  `json:"-"`
 }
 
