@@ -17,9 +17,9 @@ func main() {
 	u.SetNoAuth([]string{
 		"/basictoken",
 		"/cust",
-		"/cust/create",
 		"/shop",
 		"/order",
+		"/passport",
 	})
 
 	router := mux.NewRouter()
@@ -36,6 +36,9 @@ func main() {
 	router.HandleFunc("/shopcategory", c.ListShopCategory).Methods("GET")
 	router.HandleFunc("/shopcategory/{id}", c.ViewShopCategory).Methods("GET")
 	router.HandleFunc("/order/create", c.CreateOrder).Methods("POST")
+	router.HandleFunc("/passport", c.ListPassport).Methods("GET")
+	router.HandleFunc("/passport/create", c.CreatePassport).Methods("POST")
+	router.HandleFunc("/passport/update", c.UpdatePassport).Methods("POST")
 
 	router.Use(u.JwtAuthentication)
 

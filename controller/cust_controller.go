@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 )
 
 var CreateCust = func(w http.ResponseWriter, r *http.Request) {
@@ -61,12 +60,8 @@ func (custController *CustController) FNew() functions.SQLFunction {
 func (custController *CustController) CreateModel() map[string]interface{} {
 
 	if retval := CreateModel(custController, func(m model.Model) {
-		currentTime := time.Now()
-
 		cust := m.(*model.Cust)
 		cust.Status = "W"
-		cust.CreatedAt = currentTime
-		cust.UpdatedAt = currentTime
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
@@ -91,7 +86,6 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 		custSrc.CountryCode = custTemp.CountryCode
 		custSrc.PhoneNumber = custTemp.PhoneNumber
 		custSrc.Passport = custTemp.Passport
-		custSrc.UpdatedAt = time.Now()
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)

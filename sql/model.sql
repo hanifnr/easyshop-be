@@ -7,7 +7,7 @@ CREATE TABLE public.cust(
   phone_number VARCHAR, 
   passport VARCHAR, 
   status VARCHAR(1), 
-  isactive boolean DEFAULT TRUE, 
+  isactive BOOLEAN DEFAULT TRUE, 
   created_at TIMESTAMP, 
   updated_at TIMESTAMP,
   CONSTRAINT cust_pk PRIMARY KEY (id)
@@ -210,3 +210,25 @@ CREATE TABLE public.ncount(
   length INTEGER,
 CONSTRAINT ncount_pk PRIMARY KEY (code)
 );
+
+CREATE SEQUENCE public.passport_id_seq;
+CREATE TABLE public.passport(
+id BIGINT NOT NULL DEFAULT nextval('public.passport_id_seq'),
+  cust_id BIGINT, 
+  name VARCHAR,
+  country_code VARCHAR,
+  number VARCHAR,
+  nationality VARCHAR,
+  birth_date DATE,
+  issue_date DATE,
+  exp_date DATE,
+  created_at TIMESTAMP, 
+  updated_at TIMESTAMP,
+  isdelete BOOLEAN DEFAULT FALSE,
+CONSTRAINT passport_pk PRIMARY KEY (id)
+);
+ALTER TABLE public.passport
+ADD CONSTRAINT passport_rel_cust_fk
+FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+CREATE UNIQUE INDEX passport_cust_id_index ON public.passport (cust_id);

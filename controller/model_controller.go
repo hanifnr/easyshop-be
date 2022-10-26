@@ -3,15 +3,22 @@ package controllers
 import (
 	"easyshop/model"
 	"easyshop/utils"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils.StatusReturn {
 	fDefaultValue(controller.Model())
+
 	db := utils.GetDB().Begin()
 	fNew := controller.FNew()
 	m := controller.Model()
+
+	currentTime := time.Now()
+	timeField := m.(model.TimeField)
+	timeField.SetCreatedAt(currentTime)
+	timeField.SetUpdatedAt(currentTime)
 	if err := m.Validate(); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
@@ -48,6 +55,8 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 	if err := model.Load(modelTemp.ID(), m, db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}, nil
 	}
+	timeField := m.(model.TimeField)
+	timeField.SetUpdatedAt(time.Now())
 	fUpdate(m, modelTemp)
 	if err := model.Save(m, db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}, nil

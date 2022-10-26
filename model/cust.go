@@ -38,3 +38,11 @@ func (cust Cust) Validate() error {
 
 	return err
 }
+
+func (cust *Cust) SetCreatedAt(time time.Time) {
+	cust.CreatedAt = time
+}
+
+func (cust *Cust) SetUpdatedAt(time time.Time) {
+	cust.UpdatedAt = time
+}

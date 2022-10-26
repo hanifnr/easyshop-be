@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -26,4 +27,11 @@ func CreateTransAction(controller TransController, w http.ResponseWriter, r *htt
 	}
 	resp := controller.CreateTrans()
 	utils.Respond(w, resp)
+}
+
+func ValidateTrans(controller TransController) error {
+	if len(controller.DetailsModel()) == 0 {
+		return errors.New("detail transaction can't be empty")
+	}
+	return nil
 }
