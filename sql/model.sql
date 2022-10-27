@@ -12,6 +12,9 @@ CREATE TABLE public.cust(
   updated_at TIMESTAMP,
   CONSTRAINT cust_pk PRIMARY KEY (id)
 );
+ALTER TABLE public.cust ALTER COLUMN isactive SET DEFAULT FALSE;
+ALTER TABLE public.cust ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.cust DROP COLUMN passport;
 
 CREATE SEQUENCE public.shop_category_id_seq;
 CREATE TABLE public.shop_category(
@@ -70,6 +73,7 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
+ALTER TABLE public.order ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 
@@ -124,6 +128,7 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
+ALTER TABLE public.purc ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 
 CREATE TABLE public.purcd(
   purc_id BIGINT, 
@@ -175,6 +180,7 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
+ALTER TABLE public.wh ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 
 CREATE TABLE public.whd(
   wh_id BIGINT, 

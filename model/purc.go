@@ -11,6 +11,7 @@ type Purc struct {
 	Total     float64   `json:"total"  gorm:"DEFAULT:0"`
 	CreatedAt time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
+	Isdelete  bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
 }
 
 func (Purc) TableName() string {

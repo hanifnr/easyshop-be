@@ -85,7 +85,6 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 		custSrc.Email = custTemp.Email
 		custSrc.CountryCode = custTemp.CountryCode
 		custSrc.PhoneNumber = custTemp.PhoneNumber
-		custSrc.Passport = custTemp.Passport
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)

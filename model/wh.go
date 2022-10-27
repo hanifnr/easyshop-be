@@ -10,6 +10,7 @@ type Wh struct {
 	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
+	Isdelete  bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
 }
 
 func (Wh) TableName() string {

@@ -13,11 +13,11 @@ type Cust struct {
 	Email       string    `json:"email"`
 	CountryCode string    `json:"country_code"`
 	PhoneNumber string    `json:"phone_number"`
-	Passport    string    `json:"passport"`
 	Status      string    `json:"status"`
-	Isactive    bool      `json:"isactive" gorm:"DEFAULT:TRUE"`
+	Isactive    bool      `json:"isactive" gorm:"DEFAULT:FALSE"`
 	CreatedAt   time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
+	Isdelete    bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
 }
 
 func (cust Cust) ID() int64 {

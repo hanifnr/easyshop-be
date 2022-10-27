@@ -19,8 +19,5 @@ func (f FCustNew) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 	if rows := db.Select("1").Table("cust").Where("country_code = ? AND phone_number = ?", cust.CountryCode, cust.PhoneNumber).Scan(&exist).RowsAffected; rows > 0 {
 		return utils.StatusReturn{ErrCode: utils.ErrExist, Message: "Phone number already registered!"}
 	}
-	if rows := db.Select("1").Table("cust").Where("UPPER(passport) = ?", strings.ToUpper(cust.Passport)).Scan(&exist).RowsAffected; rows > 0 {
-		return utils.StatusReturn{ErrCode: utils.ErrExist, Message: "Passport already registered!"}
-	}
 	return utils.StatusReturnOK()
 }
