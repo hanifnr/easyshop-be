@@ -4,6 +4,8 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+
+	"gorm.io/gorm"
 )
 
 func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) utils.StatusReturn {
@@ -51,4 +53,37 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 	}
 	db.Commit()
 	return utils.StatusReturnOK()
+}
+
+func ViewTrans(id int64, controller TransController, fLoadDetail func(db *gorm.DB) error) utils.StatusReturn {
+	db := utils.GetDB().Begin()
+	if err := model.Load(id, controller.MasterModel(), db); err != nil {
+		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+	}
+	if err := fLoadDetail(db); err != nil {
+		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+	}
+	return utils.StatusReturnOK()
+}
+
+func ListTrans(page int, table string, list interface{}) map[string]interface{} {
+	db := utils.GetDB()
+
+	var totalRow int64
+	if err := db.Select("count(id)").Table(table).Scan(&totalRow).Error; err != nil {
+		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
+	}
+
+	var query *gorm.DB
+	if page == 0 {
+		query = db.Find(&list).Order("id ASC")
+	} else {
+		offset, limit := utils.GetOffsetLimit(page)
+		query = db.Offset(offset).Order("id ASC").Limit(limit).Find(&list)
+	}
+	if err := query.Error; err != nil {
+		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
+	}
+	respPage := utils.RespPage(page, int(totalRow))
+	return utils.MessageListData(true, list, respPage)
 }

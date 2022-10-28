@@ -6,11 +6,23 @@ import (
 	"easyshop/utils"
 	"net/http"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var CreateOrder = func(w http.ResponseWriter, r *http.Request) {
 	orderController := &OrderController{}
 	CreateTransAction(orderController, w, r)
+}
+
+var ViewOrder = func(w http.ResponseWriter, r *http.Request) {
+	orderController := &OrderController{}
+	ViewTransAction(orderController, w, r)
+}
+
+var ListOrder = func(w http.ResponseWriter, r *http.Request) {
+	orderController := &OrderController{}
+	ListTransAction(orderController, w, r)
 }
 
 type OrderController struct {
@@ -45,10 +57,16 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	return utils.MessageData(true, orderController)
 }
 func (orderController *OrderController) ViewTrans(id int64) map[string]interface{} {
-	return nil
+	if retval := ViewTrans(id, orderController, func(db *gorm.DB) error {
+		err := db.Where("order_id = ?", id).Find(&orderController.Orderd).Error
+		return err
+	}); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.MessageData(true, orderController)
 }
 func (orderController *OrderController) ListTrans(page int) map[string]interface{} {
-	return nil
+	return ListTrans(page, "order", make([]*model.Order, 0))
 }
 func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 	return nil

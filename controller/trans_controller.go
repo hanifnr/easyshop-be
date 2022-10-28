@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 )
 
 type TransController interface {
@@ -26,6 +27,30 @@ func CreateTransAction(controller TransController, w http.ResponseWriter, r *htt
 		return
 	}
 	resp := controller.CreateTrans()
+	utils.Respond(w, resp)
+}
+
+func ViewTransAction(controller TransController, w http.ResponseWriter, r *http.Request) {
+	id, err := GetInt64Param("id", w, r)
+	if err != nil {
+		return
+	}
+	resp := controller.ViewTrans(int64(id))
+	utils.Respond(w, resp)
+}
+
+func ListTransAction(controller TransController, w http.ResponseWriter, r *http.Request) {
+	paramPage := r.URL.Query().Get("page")
+	if paramPage == "" {
+		paramPage = "0"
+	}
+	page, err := strconv.Atoi(paramPage)
+	if err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	resp := controller.ListTrans(page)
 	utils.Respond(w, resp)
 }
 
