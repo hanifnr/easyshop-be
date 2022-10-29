@@ -49,3 +49,11 @@ func (order *Order) GetTrxno() string {
 func (order *Order) SetTrxno(trxno string) {
 	order.Trxno = trxno
 }
+
+func (order *Order) SetCreatedAt(time time.Time) {
+	order.CreatedAt = time
+}
+
+func (order *Order) SetUpdatedAt(time time.Time) {
+	order.UpdatedAt = time
+}

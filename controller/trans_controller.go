@@ -18,6 +18,7 @@ type TransController interface {
 	ListTrans(page int) map[string]interface{}
 	UpdateTrans() map[string]interface{}
 	FNew() functions.SQLFunction
+	MasterField() string
 }
 
 func CreateTransAction(controller TransController, w http.ResponseWriter, r *http.Request) {
@@ -51,6 +52,16 @@ func ListTransAction(controller TransController, w http.ResponseWriter, r *http.
 		return
 	}
 	resp := controller.ListTrans(page)
+	utils.Respond(w, resp)
+}
+
+func UpdateTransAction(controller TransController, w http.ResponseWriter, r *http.Request) {
+	if err := json.NewDecoder(r.Body).Decode(controller); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	resp := controller.UpdateTrans()
 	utils.Respond(w, resp)
 }
 

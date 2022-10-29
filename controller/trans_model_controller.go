@@ -4,6 +4,7 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -56,13 +57,52 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 }
 
 func ViewTrans(id int64, controller TransController, fLoadDetail func(db *gorm.DB) error) utils.StatusReturn {
-	db := utils.GetDB().Begin()
+	db := utils.GetDB()
+
 	if err := model.Load(id, controller.MasterModel(), db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
 	}
 	if err := fLoadDetail(db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
 	}
+	return utils.StatusReturnOK()
+}
+
+func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpdate func(modelSrc model.Model, modelTemp model.Model)) utils.StatusReturn {
+	db := utils.GetDB().Begin()
+	modelTemp := controller.MasterModel()
+	if err := modelTemp.Validate(); err != nil {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
+	}
+	if err := model.Load(modelTemp.ID(), m, db); err != nil {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+	}
+	timeField := m.(model.TimeField)
+	timeField.SetUpdatedAt(time.Now())
+	fUpdate(m, modelTemp)
+	if err := model.Save(m, db); err != nil {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
+	}
+	if err := db.Debug().Where(controller.MasterField()+"= ?", modelTemp.ID()).Delete(d).Error; err != nil {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: utils.ErrSQLDelete, Message: err.Error()}
+	}
+	for _, data := range controller.DetailsModel() {
+		if err := data.Validate(); err != nil {
+			db.Rollback()
+			return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
+		}
+		detail := data.(model.Detail)
+		detail.SetMasterId(modelTemp.ID())
+		if err := model.Create(data, db); err != nil {
+			db.Rollback()
+			return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
+		}
+	}
+	db.Commit()
 	return utils.StatusReturnOK()
 }
 

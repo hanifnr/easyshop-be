@@ -38,7 +38,7 @@ func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils
 }
 
 func ViewModel(id int64, m model.Model) utils.StatusReturn {
-	db := utils.GetDB().Begin()
+	db := utils.GetDB()
 	if err := model.Load(id, m, db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
 	}
@@ -46,21 +46,24 @@ func ViewModel(id int64, m model.Model) utils.StatusReturn {
 }
 
 func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc model.Model, modelTemp model.Model)) (utils.StatusReturn, model.Model) {
-	db := utils.GetDB()
+	db := utils.GetDB().Begin()
 	modelTemp := controller.Model()
 	if err := modelTemp.Validate(); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}, nil
 	}
 	if err := model.Load(modelTemp.ID(), m, db); err != nil {
+		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}, nil
 	}
 	timeField := m.(model.TimeField)
 	timeField.SetUpdatedAt(time.Now())
 	fUpdate(m, modelTemp)
 	if err := model.Save(m, db); err != nil {
+		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}, nil
 	}
+	db.Commit()
 	return utils.StatusReturnOK(), m
 }
 

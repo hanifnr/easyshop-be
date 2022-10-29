@@ -51,4 +51,5 @@ const ErrSQLCreate = 1002
 const ErrSQLLoad = 1003
 const ErrSQLList = 1004
 const ErrSQLSave = 1005
-const ErrExist = 1006
+const ErrSQLDelete = 1006
+const ErrExist = 1007

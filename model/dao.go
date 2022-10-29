@@ -30,3 +30,10 @@ func Save(model Model, db *gorm.DB) error {
 	}
 	return nil
 }
+
+func Delete(model Model, db *gorm.DB) error {
+	if err := db.Delete(model).Error; err != nil {
+		return err
+	}
+	return nil
+}
