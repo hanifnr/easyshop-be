@@ -67,13 +67,13 @@ func UpdateModelAction(controller Controller, w http.ResponseWriter, r *http.Req
 
 func GetInt64Param(param string, w http.ResponseWriter, r *http.Request) (int64, error) {
 	params := mux.Vars(r)
-	value, err := strconv.Atoi(params[param])
+	value, err := strconv.ParseInt(params[param], 10, 64)
 	if err != nil {
 		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
 		utils.RespondError(w, data, http.StatusBadRequest)
 		return -1, err
 	}
-	return int64(value), err
+	return value, err
 }
 
 func GetStringQuery(param string, isRequired bool, w http.ResponseWriter, r *http.Request) (string, error) {

@@ -34,7 +34,7 @@ func (shopController *ShopController) CreateModel() map[string]interface{} {
 }
 
 func (shopController *ShopController) ViewModel(id int64) map[string]interface{} {
-	shop := &model.Shop{}
+	shop := &shopController.Shop
 	if retval := ViewModel(id, shop); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}

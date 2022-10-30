@@ -69,7 +69,7 @@ func (custController *CustController) CreateModel() map[string]interface{} {
 }
 
 func (custController *CustController) ViewModel(id int64) map[string]interface{} {
-	cust := &model.Cust{}
+	cust := &custController.Cust
 	if retval := ViewModel(id, cust); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
