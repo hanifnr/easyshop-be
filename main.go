@@ -34,7 +34,7 @@ func main() {
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/view/{id}", c.ViewShop).Methods("GET")
 	router.HandleFunc("/shopcategory", c.ListShopCategory).Methods("GET")
-	router.HandleFunc("/shopcategory/{id}", c.ViewShopCategory).Methods("GET")
+	router.HandleFunc("/shopcategory/view/{id}", c.ViewShopCategory).Methods("GET")
 	router.HandleFunc("/order", c.ListOrder).Methods("GET")
 	router.HandleFunc("/order/view/{id}", c.ViewOrder).Methods("GET")
 	router.HandleFunc("/order/create", c.CreateOrder).Methods("POST")
