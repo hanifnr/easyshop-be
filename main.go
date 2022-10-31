@@ -42,7 +42,7 @@ func main() {
 	router.HandleFunc("/order/{id}", c.ViewOrder).Methods("GET")
 	router.HandleFunc("/order/handle", c.HandleOrder).Methods("POST")
 	router.HandleFunc("/passport", c.ListPassport).Methods("GET")
-	router.HandleFunc("/passport/view{id}", c.ViewPassport).Methods("GET")
+	router.HandleFunc("/passport/view/{id}", c.ViewPassport).Methods("GET")
 	router.HandleFunc("/passport/create", c.CreatePassport).Methods("POST")
 	router.HandleFunc("/passport/update", c.UpdatePassport).Methods("POST")
 	router.HandleFunc("/passport/cust/{id}", c.ViewPassportCust).Methods("GET")
