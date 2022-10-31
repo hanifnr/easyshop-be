@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Model interface {
 	ID() int64
@@ -20,4 +24,8 @@ type Detail interface {
 type TimeField interface {
 	SetCreatedAt(time time.Time)
 	SetUpdatedAt(time time.Time)
+}
+
+type ModelExt interface {
+	SetValueModelExt(db *gorm.DB)
 }

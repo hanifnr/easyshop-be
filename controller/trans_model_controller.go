@@ -4,6 +4,7 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+	"reflect"
 	"time"
 
 	"gorm.io/gorm"
@@ -62,8 +63,13 @@ func ViewTrans(id int64, controller TransController, fLoadDetail func(db *gorm.D
 	if err := model.Load(id, controller.MasterModel(), db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
 	}
+
 	if err := fLoadDetail(db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+	}
+
+	if v, ok := controller.MasterModel().(model.ModelExt); ok {
+		v.SetValueModelExt(db)
 	}
 	return utils.StatusReturnOK()
 }
@@ -123,6 +129,16 @@ func ListTrans(page int, table string, list interface{}) map[string]interface{} 
 	}
 	if err := query.Error; err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
+	}
+	switch reflect.TypeOf(list).Kind() {
+	case reflect.Slice:
+		s := reflect.ValueOf(list)
+
+		for i := 0; i < s.Len(); i++ {
+			if v, ok := s.Index(i).Interface().(model.ModelExt); ok {
+				v.SetValueModelExt(db)
+			}
+		}
 	}
 	respPage := utils.RespPage(page, int(totalRow))
 	return utils.MessageListData(true, list, respPage)
