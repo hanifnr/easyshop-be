@@ -94,8 +94,8 @@ func (orderController *OrderController) ViewTrans(id int64) map[string]interface
 	return utils.MessageData(true, orderController)
 }
 
-func (orderController *OrderController) ListTrans(page int) map[string]interface{} {
-	return ListTrans(page, "order", make([]*model.Order, 0))
+func (orderController *OrderController) ListTrans(page int, param *Param) map[string]interface{} {
+	return ListTrans(page, "order", make([]*model.Order, 0), param)
 }
 
 func (orderController *OrderController) UpdateTrans() map[string]interface{} {

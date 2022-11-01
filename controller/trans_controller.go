@@ -15,7 +15,7 @@ type TransController interface {
 	DetailsModel() []model.Model
 	CreateTrans() map[string]interface{}
 	ViewTrans(id int64) map[string]interface{}
-	ListTrans(page int) map[string]interface{}
+	ListTrans(page int, param *Param) map[string]interface{}
 	UpdateTrans() map[string]interface{}
 	FNew() functions.SQLFunction
 	MasterField() string
@@ -51,7 +51,8 @@ func ListTransAction(controller TransController, w http.ResponseWriter, r *http.
 		utils.RespondError(w, data, http.StatusBadRequest)
 		return
 	}
-	resp := controller.ListTrans(page)
+	param := ProcessParam(r)
+	resp := controller.ListTrans(page, param)
 	utils.Respond(w, resp)
 }
 

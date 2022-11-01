@@ -112,21 +112,19 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 	return utils.StatusReturnOK()
 }
 
-func ListTrans(page int, table string, list interface{}) map[string]interface{} {
+func ListTrans(page int, table string, list interface{}, param *Param) map[string]interface{} {
 	db := utils.GetDB()
-
-	var totalRow int64
-	if err := db.Select("count(id)").Table(table).Scan(&totalRow).Error; err != nil {
-		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
-	}
 
 	var query *gorm.DB
 	if page == 0 {
-		query = db.Find(&list).Order("id ASC")
+		query = db.Order("id ASC")
 	} else {
 		offset, limit := utils.GetOffsetLimit(page)
-		query = db.Offset(offset).Order("id ASC").Limit(limit).Find(&list)
+		query = db.Offset(offset).Order("id ASC").Limit(limit)
 	}
+	param.ProcessFilter(query)
+	totalRow := query.Find(&list).RowsAffected
+
 	if err := query.Error; err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}

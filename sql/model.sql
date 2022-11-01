@@ -238,3 +238,22 @@ ADD CONSTRAINT passport_rel_cust_fk
 FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 CREATE UNIQUE INDEX passport_cust_id_index ON public.passport (cust_id);
+
+CREATE SEQUENCE public.cust_addr_id_seq;
+CREATE TABLE public.cust_addr(
+  id BIGINT NOT NULL DEFAULT nextval('public.cust_addr_id_seq'),
+  cust_id BIGINT,
+  name VARCHAR,
+  email VARCHAR,
+  phone_number VARCHAR,
+  zip_code VARCHAR,
+  country_code VARCHAR,
+  province VARCHAR,
+  city VARCHAR,
+  full_address VARCHAR,
+  CONSTRAINT cust_addr_pk PRIMARY KEY (id)
+);
+ALTER TABLE public.cust_addr
+ADD CONSTRAINT cust_addr_rel_cust_fk
+FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
