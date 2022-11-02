@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -33,7 +34,7 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 		db.Where("CAST(date AS DATE) BETWEEN ? AND ?", param.StartDate, param.EndDate)
 	}
 	if param.Status != nil {
-		db.Where("status = ?", param.Status)
+		db.Where("status = ?", strings.ToUpper(*param.Status))
 	}
 	if param.CustId != nil {
 		db.Where("cust_id = ?", param.CustId)

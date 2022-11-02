@@ -1,7 +1,7 @@
 runtime: go116
 env_variables:
-  INSTANCE_UNIX_SOCKET: 34.85.31.201
+  INSTANCE_UNIX_SOCKET: 34.84.51.52
   DB_USER: admin
   DB_PASS: 345y5h0p#011022
-  DB_NAME: easy-shop-db
+  DB_NAME: easyshop-db
   APP_PORT: 8080
