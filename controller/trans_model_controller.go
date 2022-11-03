@@ -20,6 +20,12 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 	masterModel := controller.MasterModel()
 	listDetail := controller.DetailsModel()
 
+	if t, ok := controller.MasterModel().(model.TimeField); ok {
+		currentTime := time.Now()
+		t.SetCreatedAt(currentTime)
+		t.SetUpdatedAt(currentTime)
+	}
+
 	db := utils.GetDB().Begin()
 
 	master := masterModel.(model.Master)
@@ -35,6 +41,7 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
 	}
+
 	for _, data := range listDetail {
 		if err := data.Validate(); err != nil {
 			db.Rollback()
@@ -54,6 +61,11 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 		}
 	}
 	db.Commit()
+
+	if v, ok := controller.MasterModel().(model.ModelExt); ok {
+		v.SetValueModelExt(db)
+	}
+
 	return utils.StatusReturnOK()
 }
 
@@ -85,8 +97,9 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
 	}
-	timeField := m.(model.TimeField)
-	timeField.SetUpdatedAt(time.Now())
+	if t, ok := m.(model.TimeField); ok {
+		t.SetUpdatedAt(time.Now())
+	}
 	fUpdate(m, modelTemp)
 	if err := model.Save(m, db); err != nil {
 		db.Rollback()

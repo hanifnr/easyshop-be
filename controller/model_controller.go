@@ -3,6 +3,7 @@ package controllers
 import (
 	"easyshop/model"
 	"easyshop/utils"
+	"reflect"
 	"time"
 
 	"gorm.io/gorm"
@@ -15,10 +16,12 @@ func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils
 	fNew := controller.FNew()
 	m := controller.Model()
 
-	currentTime := time.Now()
-	timeField := m.(model.TimeField)
-	timeField.SetCreatedAt(currentTime)
-	timeField.SetUpdatedAt(currentTime)
+	if t, ok := m.(model.TimeField); ok {
+		currentTime := time.Now()
+		t.SetCreatedAt(currentTime)
+		t.SetUpdatedAt(currentTime)
+	}
+
 	if err := m.Validate(); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
@@ -34,6 +37,11 @@ func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils
 		return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
 	}
 	db.Commit()
+
+	if modelExt, ok := m.(model.ModelExt); ok {
+		modelExt.SetValueModelExt(db)
+	}
+
 	return utils.StatusReturnOK()
 }
 
@@ -42,6 +50,11 @@ func ViewModel(id int64, m model.Model) utils.StatusReturn {
 	if err := model.Load(id, m, db); err != nil {
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
 	}
+
+	if modelExt, ok := m.(model.ModelExt); ok {
+		modelExt.SetValueModelExt(db)
+	}
+
 	return utils.StatusReturnOK()
 }
 
@@ -56,8 +69,11 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}, nil
 	}
-	timeField := m.(model.TimeField)
-	timeField.SetUpdatedAt(time.Now())
+
+	if t, ok := m.(model.TimeField); ok {
+		t.SetUpdatedAt(time.Now())
+	}
+
 	fUpdate(m, modelTemp)
 	if err := model.Save(m, db); err != nil {
 		db.Rollback()
@@ -82,9 +98,22 @@ func ListModel(page int, table string, list interface{}) map[string]interface{} 
 		offset, limit := utils.GetOffsetLimit(page)
 		query = db.Offset(offset).Order("id ASC").Limit(limit).Find(&list)
 	}
+
 	if err := query.Error; err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
+
+	switch reflect.TypeOf(list).Kind() {
+	case reflect.Slice:
+		s := reflect.ValueOf(list)
+
+		for i := 0; i < s.Len(); i++ {
+			if v, ok := s.Index(i).Interface().(model.ModelExt); ok {
+				v.SetValueModelExt(db)
+			}
+		}
+	}
+
 	respPage := utils.RespPage(page, int(totalRow))
 	return utils.MessageListData(true, list, respPage)
 }

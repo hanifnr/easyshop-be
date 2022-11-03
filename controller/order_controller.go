@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -68,12 +67,9 @@ func (orderController *OrderController) DetailsModel() []model.Model {
 
 func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	if retval := CreateTrans(orderController, func(m model.Model) {
-		currentTime := time.Now()
 
 		order := m.(*model.Order)
 		order.Status = "W"
-		order.CreatedAt = currentTime
-		order.UpdatedAt = currentTime
 
 		for i := range orderController.Orderd {
 			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
@@ -103,9 +99,9 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 		orderSrc := modelSrc.(*model.Order)
 		orderTemp := modelTemp.(*model.Order)
 
-		orderSrc.Cust_id = orderTemp.Cust_id
+		orderSrc.CustId = orderTemp.CustId
 		orderSrc.Date = orderTemp.Date
-		orderSrc.Pick_date = orderTemp.Pick_date
+		orderSrc.PickDate = orderTemp.PickDate
 		orderSrc.Total = orderTemp.Total
 		orderSrc.Trxno = orderTemp.Trxno
 

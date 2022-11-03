@@ -239,9 +239,9 @@ FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE C
 NOT DEFERRABLE;
 CREATE UNIQUE INDEX passport_cust_id_index ON public.passport (cust_id);
 
-CREATE SEQUENCE public.cust_addr_id_seq;
-CREATE TABLE public.cust_addr(
-  id BIGINT NOT NULL DEFAULT nextval('public.cust_addr_id_seq'),
+CREATE SEQUENCE public.addr_id_seq;
+CREATE TABLE public.addr(
+  id BIGINT NOT NULL DEFAULT nextval('public.addr_id_seq'),
   cust_id BIGINT,
   name VARCHAR,
   email VARCHAR,
@@ -251,9 +251,12 @@ CREATE TABLE public.cust_addr(
   province VARCHAR,
   city VARCHAR,
   full_address VARCHAR,
-  CONSTRAINT cust_addr_pk PRIMARY KEY (id)
+  created_at TIMESTAMP, 
+  updated_at TIMESTAMP,
+  isdelete BOOLEAN DEFAULT FALSE,
+  CONSTRAINT addr_pk PRIMARY KEY (id)
 );
-ALTER TABLE public.cust_addr
-ADD CONSTRAINT cust_addr_rel_cust_fk
+ALTER TABLE public.addr
+ADD CONSTRAINT addr_rel_cust_fk
 FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;

@@ -20,6 +20,7 @@ func main() {
 		"/shop",
 		"/order",
 		"/passport",
+		"/addr",
 	})
 
 	router := mux.NewRouter()
@@ -29,7 +30,7 @@ func main() {
 	router.HandleFunc("/cust", c.ListCust).Methods("GET")
 	router.HandleFunc("/cust/view/{id}", c.ViewCust).Methods("GET")
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
-	router.HandleFunc("/cust/update", c.UpdateCust).Methods("POST")
+	router.HandleFunc("/cust/update", c.UpdateCust).Methods("PUT")
 	router.HandleFunc("/cust/handle", c.HandleCust).Methods("POST")
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/view/{id}", c.ViewShop).Methods("GET")
@@ -38,14 +39,18 @@ func main() {
 	router.HandleFunc("/order", c.ListOrder).Methods("GET")
 	router.HandleFunc("/order/view/{id}", c.ViewOrder).Methods("GET")
 	router.HandleFunc("/order/create", c.CreateOrder).Methods("POST")
-	router.HandleFunc("/order/update", c.UpdateOrder).Methods("POST")
+	router.HandleFunc("/order/update", c.UpdateOrder).Methods("PUT")
 	router.HandleFunc("/order/{id}", c.ViewOrder).Methods("GET")
 	router.HandleFunc("/order/handle", c.HandleOrder).Methods("POST")
 	router.HandleFunc("/passport", c.ListPassport).Methods("GET")
 	router.HandleFunc("/passport/view/{id}", c.ViewPassport).Methods("GET")
 	router.HandleFunc("/passport/create", c.CreatePassport).Methods("POST")
-	router.HandleFunc("/passport/update", c.UpdatePassport).Methods("POST")
+	router.HandleFunc("/passport/update", c.UpdatePassport).Methods("PUT")
 	router.HandleFunc("/passport/cust/{id}", c.ViewPassportCust).Methods("GET")
+	router.HandleFunc("/addr", c.ListAddr).Methods("GET")
+	router.HandleFunc("/addr/view/{id}", c.ViewAddr).Methods("GET")
+	router.HandleFunc("/addr/create", c.CreateAddr).Methods("POST")
+	router.HandleFunc("/addr/update", c.UpdateAddr).Methods("PUT")
 
 	router.Use(u.JwtAuthentication)
 
