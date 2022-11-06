@@ -16,7 +16,7 @@ type Controller interface {
 	Model() model.Model
 	CreateModel() map[string]interface{}
 	ViewModel(id int64) map[string]interface{}
-	ListModel(page int) map[string]interface{}
+	ListModel(page int, param *utils.Param) map[string]interface{}
 	UpdateModel() map[string]interface{}
 	FNew() functions.SQLFunction
 }
@@ -51,7 +51,8 @@ func ListModelAction(controller Controller, w http.ResponseWriter, r *http.Reque
 		utils.RespondError(w, data, http.StatusBadRequest)
 		return
 	}
-	resp := controller.ListModel(page)
+	param := utils.ProcessParam(r)
+	resp := controller.ListModel(page, param)
 	utils.Respond(w, resp)
 }
 

@@ -6,6 +6,7 @@ import (
 	"easyshop/utils"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -42,6 +43,22 @@ var HandleCust = func(w http.ResponseWriter, r *http.Request) {
 	}
 	custController := &CustController{}
 	resp := custController.HandleCust(custStatus.Id, custStatus.Status)
+	utils.Respond(w, resp)
+}
+
+var ListComboCust = func(w http.ResponseWriter, r *http.Request) {
+	paramPage := r.URL.Query().Get("page")
+	if paramPage == "" {
+		paramPage = "0"
+	}
+	page, err := strconv.Atoi(paramPage)
+	if err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	param := utils.ProcessParam(r)
+	resp := Combo(page, param)
 	utils.Respond(w, resp)
 }
 
@@ -92,8 +109,8 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 	return utils.MessageData(true, retModel)
 }
 
-func (custController *CustController) ListModel(page int) map[string]interface{} {
-	return ListModel(page, "cust", make([]*model.Cust, 0))
+func (custController *CustController) ListModel(page int, param *utils.Param) map[string]interface{} {
+	return ListModel(page, "cust", make([]*model.Cust, 0), param)
 }
 
 func (custController *CustController) HandleCust(id int64, status string) map[string]interface{} {
@@ -109,4 +126,17 @@ func (custController *CustController) HandleCust(id int64, status string) map[st
 	}
 	db.Commit()
 	return utils.MessageData(true, cust)
+}
+
+type ComboCust struct {
+	Id   int64
+	Name string
+}
+
+func (ComboCust) TableName() string {
+	return "cust"
+}
+
+func Combo(page int, param *utils.Param) map[string]interface{} {
+	return ListModelColumns(page, "id,name", "cust", make([]*ComboCust, 0), param)
 }

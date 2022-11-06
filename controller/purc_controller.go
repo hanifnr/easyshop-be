@@ -100,7 +100,7 @@ func (purcController *PurcController) ViewTrans(id int64) map[string]interface{}
 	return utils.MessageData(true, purcController)
 }
 
-func (purcController *PurcController) ListTrans(page int, param *Param) map[string]interface{} {
+func (purcController *PurcController) ListTrans(page int, param *utils.Param) map[string]interface{} {
 	return ListTrans(page, "purc", make([]*model.Purc, 0), param)
 }
 

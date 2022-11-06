@@ -79,8 +79,8 @@ func (passportController *PassportController) UpdateModel() map[string]interface
 	return utils.MessageData(true, retModel)
 }
 
-func (passportController *PassportController) ListModel(page int) map[string]interface{} {
-	return ListModel(page, "passport", make([]*model.Passport, 0))
+func (passportController *PassportController) ListModel(page int, param *utils.Param) map[string]interface{} {
+	return ListModel(page, "passport", make([]*model.Passport, 0), param)
 }
 
 func ViewModelCust(passportController *PassportController, w http.ResponseWriter, r *http.Request) {

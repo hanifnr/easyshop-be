@@ -45,6 +45,6 @@ func (shopController *ShopController) UpdateModel() map[string]interface{} {
 	return nil
 }
 
-func (shopController *ShopController) ListModel(page int) map[string]interface{} {
-	return ListModel(page, "shop", make([]*model.Shop, 0))
+func (shopController *ShopController) ListModel(page int, param *utils.Param) map[string]interface{} {
+	return ListModel(page, "shop", make([]*model.Shop, 0), param)
 }

@@ -5,8 +5,6 @@ import (
 	"easyshop/utils"
 	"reflect"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils.StatusReturn {
@@ -83,23 +81,15 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 	return utils.StatusReturnOK(), m
 }
 
-func ListModel(page int, table string, list interface{}) map[string]interface{} {
+func ListModel(page int, table string, list interface{}, param *utils.Param) map[string]interface{} {
+	return ListModelColumns(page, "", table, list, param)
+}
+
+func ListModelColumns(page int, columns, table string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	var totalRow int64
-	if err := db.Select("count(id)").Table(table).Scan(&totalRow).Error; err != nil {
-		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
-	}
-
-	var query *gorm.DB
-	if page == 0 {
-		query = db.Find(&list).Order("id ASC")
-	} else {
-		offset, limit := utils.GetOffsetLimit(page)
-		query = db.Offset(offset).Order("id ASC").Limit(limit).Find(&list)
-	}
-
-	if err := query.Error; err != nil {
+	respPage, err := utils.QueryList(page, columns, table, &list, param)
+	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
 
@@ -114,6 +104,5 @@ func ListModel(page int, table string, list interface{}) map[string]interface{} 
 		}
 	}
 
-	respPage := utils.RespPage(page, int(totalRow))
 	return utils.MessageListData(true, list, respPage)
 }

@@ -82,6 +82,6 @@ func (addrController *AddrController) UpdateModel() map[string]interface{} {
 	return utils.MessageData(true, retModel)
 }
 
-func (addrController *AddrController) ListModel(page int) map[string]interface{} {
-	return ListModel(page, "addr", make([]*model.Addr, 0))
+func (addrController *AddrController) ListModel(page int, param *utils.Param) map[string]interface{} {
+	return ListModel(page, "addr", make([]*model.Addr, 0), param)
 }
