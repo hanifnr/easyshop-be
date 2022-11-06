@@ -4,7 +4,9 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+	"encoding/json"
 	"net/http"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -27,6 +29,22 @@ var ViewPurc = func(w http.ResponseWriter, r *http.Request) {
 var ListPurc = func(w http.ResponseWriter, r *http.Request) {
 	purcController := &PurcController{}
 	ListTransAction(purcController, w, r)
+}
+
+var HandlePurc = func(w http.ResponseWriter, r *http.Request) {
+	type PurcStatus struct {
+		Id     int64
+		Status string
+	}
+	purcStatus := &PurcStatus{}
+	if err := json.NewDecoder(r.Body).Decode(&purcStatus); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	purcController := &PurcController{}
+	resp := purcController.HandlePurc(purcStatus.Id, purcStatus.Status)
+	utils.Respond(w, resp)
 }
 
 type PurcController struct {
@@ -118,4 +136,19 @@ func (purcController *PurcController) UpdateTrans() map[string]interface{} {
 }
 func (purcController *PurcController) FNew() functions.SQLFunction {
 	return nil
+}
+
+func (purcController *PurcController) HandlePurc(id int64, status string) map[string]interface{} {
+	db := utils.GetDB().Begin()
+	purc := &model.Purc{}
+	if retval := ViewModel(id, purc); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	purc.Status = strings.ToUpper(status)
+	if err := model.Save(purc, db); err != nil {
+		db.Rollback()
+		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
+	}
+	db.Commit()
+	return utils.MessageData(true, purc)
 }

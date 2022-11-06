@@ -56,6 +56,7 @@ func main() {
 	router.HandleFunc("/purc/view/{id}", c.ViewPurc).Methods("GET")
 	router.HandleFunc("/purc/create", c.CreatePurc).Methods("POST")
 	router.HandleFunc("/purc/update", c.UpdatePurc).Methods("PUT")
+	router.HandleFunc("/purc/handle", c.HandlePurc).Methods("POST")
 
 	router.Use(u.JwtAuthentication)
 
