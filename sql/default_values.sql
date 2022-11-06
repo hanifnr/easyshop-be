@@ -185,3 +185,12 @@ VALUES
     1000,
     8
   )
+
+  INSERT INTO ncount (code,name,number,length)
+  VALUES
+  (
+    'PR',
+    'PURC',
+    1000,
+    8
+  )

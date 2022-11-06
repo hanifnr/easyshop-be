@@ -10,23 +10,26 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) utils.StatusReturn {
-	fDefaultValue(controller.MasterModel())
-	if err := ValidateTrans(controller); err != nil {
-		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
-	}
-
+func CreateTrans(controller TransController, fDefaultValue func(db *gorm.DB) error) utils.StatusReturn {
 	fNew := controller.FNew()
 	masterModel := controller.MasterModel()
-	listDetail := controller.DetailsModel()
 
-	if t, ok := controller.MasterModel().(model.TimeField); ok {
+	if t, ok := masterModel.(model.TimeField); ok {
 		currentTime := time.Now()
 		t.SetCreatedAt(currentTime)
 		t.SetUpdatedAt(currentTime)
 	}
 
 	db := utils.GetDB().Begin()
+
+	if err := fDefaultValue(db); err != nil {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+	}
+
+	if err := ValidateTrans(controller); err != nil {
+		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
+	}
 
 	master := masterModel.(model.Master)
 	if master.GetTrxno() == "AUTO" {
@@ -42,7 +45,7 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 		return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
 	}
 
-	for _, data := range listDetail {
+	for _, data := range controller.DetailsModel() {
 		if err := data.Validate(); err != nil {
 			db.Rollback()
 			return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
@@ -60,11 +63,12 @@ func CreateTrans(controller TransController, fDefaultValue func(m model.Model)) 
 			return retval
 		}
 	}
-	db.Commit()
 
 	if v, ok := controller.MasterModel().(model.ModelExt); ok {
 		v.SetValueModelExt(db)
 	}
+
+	db.Commit()
 
 	return utils.StatusReturnOK()
 }
@@ -86,7 +90,7 @@ func ViewTrans(id int64, controller TransController, fLoadDetail func(db *gorm.D
 	return utils.StatusReturnOK()
 }
 
-func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpdate func(modelSrc model.Model, modelTemp model.Model)) utils.StatusReturn {
+func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpdate func(modelSrc model.Model, modelTemp model.Model, db *gorm.DB) error) utils.StatusReturn {
 	db := utils.GetDB().Begin()
 	modelTemp := controller.MasterModel()
 	if err := modelTemp.Validate(); err != nil {
@@ -100,7 +104,9 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 	if t, ok := m.(model.TimeField); ok {
 		t.SetUpdatedAt(time.Now())
 	}
-	fUpdate(m, modelTemp)
+	if err := fUpdate(m, modelTemp, db); err != nil {
+		return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+	}
 	if err := model.Save(m, db); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}

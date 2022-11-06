@@ -14,6 +14,7 @@ type Param struct {
 	EndDate   *time.Time
 	Status    *string
 	CustId    *int64
+	ShopId    *int64
 }
 
 func ProcessParam(r *http.Request) *Param {
@@ -21,11 +22,13 @@ func ProcessParam(r *http.Request) *Param {
 	paramEndDate := ParamToTime(r.URL.Query().Get("enddate"), false)
 	paramStatus := ParamToString(r.URL.Query().Get("status"))
 	paramCustId := ParamToInt64(r.URL.Query().Get("cust_id"))
+	paramShopId := ParamToInt64(r.URL.Query().Get("shop_id"))
 	return &Param{
 		StartDate: paramStartDate,
 		EndDate:   paramEndDate,
 		Status:    paramStatus,
 		CustId:    paramCustId,
+		ShopId:    paramShopId,
 	}
 }
 
@@ -38,6 +41,9 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.CustId != nil {
 		db.Where("cust_id = ?", param.CustId)
+	}
+	if param.ShopId != nil {
+		db.Where("shop_id = ?", param.ShopId)
 	}
 }
 

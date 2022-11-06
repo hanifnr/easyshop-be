@@ -66,14 +66,18 @@ func (orderController *OrderController) DetailsModel() []model.Model {
 }
 
 func (orderController *OrderController) CreateTrans() map[string]interface{} {
-	if retval := CreateTrans(orderController, func(m model.Model) {
-
-		order := m.(*model.Order)
+	if retval := CreateTrans(orderController, func(db *gorm.DB) error {
+		order := orderController.Order
+		passport, err := utils.QueryStringValue(db.Select("number").Table("passport").Where("cust_id=?", order.CustId))
+		if err != nil {
+			return err
+		}
 		order.Status = "W"
-
+		order.Passport = passport
 		for i := range orderController.Orderd {
 			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
 		}
+		return nil
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
@@ -95,7 +99,7 @@ func (orderController *OrderController) ListTrans(page int, param *Param) map[st
 }
 
 func (orderController *OrderController) UpdateTrans() map[string]interface{} {
-	retval := UpdateTrans(orderController, &model.Order{}, &model.Orderd{}, func(modelSrc, modelTemp model.Model) {
+	retval := UpdateTrans(orderController, &model.Order{}, &model.Orderd{}, func(modelSrc, modelTemp model.Model, db *gorm.DB) error {
 		orderSrc := modelSrc.(*model.Order)
 		orderTemp := modelTemp.(*model.Order)
 
@@ -108,6 +112,7 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 		for i := range orderController.Orderd {
 			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
 		}
+		return nil
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)

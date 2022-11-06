@@ -61,7 +61,7 @@ CREATE TABLE public.order(
   status VARCHAR(1), 
   total NUMERIC(19, 4) DEFAULT 0, 
   created_at TIMESTAMP, 
-  updated_at TIMESTAMP, 
+  updated_at TIMESTAMP,
   CONSTRAINT order_pk PRIMARY KEY (id)
 );
 ALTER TABLE 
@@ -74,6 +74,7 @@ ADD
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
 ALTER TABLE public.order ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.order ADD COLUMN passport VARCHAR;
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 
@@ -134,7 +135,7 @@ CREATE TABLE public.purcd(
   purc_id BIGINT, 
   dno INT, 
   order_id BIGINT, 
-  order_dno INT, 
+  order_dno INT,
   qty NUMERIC(15, 4) DEFAULT 0, 
   qtywh NUMERIC(15, 4) DEFAULT 0, 
   price NUMERIC(19, 4) DEFAULT 0, 
@@ -159,6 +160,8 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
+ALTER TABLE public.purcd ADD COLUMN productid VARCHAR; 
+ALTER TABLE public.purcd ADD COLUMN name VARCHAR; 
 
 CREATE SEQUENCE public.wh_id_seq;
 CREATE TABLE public.wh(
