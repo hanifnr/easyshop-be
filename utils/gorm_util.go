@@ -8,7 +8,7 @@ func QueryStringValue(query *gorm.DB) (string, error) {
 	return result, err
 }
 
-func QueryList(page int, columns, table string, list *interface{}, param *Param) (map[string]interface{}, error) {
+func QueryListFind(page int, list *interface{}, param *Param) (map[string]interface{}, error) {
 	var query *gorm.DB
 	if page == 0 {
 		query = db.Order("id ASC")
@@ -16,11 +16,25 @@ func QueryList(page int, columns, table string, list *interface{}, param *Param)
 		offset, limit := GetOffsetLimit(page)
 		query = db.Offset(offset).Order("id ASC").Limit(limit)
 	}
-	if columns != "" {
-		query = db.Select(columns)
-	}
 	param.ProcessFilter(query)
-	totalRow := query.Find(list).RowsAffected
+	totalRow := query.Debug().Find(list).RowsAffected
+
+	if err := query.Error; err != nil {
+		return nil, err
+	}
+	return RespPage(page, int(totalRow)), nil
+}
+
+func QueryListScan(page int, column, table string, list *interface{}, param *Param) (map[string]interface{}, error) {
+	var query *gorm.DB
+	param.ProcessFilter(query)
+	if page == 0 {
+		query = db.Select(column).Table(table).Order("id ASC")
+	} else {
+		offset, limit := GetOffsetLimit(page)
+		query = db.Select(column).Table(table).Offset(offset).Order("id ASC").Limit(limit)
+	}
+	totalRow := query.Debug().Scan(list).RowsAffected
 
 	if err := query.Error; err != nil {
 		return nil, err

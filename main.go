@@ -36,6 +36,7 @@ func main() {
 	router.HandleFunc("/cust/combo", c.ListComboCust).Methods("GET")
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/view/{id}", c.ViewShop).Methods("GET")
+	router.HandleFunc("/shop/combo", c.ListComboShop).Methods("GET")
 	router.HandleFunc("/shopcategory", c.ListShopCategory).Methods("GET")
 	router.HandleFunc("/shopcategory/view/{id}", c.ViewShopCategory).Methods("GET")
 	router.HandleFunc("/order", c.ListOrder).Methods("GET")

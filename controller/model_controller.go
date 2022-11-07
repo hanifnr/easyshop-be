@@ -5,6 +5,8 @@ import (
 	"easyshop/utils"
 	"reflect"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils.StatusReturn {
@@ -82,17 +84,28 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 }
 
 func ListModel(page int, table string, list interface{}, param *utils.Param) map[string]interface{} {
-	return ListModelColumns(page, "", table, list, param)
+	db := utils.GetDB()
+
+	respPage, err := utils.QueryListFind(page, &list, param)
+	if err != nil {
+		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
+	}
+	ProcessExtField(list, db)
+	return utils.MessageListData(true, list, respPage)
 }
 
 func ListModelColumns(page int, columns, table string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryList(page, columns, table, &list, param)
+	respPage, err := utils.QueryListScan(page, columns, table, &list, param)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
+	ProcessExtField(list, db)
+	return utils.MessageListData(true, list, respPage)
+}
 
+func ProcessExtField(list interface{}, db *gorm.DB) {
 	switch reflect.TypeOf(list).Kind() {
 	case reflect.Slice:
 		s := reflect.ValueOf(list)
@@ -103,6 +116,4 @@ func ListModelColumns(page int, columns, table string, list interface{}, param *
 			}
 		}
 	}
-
-	return utils.MessageListData(true, list, respPage)
 }

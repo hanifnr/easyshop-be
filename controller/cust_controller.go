@@ -58,7 +58,7 @@ var ListComboCust = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	param := utils.ProcessParam(r)
-	resp := Combo(page, param)
+	resp := ComboCust(page, param)
 	utils.Respond(w, resp)
 }
 
@@ -128,15 +128,6 @@ func (custController *CustController) HandleCust(id int64, status string) map[st
 	return utils.MessageData(true, cust)
 }
 
-type ComboCust struct {
-	Id   int64
-	Name string
-}
-
-func (ComboCust) TableName() string {
-	return "cust"
-}
-
-func Combo(page int, param *utils.Param) map[string]interface{} {
-	return ListModelColumns(page, "id,name", "cust", make([]*ComboCust, 0), param)
+func ComboCust(page int, param *utils.Param) map[string]interface{} {
+	return GetCombo(page, "cust", param)
 }

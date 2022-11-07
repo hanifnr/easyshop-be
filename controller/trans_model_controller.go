@@ -134,7 +134,7 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 func ListTrans(page int, table string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryList(page, "", table, &list, param)
+	respPage, err := utils.QueryListFind(page, &list, param)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
