@@ -86,7 +86,7 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 func ListModel(page int, table string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListFind(page, &list, param)
+	respPage, err := utils.QueryListFind(page, table, &list, param)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
