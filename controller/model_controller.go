@@ -36,11 +36,10 @@ func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
 	}
-	db.Commit()
-
 	if modelExt, ok := m.(model.ModelExt); ok {
 		modelExt.SetValueModelExt(db)
 	}
+	db.Commit()
 
 	return utils.StatusReturnOK()
 }

@@ -67,7 +67,7 @@ func (orderController *OrderController) DetailsModel() []model.Model {
 
 func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	if retval := CreateTrans(orderController, func(db *gorm.DB) error {
-		order := orderController.Order
+		order := &orderController.Order
 		passport, err := utils.QueryStringValue(db.Select("number").Table("passport").Where("cust_id=?", order.CustId))
 		if err != nil {
 			return err
@@ -108,6 +108,7 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 		orderSrc.PickDate = orderTemp.PickDate
 		orderSrc.Total = orderTemp.Total
 		orderSrc.Trxno = orderTemp.Trxno
+		orderSrc.AddrId = orderTemp.AddrId
 
 		for i := range orderController.Orderd {
 			orderController.Details = append(orderController.Details, &orderController.Orderd[i])

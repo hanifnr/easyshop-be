@@ -17,6 +17,8 @@ type Orderd struct {
 	Qtywh     float32 `json:"qtywh" gorm:"DEFAULT:0"`
 	Price     float64 `json:"price" gorm:"DEFAULT:0"`
 	Subtotal  float64 `json:"subtotal" gorm:"DEFAULT:0"`
+	Url       string  `json:"url"`
+	Image     string  `json:"image"`
 }
 
 func (Orderd) TableName() string {

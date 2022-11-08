@@ -22,11 +22,13 @@ type Order struct {
 	UpdatedAt      time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 	Isdelete       bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
 	Passport       string    `json:"passport"`
+	AddrId         int64     `json:"addr_id"`
 	OrderExt       `gorm:"-"`
 }
 
 type OrderExt struct {
 	CustName string `json:"cust_name"`
+	AddrName string `json:"addr_name"`
 }
 
 func (Order) TableName() string {
@@ -67,4 +69,5 @@ func (order *Order) SetUpdatedAt(time time.Time) {
 
 func (order *Order) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("cust").Where("id = ?", order.CustId).Scan(&order.CustName)
+	db.Select("name").Table("addr").Where("id = ?", order.AddrId).Scan(&order.AddrName)
 }
