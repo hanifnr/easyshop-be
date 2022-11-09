@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -26,6 +27,22 @@ var ViewAddr = func(w http.ResponseWriter, r *http.Request) {
 var ListAddr = func(w http.ResponseWriter, r *http.Request) {
 	addrController := &AddrController{}
 	ListModelAction(addrController, w, r)
+}
+
+var ListComboAddr = func(w http.ResponseWriter, r *http.Request) {
+	paramPage := r.URL.Query().Get("page")
+	if paramPage == "" {
+		paramPage = "0"
+	}
+	page, err := strconv.Atoi(paramPage)
+	if err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	param := utils.ProcessParam(r)
+	resp := ComboAddr(page, param)
+	utils.Respond(w, resp)
 }
 
 type AddrController struct {
@@ -84,4 +101,8 @@ func (addrController *AddrController) UpdateModel() map[string]interface{} {
 
 func (addrController *AddrController) ListModel(page int, param *utils.Param) map[string]interface{} {
 	return ListModel(page, "addr", make([]*model.Addr, 0), param)
+}
+
+func ComboAddr(page int, param *utils.Param) map[string]interface{} {
+	return GetCombo(page, "addr", param)
 }
