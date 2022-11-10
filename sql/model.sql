@@ -48,6 +48,10 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
+ALTER TABLE public.shop ADD COLUMN scrape_image VARCHAR;
+ALTER TABLE public.shop ADD COLUMN isactive BOOLEAN;
+ALTER TABLE public.shop RENAME COLUMN scrap_item_name TO scrape_item_name;
+ALTER TABLE public.shop RENAME COLUMN scrap_item_price TO scrape_item_price;
 
 CREATE SEQUENCE public.order_id_seq;
 CREATE TABLE public.order(
