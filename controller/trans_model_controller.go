@@ -151,3 +151,18 @@ func ListTrans(page int, table string, list interface{}, param *utils.Param) map
 	}
 	return utils.MessageListData(true, list, respPage)
 }
+
+func UpdateMaster(id int64, controller TransController, fAction func(m model.Model)) map[string]interface{} {
+	db := utils.GetDB().Begin()
+	m := controller.MasterModel()
+	if retval := ViewModel(id, m); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	fAction(m)
+	if err := model.Save(m, db); err != nil {
+		db.Rollback()
+		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
+	}
+	db.Commit()
+	return utils.MessageData(true, m)
+}

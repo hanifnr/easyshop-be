@@ -4,7 +4,6 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
-	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -32,19 +31,17 @@ var ListOrder = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var HandleOrder = func(w http.ResponseWriter, r *http.Request) {
-	type OrderStatus struct {
-		Id     int64
-		Status string
-	}
-	orderStatus := &OrderStatus{}
-	if err := json.NewDecoder(r.Body).Decode(&orderStatus); err != nil {
-		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
-		utils.RespondError(w, data, http.StatusBadRequest)
-		return
-	}
-	orderController := &OrderController{}
-	resp := orderController.HandleOrder(orderStatus.Id, orderStatus.Status)
-	utils.Respond(w, resp)
+	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
+		orderController := &OrderController{}
+		return orderController.HandleOrder(scu.Id, scu.Value)
+	})
+}
+
+var TrackingNumber = func(w http.ResponseWriter, r *http.Request) {
+	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
+		orderController := &OrderController{}
+		return orderController.TrackingNumber(scu.Id, scu.Value)
+	})
 }
 
 type OrderController struct {
@@ -126,16 +123,15 @@ func (orderController *OrderController) FNew() functions.SQLFunction {
 }
 
 func (orderController *OrderController) HandleOrder(id int64, status string) map[string]interface{} {
-	db := utils.GetDB().Begin()
-	order := &model.Order{}
-	if retval := ViewModel(id, order); retval.ErrCode != 0 {
-		return utils.MessageErr(false, retval.ErrCode, retval.Message)
-	}
-	order.Status = strings.ToUpper(status)
-	if err := model.Save(order, db); err != nil {
-		db.Rollback()
-		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
-	}
-	db.Commit()
-	return utils.MessageData(true, order)
+	return UpdateMaster(id, orderController, func(m model.Model) {
+		order := m.(*model.Order)
+		order.Status = strings.ToUpper(status)
+	})
+}
+
+func (orderController *OrderController) TrackingNumber(id int64, trackingNumber string) map[string]interface{} {
+	return UpdateMaster(id, orderController, func(m model.Model) {
+		order := m.(*model.Order)
+		order.TrackingNumber = strings.ToUpper(trackingNumber)
+	})
 }

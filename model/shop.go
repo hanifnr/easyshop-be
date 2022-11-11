@@ -13,7 +13,7 @@ type Shop struct {
 	ScrapeItemPrice string    `json:"scrape_item_price"`
 	CreatedAt       time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt       time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
-	Isactive        bool      `json:"isactive" gorm:"DEFAULT:FALSE"`
+	Isactive        bool      `json:"isactive" gorm:"DEFAULT:TRUE"`
 	ScrapeImage     string    `json:"scrape_image"`
 }
 
