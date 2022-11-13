@@ -7,6 +7,6 @@ type ComboModel struct {
 	Name string
 }
 
-func GetCombo(page int, table string, param *utils.Param) map[string]interface{} {
-	return ListModelColumns(page, "id,name", table, make([]*ComboModel, 0), param)
+func GetCombo(page int, table, order string, param *utils.Param) map[string]interface{} {
+	return ListModelColumns("id,name", table, order, make([]*ComboModel, 0), param)
 }

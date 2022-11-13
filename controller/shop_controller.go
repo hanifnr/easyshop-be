@@ -62,10 +62,10 @@ func (shopController *ShopController) UpdateModel() map[string]interface{} {
 	return nil
 }
 
-func (shopController *ShopController) ListModel(page int, param *utils.Param) map[string]interface{} {
-	return ListModel(page, "shop", make([]*model.Shop, 0), param)
+func (shopController *ShopController) ListModel(param *utils.Param) map[string]interface{} {
+	return ListModel("shop", "id ASC", make([]*model.Shop, 0), param)
 }
 
 func ComboShop(page int, param *utils.Param) map[string]interface{} {
-	return GetCombo(page, "shop", param)
+	return GetCombo(page, "shop", "id ASC", param)
 }

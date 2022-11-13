@@ -99,10 +99,10 @@ func (addrController *AddrController) UpdateModel() map[string]interface{} {
 	return utils.MessageData(true, retModel)
 }
 
-func (addrController *AddrController) ListModel(page int, param *utils.Param) map[string]interface{} {
-	return ListModel(page, "addr", make([]*model.Addr, 0), param)
+func (addrController *AddrController) ListModel(param *utils.Param) map[string]interface{} {
+	return ListModel("addr", "id ASC", make([]*model.Addr, 0), param)
 }
 
 func ComboAddr(page int, param *utils.Param) map[string]interface{} {
-	return GetCombo(page, "addr", param)
+	return GetCombo(page, "addr", "id ASC", param)
 }

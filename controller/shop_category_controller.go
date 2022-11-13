@@ -45,6 +45,6 @@ func (shopCategoryController *ShopCategoryController) UpdateModel() map[string]i
 	return nil
 }
 
-func (shopCategoryController *ShopCategoryController) ListModel(page int, param *utils.Param) map[string]interface{} {
-	return ListModel(page, "shop_category", make([]*model.ShopCategory, 0), param)
+func (shopCategoryController *ShopCategoryController) ListModel(param *utils.Param) map[string]interface{} {
+	return ListModel("shop_category", "id ASC", make([]*model.ShopCategory, 0), param)
 }

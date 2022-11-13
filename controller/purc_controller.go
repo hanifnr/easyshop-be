@@ -4,7 +4,6 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
-	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -32,19 +31,10 @@ var ListPurc = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var HandlePurc = func(w http.ResponseWriter, r *http.Request) {
-	type PurcStatus struct {
-		Id     int64
-		Status string
-	}
-	purcStatus := &PurcStatus{}
-	if err := json.NewDecoder(r.Body).Decode(&purcStatus); err != nil {
-		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
-		utils.RespondError(w, data, http.StatusBadRequest)
-		return
-	}
-	purcController := &PurcController{}
-	resp := purcController.HandlePurc(purcStatus.Id, purcStatus.Status)
-	utils.Respond(w, resp)
+	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
+		purcController := &PurcController{}
+		return purcController.HandlePurc(scu.Id, scu.Value)
+	})
 }
 
 type PurcController struct {
@@ -100,8 +90,8 @@ func (purcController *PurcController) ViewTrans(id int64) map[string]interface{}
 	return utils.MessageData(true, purcController)
 }
 
-func (purcController *PurcController) ListTrans(page int, param *utils.Param) map[string]interface{} {
-	return ListTrans(page, "purc", make([]*model.Purc, 0), param)
+func (purcController *PurcController) ListTrans(param *utils.Param) map[string]interface{} {
+	return ListTrans("purc", "id ASC", make([]*model.Purc, 0), param)
 }
 
 func (purcController *PurcController) UpdateTrans() map[string]interface{} {
@@ -139,16 +129,8 @@ func (purcController *PurcController) FNew() functions.SQLFunction {
 }
 
 func (purcController *PurcController) HandlePurc(id int64, status string) map[string]interface{} {
-	db := utils.GetDB().Begin()
-	purc := &model.Purc{}
-	if retval := ViewModel(id, purc); retval.ErrCode != 0 {
-		return utils.MessageErr(false, retval.ErrCode, retval.Message)
-	}
-	purc.Status = strings.ToUpper(status)
-	if err := model.Save(purc, db); err != nil {
-		db.Rollback()
-		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
-	}
-	db.Commit()
-	return utils.MessageData(true, purc)
+	return UpdateFieldMaster(id, purcController, func(m model.Model) {
+		purc := m.(*model.Purc)
+		purc.Status = strings.ToUpper(status)
+	})
 }

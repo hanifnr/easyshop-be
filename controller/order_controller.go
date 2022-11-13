@@ -44,6 +44,13 @@ var TrackingNumber = func(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+var ListOrderd = func(w http.ResponseWriter, r *http.Request) {
+	param := utils.ProcessParam(r)
+	orderController := &OrderController{}
+	resp := orderController.ListDetail(param)
+	utils.Respond(w, resp)
+}
+
 type OrderController struct {
 	Order   model.Order    `json:"order"`
 	Orderd  []model.Orderd `json:"orderd"`
@@ -91,8 +98,8 @@ func (orderController *OrderController) ViewTrans(id int64) map[string]interface
 	return utils.MessageData(true, orderController)
 }
 
-func (orderController *OrderController) ListTrans(page int, param *utils.Param) map[string]interface{} {
-	return ListTrans(page, "order", make([]*model.Order, 0), param)
+func (orderController *OrderController) ListTrans(param *utils.Param) map[string]interface{} {
+	return ListTrans("order", "id ASC", make([]*model.Order, 0), param)
 }
 
 func (orderController *OrderController) UpdateTrans() map[string]interface{} {
@@ -123,15 +130,19 @@ func (orderController *OrderController) FNew() functions.SQLFunction {
 }
 
 func (orderController *OrderController) HandleOrder(id int64, status string) map[string]interface{} {
-	return UpdateMaster(id, orderController, func(m model.Model) {
+	return UpdateFieldMaster(id, orderController, func(m model.Model) {
 		order := m.(*model.Order)
 		order.Status = strings.ToUpper(status)
 	})
 }
 
 func (orderController *OrderController) TrackingNumber(id int64, trackingNumber string) map[string]interface{} {
-	return UpdateMaster(id, orderController, func(m model.Model) {
+	return UpdateFieldMaster(id, orderController, func(m model.Model) {
 		order := m.(*model.Order)
 		order.TrackingNumber = strings.ToUpper(trackingNumber)
 	})
+}
+
+func (orderController *OrderController) ListDetail(param *utils.Param) map[string]interface{} {
+	return ListModel("orderd", "order_id DESC,dno ASC", make([]*model.Orderd, 0), param)
 }

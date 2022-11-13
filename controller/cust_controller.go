@@ -4,7 +4,6 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -31,19 +30,10 @@ var ListCust = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var HandleCust = func(w http.ResponseWriter, r *http.Request) {
-	type CustStatus struct {
-		Id     int64
-		Status string
-	}
-	custStatus := &CustStatus{}
-	if err := json.NewDecoder(r.Body).Decode(&custStatus); err != nil {
-		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
-		utils.RespondError(w, data, http.StatusBadRequest)
-		return
-	}
-	custController := &CustController{}
-	resp := custController.HandleCust(custStatus.Id, custStatus.Status)
-	utils.Respond(w, resp)
+	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
+		custController := &CustController{}
+		return custController.HandleCust(scu.Id, scu.Value)
+	})
 }
 
 var ListComboCust = func(w http.ResponseWriter, r *http.Request) {
@@ -109,25 +99,17 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 	return utils.MessageData(true, retModel)
 }
 
-func (custController *CustController) ListModel(page int, param *utils.Param) map[string]interface{} {
-	return ListModel(page, "cust", make([]*model.Cust, 0), param)
+func (custController *CustController) ListModel(param *utils.Param) map[string]interface{} {
+	return ListModel("cust", "id ASC", make([]*model.Cust, 0), param)
 }
 
 func (custController *CustController) HandleCust(id int64, status string) map[string]interface{} {
-	db := utils.GetDB().Begin()
-	cust := &model.Cust{}
-	if retval := ViewModel(id, cust); retval.ErrCode != 0 {
-		return utils.MessageErr(false, retval.ErrCode, retval.Message)
-	}
-	cust.Status = strings.ToUpper(status)
-	if err := model.Save(cust, db); err != nil {
-		db.Rollback()
-		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
-	}
-	db.Commit()
-	return utils.MessageData(true, cust)
+	return UpdateFieldModel(id, custController, func(m model.Model) {
+		cust := m.(*model.Cust)
+		cust.Status = strings.ToUpper(status)
+	})
 }
 
 func ComboCust(page int, param *utils.Param) map[string]interface{} {
-	return GetCombo(page, "cust", param)
+	return GetCombo(page, "cust", "id ASC", param)
 }

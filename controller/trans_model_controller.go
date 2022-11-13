@@ -131,10 +131,10 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 	return utils.StatusReturnOK()
 }
 
-func ListTrans(page int, table string, list interface{}, param *utils.Param) map[string]interface{} {
+func ListTrans(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListFind(page, table, &list, param)
+	respPage, err := utils.QueryListFind(table, order, &list, param)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
@@ -152,7 +152,7 @@ func ListTrans(page int, table string, list interface{}, param *utils.Param) map
 	return utils.MessageListData(true, list, respPage)
 }
 
-func UpdateMaster(id int64, controller TransController, fAction func(m model.Model)) map[string]interface{} {
+func UpdateFieldMaster(id int64, controller TransController, fAction func(m model.Model)) map[string]interface{} {
 	db := utils.GetDB().Begin()
 	m := controller.MasterModel()
 	if retval := ViewModel(id, m); retval.ErrCode != 0 {

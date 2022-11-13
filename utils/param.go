@@ -10,6 +10,7 @@ import (
 )
 
 type Param struct {
+	Page      *int
 	StartDate *time.Time
 	EndDate   *time.Time
 	Id        *int64
@@ -20,6 +21,7 @@ type Param struct {
 }
 
 func ProcessParam(r *http.Request) *Param {
+	paramPage := ParamToInt(r.URL.Query().Get("page"))
 	paramStartDate := ParamToTime(r.URL.Query().Get("startdate"), true)
 	paramEndDate := ParamToTime(r.URL.Query().Get("enddate"), false)
 	paramId := ParamToInt64(r.URL.Query().Get("id"))
@@ -27,7 +29,9 @@ func ProcessParam(r *http.Request) *Param {
 	paramStatus := ParamToString(r.URL.Query().Get("status"))
 	paramCustId := ParamToInt64(r.URL.Query().Get("cust_id"))
 	paramShopId := ParamToInt64(r.URL.Query().Get("shop_id"))
+
 	return &Param{
+		Page:      paramPage,
 		StartDate: paramStartDate,
 		EndDate:   paramEndDate,
 		Id:        paramId,
@@ -65,6 +69,17 @@ func ParamToString(param string) *string {
 	} else {
 		return &param
 	}
+}
+
+func ParamToInt(param string) *int {
+	if param == "" {
+		return nil
+	}
+	value, err := strconv.Atoi(param)
+	if err != nil {
+		return nil
+	}
+	return &value
 }
 
 func ParamToInt64(param string) *int64 {

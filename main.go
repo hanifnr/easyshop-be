@@ -32,7 +32,7 @@ func main() {
 	router.HandleFunc("/cust/view/{id}", c.ViewCust).Methods("GET")
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
 	router.HandleFunc("/cust/update", c.UpdateCust).Methods("PUT")
-	router.HandleFunc("/cust/handle", c.HandleCust).Methods("POST")
+	router.HandleFunc("/cust/handle", c.HandleCust).Methods("PUT")
 	router.HandleFunc("/cust/combo", c.ListComboCust).Methods("GET")
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/view/{id}", c.ViewShop).Methods("GET")
@@ -43,9 +43,9 @@ func main() {
 	router.HandleFunc("/order/view/{id}", c.ViewOrder).Methods("GET")
 	router.HandleFunc("/order/create", c.CreateOrder).Methods("POST")
 	router.HandleFunc("/order/update", c.UpdateOrder).Methods("PUT")
-	router.HandleFunc("/order/{id}", c.ViewOrder).Methods("GET")
 	router.HandleFunc("/order/handle", c.HandleOrder).Methods("PUT")
 	router.HandleFunc("/order/track", c.TrackingNumber).Methods("PUT")
+	router.HandleFunc("/order/details", c.ListOrderd).Methods("GET")
 	router.HandleFunc("/passport", c.ListPassport).Methods("GET")
 	router.HandleFunc("/passport/view/{id}", c.ViewPassport).Methods("GET")
 	router.HandleFunc("/passport/create", c.CreatePassport).Methods("POST")
@@ -60,7 +60,7 @@ func main() {
 	router.HandleFunc("/purc/view/{id}", c.ViewPurc).Methods("GET")
 	router.HandleFunc("/purc/create", c.CreatePurc).Methods("POST")
 	router.HandleFunc("/purc/update", c.UpdatePurc).Methods("PUT")
-	router.HandleFunc("/purc/handle", c.HandlePurc).Methods("POST")
+	router.HandleFunc("/purc/handle", c.HandlePurc).Methods("PUT")
 
 	router.Use(u.JwtAuthentication)
 

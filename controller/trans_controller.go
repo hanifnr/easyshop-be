@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 )
 
 type TransController interface {
@@ -15,7 +14,7 @@ type TransController interface {
 	DetailsModel() []model.Model
 	CreateTrans() map[string]interface{}
 	ViewTrans(id int64) map[string]interface{}
-	ListTrans(page int, param *utils.Param) map[string]interface{}
+	ListTrans(param *utils.Param) map[string]interface{}
 	UpdateTrans() map[string]interface{}
 	FNew() functions.SQLFunction
 	MasterField() string
@@ -41,18 +40,8 @@ func ViewTransAction(controller TransController, w http.ResponseWriter, r *http.
 }
 
 func ListTransAction(controller TransController, w http.ResponseWriter, r *http.Request) {
-	paramPage := r.URL.Query().Get("page")
-	if paramPage == "" {
-		paramPage = "0"
-	}
-	page, err := strconv.Atoi(paramPage)
-	if err != nil {
-		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
-		utils.RespondError(w, data, http.StatusBadRequest)
-		return
-	}
 	param := utils.ProcessParam(r)
-	resp := controller.ListTrans(page, param)
+	resp := controller.ListTrans(param)
 	utils.Respond(w, resp)
 }
 

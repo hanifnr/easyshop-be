@@ -8,17 +8,25 @@ func QueryStringValue(query *gorm.DB) (string, error) {
 	return result, err
 }
 
-func QueryListFind(page int, table string, list *interface{}, param *Param) (map[string]interface{}, error) {
+func QueryListFind(table, order string, list *interface{}, param *Param) (map[string]interface{}, error) {
 	var query *gorm.DB
 	var totalRow int64
+	var page int
+
+	if param.Page == nil {
+		page = 0
+	} else {
+		page = *param.Page
+	}
+
 	query = db.Select("count(*)").Table(table)
 	param.ProcessFilter(query)
 	query.Scan(&totalRow)
 	if page == 0 {
-		query = db.Order("id ASC")
+		query = db.Order(order)
 	} else {
 		offset, limit := GetOffsetLimit(page)
-		query = db.Offset(offset).Order("id ASC").Limit(limit)
+		query = db.Offset(offset).Order(order).Limit(limit)
 	}
 	param.ProcessFilter(query)
 	query.Debug().Find(list)
@@ -29,17 +37,25 @@ func QueryListFind(page int, table string, list *interface{}, param *Param) (map
 	return RespPage(page, int(totalRow)), nil
 }
 
-func QueryListScan(page int, column, table string, list *interface{}, param *Param) (map[string]interface{}, error) {
+func QueryListScan(column, table, order string, list *interface{}, param *Param) (map[string]interface{}, error) {
 	var query *gorm.DB
 	var totalRow int64
+	var page int
+
+	if param.Page == nil {
+		page = 0
+	} else {
+		page = *param.Page
+	}
+
 	query = db.Select("count(*)").Table(table)
 	param.ProcessFilter(query)
 	query.Scan(&totalRow)
 	if page == 0 {
-		query = db.Select(column).Table(table).Order("id ASC")
+		query = db.Select(column).Table(table).Order(order)
 	} else {
 		offset, limit := GetOffsetLimit(page)
-		query = db.Select(column).Table(table).Offset(offset).Order("id ASC").Limit(limit)
+		query = db.Select(column).Table(table).Offset(offset).Order(order).Limit(limit)
 	}
 	param.ProcessFilter(query)
 	query.Scan(list)

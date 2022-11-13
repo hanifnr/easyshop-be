@@ -82,10 +82,10 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 	return utils.StatusReturnOK(), m
 }
 
-func ListModel(page int, table string, list interface{}, param *utils.Param) map[string]interface{} {
+func ListModel(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListFind(page, table, &list, param)
+	respPage, err := utils.QueryListFind(table, order, &list, param)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
@@ -93,10 +93,10 @@ func ListModel(page int, table string, list interface{}, param *utils.Param) map
 	return utils.MessageListData(true, list, respPage)
 }
 
-func ListModelColumns(page int, columns, table string, list interface{}, param *utils.Param) map[string]interface{} {
+func ListModelColumns(columns, table, order string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListScan(page, columns, table, &list, param)
+	respPage, err := utils.QueryListScan(columns, table, order, &list, param)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
@@ -115,4 +115,19 @@ func ProcessExtField(list interface{}, db *gorm.DB) {
 			}
 		}
 	}
+}
+
+func UpdateFieldModel(id int64, controller Controller, fAction func(m model.Model)) map[string]interface{} {
+	db := utils.GetDB().Begin()
+	m := controller.Model()
+	if retval := ViewModel(id, m); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	fAction(m)
+	if err := model.Save(m, db); err != nil {
+		db.Rollback()
+		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
+	}
+	db.Commit()
+	return utils.MessageData(true, m)
 }
