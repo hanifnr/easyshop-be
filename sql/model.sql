@@ -118,6 +118,7 @@ ADD
   NOT DEFERRABLE;
 ALTER TABLE public.orderd ADD COLUMN image VARCHAR;
 ALTER TABLE public.orderd ADD COLUMN url VARCHAR;
+ALTER TABLE public.orderd ADD COLUMN imported BOOLEAN DEFAULT FALSE;
 
 CREATE SEQUENCE public.purc_seq_id;
 CREATE TABLE public.purc(

@@ -18,6 +18,7 @@ type Param struct {
 	Status    *string
 	CustId    *int64
 	ShopId    *int64
+	Imported  *bool
 }
 
 func ProcessParam(r *http.Request) *Param {
@@ -29,6 +30,7 @@ func ProcessParam(r *http.Request) *Param {
 	paramStatus := ParamToString(r.URL.Query().Get("status"))
 	paramCustId := ParamToInt64(r.URL.Query().Get("cust_id"))
 	paramShopId := ParamToInt64(r.URL.Query().Get("shop_id"))
+	paramImported := ParamToBool(r.URL.Query().Get("imported"))
 
 	return &Param{
 		Page:      paramPage,
@@ -39,6 +41,7 @@ func ProcessParam(r *http.Request) *Param {
 		Status:    paramStatus,
 		CustId:    paramCustId,
 		ShopId:    paramShopId,
+		Imported:  paramImported,
 	}
 }
 
@@ -60,6 +63,9 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.ShopId != nil {
 		db.Where("shop_id = ?", param.ShopId)
+	}
+	if param.Imported != nil {
+		db.Where("imported = ?", param.Imported)
 	}
 }
 
@@ -105,6 +111,18 @@ func ParamToTime(param string, isStartDate bool) *time.Time {
 
 	time, _ := time.Parse("2006-01-02 15:04:05 -0700 MST", date)
 	return &time
+}
+
+func ParamToBool(param string) *bool {
+	if param == "" {
+		return nil
+	} else {
+		value, err := strconv.ParseBool(param)
+		if err != nil {
+			return nil
+		}
+		return &value
+	}
 }
 
 func PercentText(text string) string {

@@ -125,7 +125,7 @@ func (purcController *PurcController) UpdateTrans() map[string]interface{} {
 
 }
 func (purcController *PurcController) FNew() functions.SQLFunction {
-	return nil
+	return &functions.FPurcNew{}
 }
 
 func (purcController *PurcController) HandlePurc(id int64, status string) map[string]interface{} {

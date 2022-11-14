@@ -52,4 +52,5 @@ const ErrSQLLoad = 1003
 const ErrSQLList = 1004
 const ErrSQLSave = 1005
 const ErrSQLDelete = 1006
-const ErrExist = 1007
+const ErrSQLUpdate = 1007
+const ErrExist = 1008

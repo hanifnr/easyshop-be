@@ -19,6 +19,7 @@ type Orderd struct {
 	Subtotal  float64 `json:"subtotal" gorm:"DEFAULT:0"`
 	Url       string  `json:"url"`
 	Image     string  `json:"image"`
+	Imported  bool    `json:"imported" gorm:"DEFAULT:FALSE"`
 }
 
 func (Orderd) TableName() string {
