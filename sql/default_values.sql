@@ -184,7 +184,7 @@ VALUES
     'ORDER',
     1000,
     8
-  )
+  );
 
   INSERT INTO ncount (code,name,number,length)
   VALUES
@@ -193,4 +193,13 @@ VALUES
     'PURC',
     1000,
     8
-  )
+  );
+
+  INSERT INTO ncount (code,name,number,length)
+  VALUES
+  (
+    'WH',
+    'WH',
+    1000,
+    8
+  );
