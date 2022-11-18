@@ -12,9 +12,11 @@ CREATE TABLE public.cust(
   updated_at TIMESTAMP,
   CONSTRAINT cust_pk PRIMARY KEY (id)
 );
-ALTER TABLE public.cust ALTER COLUMN isactive SET DEFAULT FALSE;
+ALTER TABLE public.cust ALTER COLUMN isactive SET DEFAULT TRUE;
 ALTER TABLE public.cust ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.cust DROP COLUMN passport;
+ALTER TABLE public.cust DROP COLUMN status;
+ALTER TABLE public.cust RENAME COLUMN isactive TO is_active;
 
 CREATE SEQUENCE public.shop_category_id_seq;
 CREATE TABLE public.shop_category(
@@ -52,6 +54,7 @@ ALTER TABLE public.shop ADD COLUMN scrape_image VARCHAR;
 ALTER TABLE public.shop ADD COLUMN isactive BOOLEAN;
 ALTER TABLE public.shop RENAME COLUMN scrap_item_name TO scrape_item_name;
 ALTER TABLE public.shop RENAME COLUMN scrap_item_price TO scrape_item_price;
+ALTER TABLE public.shop RENAME COLUMN isactive TO is_active;
 
 CREATE SEQUENCE public.order_id_seq;
 CREATE TABLE public.order(
@@ -79,11 +82,12 @@ ADD
   NOT DEFERRABLE;
 ALTER TABLE public.order ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.order ADD COLUMN passport VARCHAR;
-ALTER TABLE public.order ADD COLUMN addr_id BIGINT;
+ALTER TABLE public.order ADD COLUMN addr_id BIGINT  ;
 ALTER TABLE public.order
 ADD CONSTRAINT order_rel_addr_fk
 FOREIGN KEY (addr_id) REFERENCES public.addr (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
+ALTER TABLE public.order ADD COLUMN arrival_date TIMESTAMP;
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 

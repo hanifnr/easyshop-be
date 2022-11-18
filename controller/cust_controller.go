@@ -6,7 +6,6 @@ import (
 	"easyshop/utils"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 var CreateCust = func(w http.ResponseWriter, r *http.Request) {
@@ -27,13 +26,6 @@ var ViewCust = func(w http.ResponseWriter, r *http.Request) {
 var ListCust = func(w http.ResponseWriter, r *http.Request) {
 	custController := &CustController{}
 	ListModelAction(custController, w, r)
-}
-
-var HandleCust = func(w http.ResponseWriter, r *http.Request) {
-	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
-		custController := &CustController{}
-		return custController.HandleCust(scu.Id, scu.Value)
-	})
 }
 
 var ListComboCust = func(w http.ResponseWriter, r *http.Request) {
@@ -66,10 +58,7 @@ func (custController *CustController) FNew() functions.SQLFunction {
 
 func (custController *CustController) CreateModel() map[string]interface{} {
 
-	if retval := CreateModel(custController, func(m model.Model) {
-		cust := m.(*model.Cust)
-		cust.Status = "W"
-	}); retval.ErrCode != 0 {
+	if retval := CreateModel(custController, func(m model.Model) {}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, custController.Cust)
@@ -101,13 +90,6 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 
 func (custController *CustController) ListModel(param *utils.Param) map[string]interface{} {
 	return ListModel("cust", "id ASC", make([]*model.Cust, 0), param)
-}
-
-func (custController *CustController) HandleCust(id int64, status string) map[string]interface{} {
-	return UpdateFieldModel(id, custController, func(m model.Model) {
-		cust := m.(*model.Cust)
-		cust.Status = strings.ToUpper(status)
-	})
 }
 
 func ComboCust(page int, param *utils.Param) map[string]interface{} {

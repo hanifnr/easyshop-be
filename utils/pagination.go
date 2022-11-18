@@ -2,7 +2,7 @@ package utils
 
 import "math"
 
-const PAGE_LIMIT = 2
+const PAGE_LIMIT = 20
 
 func GetOffsetLimit(page int) (int, int) {
 	if page == 1 {

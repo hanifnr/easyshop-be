@@ -10,15 +10,18 @@ import (
 )
 
 type Param struct {
-	Page      *int
-	StartDate *time.Time
-	EndDate   *time.Time
-	Id        *int64
-	Name      *string
-	Status    *string
-	CustId    *int64
-	ShopId    *int64
-	Imported  *bool
+	Page        *int
+	StartDate   *time.Time
+	EndDate     *time.Time
+	Id          *int64
+	Name        *string
+	Status      *string
+	CustId      *int64
+	ShopId      *int64
+	Imported    *bool
+	PhoneNumber *string
+	CountryCode *string
+	IsActive    *bool
 }
 
 func ProcessParam(r *http.Request) *Param {
@@ -31,17 +34,23 @@ func ProcessParam(r *http.Request) *Param {
 	paramCustId := ParamToInt64(r.URL.Query().Get("cust_id"))
 	paramShopId := ParamToInt64(r.URL.Query().Get("shop_id"))
 	paramImported := ParamToBool(r.URL.Query().Get("imported"))
+	paramPhoneNumber := ParamToString(r.URL.Query().Get("phone_number"))
+	paramCountryCode := ParamToString(r.URL.Query().Get("country_code"))
+	paramIsActive := ParamToBool(r.URL.Query().Get("is_active"))
 
 	return &Param{
-		Page:      paramPage,
-		StartDate: paramStartDate,
-		EndDate:   paramEndDate,
-		Id:        paramId,
-		Name:      paramName,
-		Status:    paramStatus,
-		CustId:    paramCustId,
-		ShopId:    paramShopId,
-		Imported:  paramImported,
+		Page:        paramPage,
+		StartDate:   paramStartDate,
+		EndDate:     paramEndDate,
+		Id:          paramId,
+		Name:        paramName,
+		Status:      paramStatus,
+		CustId:      paramCustId,
+		ShopId:      paramShopId,
+		Imported:    paramImported,
+		PhoneNumber: paramPhoneNumber,
+		CountryCode: paramCountryCode,
+		IsActive:    paramIsActive,
 	}
 }
 
@@ -66,6 +75,15 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.Imported != nil {
 		db.Where("imported = ?", param.Imported)
+	}
+	if param.PhoneNumber != nil {
+		db.Where("phone_number = ?", param.PhoneNumber)
+	}
+	if param.CountryCode != nil {
+		db.Where("country_code = ?", param.CountryCode)
+	}
+	if param.IsActive != nil {
+		db.Where("is_active = ?", param.IsActive)
 	}
 }
 

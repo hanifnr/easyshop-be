@@ -23,6 +23,7 @@ type Order struct {
 	Isdelete       bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
 	Passport       string    `json:"passport"`
 	AddrId         int64     `json:"addr_id"`
+	ArrivalDate    time.Time `json:"arrival_date"`
 	OrderExt       `gorm:"-"`
 }
 
