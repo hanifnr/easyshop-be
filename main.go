@@ -23,6 +23,7 @@ func main() {
 		"/addr",
 		"/purc",
 		"/wh",
+		"/status",
 	})
 
 	router := mux.NewRouter()
@@ -65,6 +66,10 @@ func main() {
 	router.HandleFunc("/wh/view/{id}", c.ViewWh).Methods("GET")
 	router.HandleFunc("/wh/create", c.CreateWh).Methods("POST")
 	router.HandleFunc("/wh/update", c.UpdateWh).Methods("PUT")
+	router.HandleFunc("/status", c.ListStatus).Methods("GET")
+	router.HandleFunc("/status/view/{id}", c.ViewStatus).Methods("GET")
+	router.HandleFunc("/status/create", c.CreateStatus).Methods("POST")
+	router.HandleFunc("/status/update", c.UpdateStatus).Methods("PUT")
 
 	router.Use(u.JwtAuthentication)
 

@@ -19,7 +19,7 @@ type Passport struct {
 	ExpDate     time.Time `json:"exp_date"`
 	CreatedAt   time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
-	Isdelete    bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
+	IsDelete    bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
 }
 
 func (passport Passport) ID() int64 {

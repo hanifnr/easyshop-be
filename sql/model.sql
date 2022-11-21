@@ -14,6 +14,7 @@ CREATE TABLE public.cust(
 );
 ALTER TABLE public.cust ALTER COLUMN isactive SET DEFAULT TRUE;
 ALTER TABLE public.cust ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.cust RENAME COLUMN isdelete TO is_delete;
 ALTER TABLE public.cust DROP COLUMN passport;
 ALTER TABLE public.cust DROP COLUMN status;
 ALTER TABLE public.cust RENAME COLUMN isactive TO is_active;
@@ -81,6 +82,7 @@ ADD
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
 ALTER TABLE public.order ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.order RENAME COLUMN isdelete TO is_delete;
 ALTER TABLE public.order ADD COLUMN passport VARCHAR;
 ALTER TABLE public.order ADD COLUMN addr_id BIGINT  ;
 ALTER TABLE public.order
@@ -88,6 +90,7 @@ ADD CONSTRAINT order_rel_addr_fk
 FOREIGN KEY (addr_id) REFERENCES public.addr (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 ALTER TABLE public.order ADD COLUMN arrival_date TIMESTAMP;
+ALTER TABLE public.order RENAME COLUMN status TO status_code;
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 
@@ -146,6 +149,7 @@ ADD
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
 ALTER TABLE public.purc ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.purc RENAME COLUMN isdelete TO is_delete;
 
 CREATE TABLE public.purcd(
   purc_id BIGINT, 
@@ -200,6 +204,7 @@ ADD
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
 ALTER TABLE public.wh ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.wh RENAME COLUMN isdelete TO is_delete;
 
 CREATE TABLE public.whd(
   wh_id BIGINT, 
@@ -258,6 +263,7 @@ ADD CONSTRAINT passport_rel_cust_fk
 FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 CREATE UNIQUE INDEX passport_cust_id_index ON public.passport (cust_id);
+ALTER TABLE public.passport RENAME COLUMN isdelete TO is_delete;
 
 CREATE SEQUENCE public.addr_id_seq;
 CREATE TABLE public.addr(
@@ -279,4 +285,18 @@ CREATE TABLE public.addr(
 ALTER TABLE public.addr
 ADD CONSTRAINT addr_rel_cust_fk
 FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+ALTER TABLE public.addr RENAME COLUMN isdelete TO is_delete;
+
+CREATE SEQUENCE public.status_id_seq;
+CREATE TABLE public.status(
+  id BIGINT NOT NULL DEFAULT nextval('public.status_id_seq'),
+  code VARCHAR NOT NULL,
+  name VARCHAR NOT NULL,
+  CONSTRAINT status_pk PRIMARY KEY (id)
+);
+CREATE UNIQUE INDEX status_code_index ON public.status (code);
+ALTER TABLE public.order
+ADD CONSTRAINT order_rel_status_fk
+FOREIGN KEY (status_code) REFERENCES public.status (code) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;

@@ -16,11 +16,11 @@ type Order struct {
 	ProofLink      string    `json:"proof_link"`
 	PickDate       time.Time `json:"pick_date"`
 	TrackingNumber string    `json:"tracking_number"`
-	Status         string    `json:"status"`
+	StatusCode     string    `json:"status_code"`
 	Total          float64   `json:"total" gorm:"DEFAULT:0"`
 	CreatedAt      time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt      time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
-	Isdelete       bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
+	IsDelete       bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
 	Passport       string    `json:"passport"`
 	AddrId         int64     `json:"addr_id"`
 	ArrivalDate    time.Time `json:"arrival_date"`
@@ -28,8 +28,9 @@ type Order struct {
 }
 
 type OrderExt struct {
-	CustName string `json:"cust_name"`
-	AddrName string `json:"addr_name"`
+	CustName   string `json:"cust_name"`
+	AddrName   string `json:"addr_name"`
+	StatusName string `json:"status_name"`
 }
 
 func (Order) TableName() string {
@@ -71,4 +72,5 @@ func (order *Order) SetUpdatedAt(time time.Time) {
 func (order *Order) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("cust").Where("id = ?", order.CustId).Scan(&order.CustName)
 	db.Select("name").Table("addr").Where("id = ?", order.AddrId).Scan(&order.AddrName)
+	db.Select("name").Table("status").Where("code = ?", order.StatusCode).Scan(&order.StatusName)
 }

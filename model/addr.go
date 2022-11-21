@@ -19,7 +19,7 @@ type Addr struct {
 	Province    string    `json:"province"`
 	City        string    `json:"city"`
 	FullAddress string    `json:"full_address"`
-	Isdelete    bool      `json:"isdelete" gorm:"DEFAULT:FALSE"`
+	IsDelete    bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
 	CreatedAt   time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 	AddrExt     `gorm:"-"`

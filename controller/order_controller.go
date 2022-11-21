@@ -76,7 +76,7 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 		if err != nil {
 			return err
 		}
-		order.Status = "W"
+		order.StatusCode = "W"
 		order.Passport = passport
 		for i := range orderController.Orderd {
 			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
@@ -113,6 +113,7 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 		orderSrc.Total = orderTemp.Total
 		orderSrc.Trxno = orderTemp.Trxno
 		orderSrc.AddrId = orderTemp.AddrId
+		orderSrc.ArrivalDate = orderTemp.ArrivalDate
 
 		for i := range orderController.Orderd {
 			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
@@ -132,7 +133,7 @@ func (orderController *OrderController) FNew() functions.SQLFunction {
 func (orderController *OrderController) HandleOrder(id int64, status string) map[string]interface{} {
 	return UpdateFieldMaster(id, orderController, func(m model.Model) {
 		order := m.(*model.Order)
-		order.Status = strings.ToUpper(status)
+		order.StatusCode = strings.ToUpper(status)
 	})
 }
 

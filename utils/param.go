@@ -14,8 +14,9 @@ type Param struct {
 	StartDate   *time.Time
 	EndDate     *time.Time
 	Id          *int64
+	Code        *string
 	Name        *string
-	Status      *string
+	StatusCode  *string
 	CustId      *int64
 	ShopId      *int64
 	Imported    *bool
@@ -29,8 +30,9 @@ func ProcessParam(r *http.Request) *Param {
 	paramStartDate := ParamToTime(r.URL.Query().Get("startdate"), true)
 	paramEndDate := ParamToTime(r.URL.Query().Get("enddate"), false)
 	paramId := ParamToInt64(r.URL.Query().Get("id"))
+	paramCode := ParamToString(r.URL.Query().Get("code"))
 	paramName := ParamToString(r.URL.Query().Get("name"))
-	paramStatus := ParamToString(r.URL.Query().Get("status"))
+	paramStatusCode := ParamToString(r.URL.Query().Get("status_code"))
 	paramCustId := ParamToInt64(r.URL.Query().Get("cust_id"))
 	paramShopId := ParamToInt64(r.URL.Query().Get("shop_id"))
 	paramImported := ParamToBool(r.URL.Query().Get("imported"))
@@ -43,8 +45,9 @@ func ProcessParam(r *http.Request) *Param {
 		StartDate:   paramStartDate,
 		EndDate:     paramEndDate,
 		Id:          paramId,
+		Code:        paramCode,
 		Name:        paramName,
-		Status:      paramStatus,
+		StatusCode:  paramStatusCode,
 		CustId:      paramCustId,
 		ShopId:      paramShopId,
 		Imported:    paramImported,
@@ -61,11 +64,14 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	if param.Id != nil {
 		db.Where("id = ?", param.Id)
 	}
+	if param.Code != nil {
+		db.Where("UPPER(code) = ?", strings.ToUpper(*param.Code))
+	}
 	if param.Name != nil {
 		db.Where("UPPER(name) LIKE ?", PercentText(strings.ToUpper(*param.Name)))
 	}
-	if param.Status != nil {
-		db.Where("UPPER(status) = ?", strings.ToUpper(*param.Status))
+	if param.StatusCode != nil {
+		db.Where("UPPER(status_code) = ?", strings.ToUpper(*param.StatusCode))
 	}
 	if param.CustId != nil {
 		db.Where("cust_id = ?", param.CustId)

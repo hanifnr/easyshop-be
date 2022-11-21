@@ -203,3 +203,16 @@ VALUES
     1000,
     8
   );
+
+INSERT INTO status(code, name) 
+VALUES 
+('W', 'Waiting'),
+('R', 'Order Rejected'),
+('A', 'Order Approved'),
+('C', 'Order Canceled'),
+('PW', 'Waiting Payment'),
+('PR', 'Payment Rejected'),
+('PA', 'Payment Accepted'),
+('IP', 'Purchasing Items'),
+('IR', 'Items Ready To Ship'),
+('IS', 'Items Shipped');
