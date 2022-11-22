@@ -91,6 +91,7 @@ FOREIGN KEY (addr_id) REFERENCES public.addr (id) ON DELETE RESTRICT ON UPDATE C
 NOT DEFERRABLE;
 ALTER TABLE public.order ADD COLUMN arrival_date TIMESTAMP;
 ALTER TABLE public.order RENAME COLUMN status TO status_code;
+ALTER TABLE public.order ALTER COLUMN status_code TYPE VARCHAR(2);
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 
@@ -298,5 +299,23 @@ CREATE TABLE public.status(
 CREATE UNIQUE INDEX status_code_index ON public.status (code);
 ALTER TABLE public.order
 ADD CONSTRAINT order_rel_status_fk
+FOREIGN KEY (status_code) REFERENCES public.status (code) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+
+CREATE SEQUENCE public.order_log_id_seq;
+CREATE TABLE public.order_log(
+  id BIGINT NOT NULL DEFAULT nextval('public.order_log_id_seq'),
+  CONSTRAINT order_log_pk PRIMARY KEY (id),
+  order_id BIGINT NOT NULL,
+  status_code VARCHAR(2) NOT NULL,
+  note TEXT,
+  date TIMESTAMP
+);
+ALTER TABLE public.order_log
+ADD CONSTRAINT order_log_rel_order_fk
+FOREIGN KEY (order_id) REFERENCES public.order (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+ALTER TABLE public.order_log
+ADD CONSTRAINT order_log_rel_status_fk
 FOREIGN KEY (status_code) REFERENCES public.status (code) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;

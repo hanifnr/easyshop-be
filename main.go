@@ -24,6 +24,7 @@ func main() {
 		"/purc",
 		"/wh",
 		"/status",
+		"/status",
 	})
 
 	router := mux.NewRouter()
@@ -47,6 +48,7 @@ func main() {
 	router.HandleFunc("/order/handle", c.HandleOrder).Methods("PUT")
 	router.HandleFunc("/order/track", c.TrackingNumber).Methods("PUT")
 	router.HandleFunc("/order/details", c.ListOrderd).Methods("GET")
+	router.HandleFunc("/order/log", c.ListOrderLog).Methods("GET")
 	router.HandleFunc("/passport", c.ListPassport).Methods("GET")
 	router.HandleFunc("/passport/view/{id}", c.ViewPassport).Methods("GET")
 	router.HandleFunc("/passport/create", c.CreatePassport).Methods("POST")
@@ -68,8 +70,6 @@ func main() {
 	router.HandleFunc("/wh/update", c.UpdateWh).Methods("PUT")
 	router.HandleFunc("/status", c.ListStatus).Methods("GET")
 	router.HandleFunc("/status/view/{id}", c.ViewStatus).Methods("GET")
-	router.HandleFunc("/status/create", c.CreateStatus).Methods("POST")
-	router.HandleFunc("/status/update", c.UpdateStatus).Methods("PUT")
 
 	router.Use(u.JwtAuthentication)
 

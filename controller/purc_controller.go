@@ -129,8 +129,9 @@ func (purcController *PurcController) FNew() functions.SQLFunction {
 }
 
 func (purcController *PurcController) HandlePurc(id int64, status string) map[string]interface{} {
-	return UpdateFieldMaster(id, purcController, func(m model.Model) {
+	return UpdateFieldMaster(id, purcController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		purc := m.(*model.Purc)
 		purc.Status = strings.ToUpper(status)
+		return utils.StatusReturnOK()
 	})
 }

@@ -28,7 +28,6 @@ func (Orderd) TableName() string {
 
 func (orderd Orderd) Validate() error {
 	err := validation.Errors{
-		"Dno":        validation.Validate(orderd.Dno, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Shop Id":    validation.Validate(orderd.ShopId, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Product Id": validation.Validate(orderd.Productid, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Name":       validation.Validate(orderd.Name, validation.Required.Error(utils.FIELD_REQUIRED)),
