@@ -111,7 +111,7 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
 	}
-	if err := db.Debug().Where(controller.MasterField()+"= ?", modelTemp.ID()).Delete(d).Error; err != nil {
+	if err := db.Where(controller.MasterField()+"= ?", modelTemp.ID()).Delete(d).Error; err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLDelete, Message: err.Error()}
 	}
@@ -134,7 +134,7 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 func ListTrans(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListFind(table, order, &list, param)
+	respPage, err := utils.QueryListFind(table, order, &list, param, func(query *gorm.DB) {})
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}

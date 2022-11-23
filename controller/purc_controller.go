@@ -66,7 +66,7 @@ func (purcController *PurcController) CreateTrans() map[string]interface{} {
 				Name      string
 			}
 			orderProduct := &OrderProduct{}
-			if err := db.Debug().Select("productid,name").Table("orderd").Where("order_id=? AND dno=?", purcd.OrderId, purcd.Dno).Scan(&orderProduct).Error; err != nil {
+			if err := db.Select("productid,name").Table("orderd").Where("order_id=? AND dno=?", purcd.OrderId, purcd.Dno).Scan(&orderProduct).Error; err != nil {
 				return err
 			}
 			purcd.Productid = orderProduct.Productid

@@ -12,7 +12,7 @@ func FGetNewNo(name string, db *gorm.DB) string {
 	var result string
 
 	nCount := &model.NCount{}
-	db.Debug().Where("upper(name) = ?", strings.ToUpper(name)).Find(&nCount)
+	db.Where("upper(name) = ?", strings.ToUpper(name)).Find(&nCount)
 
 	numberLen := len(strconv.Itoa(nCount.Number))
 	for numberLen < nCount.Length {

@@ -8,7 +8,7 @@ func QueryStringValue(query *gorm.DB) (string, error) {
 	return result, err
 }
 
-func QueryListFind(table, order string, list *interface{}, param *Param) (map[string]interface{}, error) {
+func QueryListFind(table, order string, list *interface{}, param *Param, fJoin func(query *gorm.DB)) (map[string]interface{}, error) {
 	var query *gorm.DB
 	var totalRow int64
 	var page int
@@ -20,6 +20,7 @@ func QueryListFind(table, order string, list *interface{}, param *Param) (map[st
 	}
 
 	query = db.Select("count(*)").Table(table)
+	fJoin(query)
 	param.ProcessFilter(query)
 	query.Scan(&totalRow)
 	if page == 0 {
@@ -28,8 +29,9 @@ func QueryListFind(table, order string, list *interface{}, param *Param) (map[st
 		offset, limit := GetOffsetLimit(page)
 		query = db.Offset(offset).Order(order).Limit(limit)
 	}
+	fJoin(query)
 	param.ProcessFilter(query)
-	query.Debug().Find(list)
+	query.Find(list)
 
 	if err := query.Error; err != nil {
 		return nil, err

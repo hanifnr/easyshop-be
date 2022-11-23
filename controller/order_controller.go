@@ -167,5 +167,11 @@ func (orderController *OrderController) TrackingNumber(id int64, trackingNumber 
 }
 
 func (orderController *OrderController) ListDetail(param *utils.Param) map[string]interface{} {
-	return ListModel("orderd", "order_id DESC,dno ASC", make([]*model.Orderd, 0), param)
+	imported := false
+	statusCode := "A"
+	param.Imported = &imported
+	param.StatusCode = &statusCode
+	return ListJoinModel("orderd", "order_id DESC,dno ASC", make([]*model.Orderd, 0), param, func(query *gorm.DB) {
+		query.Joins("JOIN \"order\" ON order_id = \"order\".id")
+	})
 }

@@ -83,9 +83,13 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 }
 
 func ListModel(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
+	return ListJoinModel(table, order, list, param, func(query *gorm.DB) {})
+}
+
+func ListJoinModel(table, order string, list interface{}, param *utils.Param, fJoin func(query *gorm.DB)) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListFind(table, order, &list, param)
+	respPage, err := utils.QueryListFind(table, order, &list, param, fJoin)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}

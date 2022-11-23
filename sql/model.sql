@@ -85,10 +85,6 @@ ALTER TABLE public.order ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.order RENAME COLUMN isdelete TO is_delete;
 ALTER TABLE public.order ADD COLUMN passport VARCHAR;
 ALTER TABLE public.order ADD COLUMN addr_id BIGINT  ;
-ALTER TABLE public.order
-ADD CONSTRAINT order_rel_addr_fk
-FOREIGN KEY (addr_id) REFERENCES public.addr (id) ON DELETE RESTRICT ON UPDATE CASCADE
-NOT DEFERRABLE;
 ALTER TABLE public.order ADD COLUMN arrival_date TIMESTAMP;
 ALTER TABLE public.order RENAME COLUMN status TO status_code;
 ALTER TABLE public.order ALTER COLUMN status_code TYPE VARCHAR(2);
@@ -288,6 +284,11 @@ ADD CONSTRAINT addr_rel_cust_fk
 FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 ALTER TABLE public.addr RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.order
+ADD CONSTRAINT order_rel_addr_fk
+FOREIGN KEY (addr_id) REFERENCES public.addr (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+ALTER TABLE public.addr DROP COLUMN email;
 
 CREATE SEQUENCE public.status_id_seq;
 CREATE TABLE public.status(

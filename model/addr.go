@@ -12,7 +12,6 @@ type Addr struct {
 	Id          int64     `json:"id" gorm:"primary_key;auto_increment"`
 	CustId      int64     `json:"cust_id"`
 	Name        string    `json:"name"`
-	Email       string    `json:"email"`
 	PhoneNumber string    `json:"phone_number"`
 	ZipCode     string    `json:"zip_code"`
 	CountryCode string    `json:"country_code"`

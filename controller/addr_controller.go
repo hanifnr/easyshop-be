@@ -85,7 +85,6 @@ func (addrController *AddrController) UpdateModel() map[string]interface{} {
 		addrTemp := modelTemp.(*model.Addr)
 
 		addrSrc.Name = addrTemp.Name
-		addrSrc.Email = addrTemp.Email
 		addrSrc.CountryCode = addrTemp.CountryCode
 		addrSrc.PhoneNumber = addrTemp.PhoneNumber
 		addrSrc.ZipCode = addrTemp.ZipCode
