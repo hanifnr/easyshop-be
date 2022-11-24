@@ -123,6 +123,7 @@ ADD
 ALTER TABLE public.orderd ADD COLUMN image VARCHAR;
 ALTER TABLE public.orderd ADD COLUMN url VARCHAR;
 ALTER TABLE public.orderd ADD COLUMN imported BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.orderd RENAME COLUMN productid TO product_id;
 
 CREATE SEQUENCE public.purc_seq_id;
 CREATE TABLE public.purc(

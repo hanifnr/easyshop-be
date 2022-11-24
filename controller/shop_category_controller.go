@@ -29,6 +29,10 @@ func (shopCategoryController *ShopCategoryController) FNew() functions.SQLFuncti
 	return nil
 }
 
+func (shopCategoryController *ShopCategoryController) FDelete() functions.SQLFunction {
+	return nil
+}
+
 func (shopCategoryController *ShopCategoryController) CreateModel() map[string]interface{} {
 	return nil
 }
@@ -39,6 +43,10 @@ func (shopCategoryController *ShopCategoryController) ViewModel(id int64) map[st
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, shopCategory)
+}
+
+func (shopCategoryController *ShopCategoryController) DeleteModel(id int64) map[string]interface{} {
+	return nil
 }
 
 func (shopCategoryController *ShopCategoryController) UpdateModel() map[string]interface{} {

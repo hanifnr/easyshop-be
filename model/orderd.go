@@ -10,7 +10,7 @@ type Orderd struct {
 	OrderId   int64   `json:"order_id"`
 	Dno       int     `json:"dno"`
 	ShopId    int64   `json:"shop_id"`
-	Productid string  `json:"productid"`
+	ProductId string  `json:"product_id"`
 	Name      string  `json:"name"`
 	Qty       float32 `json:"qty" gorm:"DEFAULT:0"`
 	Qtypurc   float32 `json:"qtypurc" gorm:"DEFAULT:0"`
@@ -29,7 +29,7 @@ func (Orderd) TableName() string {
 func (orderd Orderd) Validate() error {
 	err := validation.Errors{
 		"Shop Id":    validation.Validate(orderd.ShopId, validation.Required.Error(utils.FIELD_REQUIRED)),
-		"Product Id": validation.Validate(orderd.Productid, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Product Id": validation.Validate(orderd.ProductId, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Name":       validation.Validate(orderd.Name, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Qty":        validation.Validate(orderd.Qty, validation.Required.Error(utils.FIELD_REQUIRED)),
 		"Price":      validation.Validate(orderd.Price, validation.NotNil.Error(utils.FIELD_NOTNIL)),

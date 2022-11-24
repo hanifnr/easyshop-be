@@ -39,6 +39,10 @@ func (statusController *StatusController) FNew() functions.SQLFunction {
 	return nil
 }
 
+func (statusController *StatusController) FDelete() functions.SQLFunction {
+	return nil
+}
+
 func (statusController *StatusController) CreateModel() map[string]interface{} {
 
 	if retval := CreateModel(statusController, func(m model.Model) {
@@ -67,6 +71,10 @@ func (statusController *StatusController) UpdateModel() map[string]interface{} {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, retModel)
+}
+
+func (statusController *StatusController) DeleteModel(id int64) map[string]interface{} {
+	return nil
 }
 
 func (statusController *StatusController) ListModel(param *utils.Param) map[string]interface{} {

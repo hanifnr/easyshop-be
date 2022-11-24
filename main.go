@@ -59,6 +59,7 @@ func main() {
 	router.HandleFunc("/addr/create", c.CreateAddr).Methods("POST")
 	router.HandleFunc("/addr/update", c.UpdateAddr).Methods("PUT")
 	router.HandleFunc("/addr/combo", c.ListComboAddr).Methods("GET")
+	router.HandleFunc("/addr/delete/{id}", c.DeleteAddr).Methods("DELETE")
 	router.HandleFunc("/purc", c.ListPurc).Methods("GET")
 	router.HandleFunc("/purc/view/{id}", c.ViewPurc).Methods("GET")
 	router.HandleFunc("/purc/create", c.CreatePurc).Methods("POST")

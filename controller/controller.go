@@ -18,7 +18,9 @@ type Controller interface {
 	ViewModel(id int64) map[string]interface{}
 	ListModel(param *utils.Param) map[string]interface{}
 	UpdateModel() map[string]interface{}
+	DeleteModel(id int64) map[string]interface{}
 	FNew() functions.SQLFunction
+	FDelete() functions.SQLFunction
 }
 
 func CreateModelAction(controller Controller, w http.ResponseWriter, r *http.Request) {
@@ -53,6 +55,15 @@ func UpdateModelAction(controller Controller, w http.ResponseWriter, r *http.Req
 		return
 	}
 	resp := controller.UpdateModel()
+	utils.Respond(w, resp)
+}
+
+func DeleteModelAction(controller Controller, w http.ResponseWriter, r *http.Request) {
+	id, err := GetInt64Param("id", w, r)
+	if err != nil {
+		return
+	}
+	resp := controller.DeleteModel(int64(id))
 	utils.Respond(w, resp)
 }
 

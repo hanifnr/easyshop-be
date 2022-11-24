@@ -44,6 +44,10 @@ func (passportController *PassportController) FNew() functions.SQLFunction {
 	return nil
 }
 
+func (passportController *PassportController) FDelete() functions.SQLFunction {
+	return nil
+}
+
 func (passportController *PassportController) CreateModel() map[string]interface{} {
 
 	if retval := CreateModel(passportController, func(m model.Model) {}); retval.ErrCode != 0 {
@@ -77,6 +81,10 @@ func (passportController *PassportController) UpdateModel() map[string]interface
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, retModel)
+}
+
+func (passportController *PassportController) DeleteModel(id int64) map[string]interface{} {
+	return nil
 }
 
 func (passportController *PassportController) ListModel(param *utils.Param) map[string]interface{} {

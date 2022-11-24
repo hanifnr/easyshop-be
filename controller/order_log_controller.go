@@ -39,6 +39,10 @@ func (orderLogController *OrderLogController) FNew() functions.SQLFunction {
 	return nil
 }
 
+func (orderLogController *OrderLogController) FDelete() functions.SQLFunction {
+	return nil
+}
+
 func (orderLogController *OrderLogController) CreateModel() map[string]interface{} {
 
 	if retval := CreateModel(orderLogController, func(m model.Model) {}); retval.ErrCode != 0 {
@@ -61,6 +65,10 @@ func (orderLogController *OrderLogController) UpdateModel() map[string]interface
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, retModel)
+}
+
+func (orderLogController *OrderLogController) DeleteModel(id int64) map[string]interface{} {
+	return nil
 }
 
 func (orderLogController *OrderLogController) ListModel(param *utils.Param) map[string]interface{} {

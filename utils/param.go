@@ -23,6 +23,7 @@ type Param struct {
 	PhoneNumber *string
 	CountryCode *string
 	IsActive    *bool
+	IsDelete    *bool
 	OrderId     *int64
 }
 
@@ -40,6 +41,7 @@ func ProcessParam(r *http.Request) *Param {
 	paramPhoneNumber := ParamToString(r.URL.Query().Get("phone_number"))
 	paramCountryCode := ParamToString(r.URL.Query().Get("country_code"))
 	paramIsActive := ParamToBool(r.URL.Query().Get("is_active"))
+	paramIsDelete := ParamToBool(r.URL.Query().Get("is_delete"))
 	paramOrderId := ParamToInt64(r.URL.Query().Get("order_id"))
 
 	return &Param{
@@ -56,6 +58,7 @@ func ProcessParam(r *http.Request) *Param {
 		PhoneNumber: paramPhoneNumber,
 		CountryCode: paramCountryCode,
 		IsActive:    paramIsActive,
+		IsDelete:    paramIsDelete,
 		OrderId:     paramOrderId,
 	}
 }
@@ -93,6 +96,9 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.IsActive != nil {
 		db.Where("is_active = ?", param.IsActive)
+	}
+	if param.IsDelete != nil {
+		db.Where("is_delete = ?", param.IsDelete)
 	}
 	if param.OrderId != nil {
 		db.Where("order_id = ?", param.OrderId)

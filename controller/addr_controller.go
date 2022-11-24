@@ -24,6 +24,11 @@ var ViewAddr = func(w http.ResponseWriter, r *http.Request) {
 	ViewModelAction(addrController, w, r)
 }
 
+var DeleteAddr = func(w http.ResponseWriter, r *http.Request) {
+	addrController := &AddrController{}
+	DeleteModelAction(addrController, w, r)
+}
+
 var ListAddr = func(w http.ResponseWriter, r *http.Request) {
 	addrController := &AddrController{}
 	ListModelAction(addrController, w, r)
@@ -54,6 +59,10 @@ func (addrController *AddrController) Model() model.Model {
 }
 
 func (addrController *AddrController) FNew() functions.SQLFunction {
+	return nil
+}
+
+func (addrController *AddrController) FDelete() functions.SQLFunction {
 	return nil
 }
 
@@ -96,6 +105,15 @@ func (addrController *AddrController) UpdateModel() map[string]interface{} {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, retModel)
+}
+
+func (addrController *AddrController) DeleteModel(id int64) map[string]interface{} {
+	if retval := DeleteModel(id, addrController, func(m model.Model) utils.StatusReturn {
+		return utils.StatusReturnOK()
+	}); retval.ErrCode != 0 {
+		utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.Message(true)
 }
 
 func (addrController *AddrController) ListModel(param *utils.Param) map[string]interface{} {

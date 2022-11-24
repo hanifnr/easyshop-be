@@ -34,6 +34,10 @@ type TimeField interface {
 	SetUpdatedAt(time time.Time)
 }
 
+type DeleteField interface {
+	SetIsDelete(isDelete bool)
+}
+
 type ModelExt interface {
 	SetValueModelExt(db *gorm.DB)
 }

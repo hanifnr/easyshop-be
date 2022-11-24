@@ -82,6 +82,34 @@ func UpdateModel(controller Controller, m model.Model, fUpdate func(modelSrc mod
 	return utils.StatusReturnOK(), m
 }
 
+func DeleteModel(id int64, controller Controller, fAction func(m model.Model) utils.StatusReturn) utils.StatusReturn {
+	db := utils.GetDB().Begin()
+	m := controller.Model()
+	fDelete := controller.FDelete()
+
+	if retval := ViewModel(id, m); retval.ErrCode != 0 {
+		return retval
+	}
+	if deleteField, ok := m.(model.DeleteField); ok {
+		deleteField.SetIsDelete(true)
+	}
+	if retval := fAction(m); retval.ErrCode != 0 {
+		return retval
+	}
+	if err := model.Save(m, db); err != nil {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
+	}
+	if fDelete != nil {
+		if retval := fDelete.Run(m, db); retval.ErrCode != 0 {
+			db.Rollback()
+			return retval
+		}
+	}
+	db.Commit()
+	return utils.StatusReturnOK()
+}
+
 func ListModel(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
 	return ListJoinModel(table, order, list, param, func(query *gorm.DB) {})
 }
@@ -121,13 +149,15 @@ func ProcessExtField(list interface{}, db *gorm.DB) {
 	}
 }
 
-func UpdateFieldModel(id int64, controller Controller, fAction func(m model.Model)) map[string]interface{} {
+func UpdateFieldModel(id int64, controller Controller, fAction func(m model.Model) utils.StatusReturn) map[string]interface{} {
 	db := utils.GetDB().Begin()
 	m := controller.Model()
 	if retval := ViewModel(id, m); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
-	fAction(m)
+	if retval := fAction(m); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
 	if err := model.Save(m, db); err != nil {
 		db.Rollback()
 		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())

@@ -60,3 +60,7 @@ func (addr *Addr) SetUpdatedAt(time time.Time) {
 func (addr *Addr) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("cust").Where("id = ?", addr.CustId).Scan(&addr.CustName)
 }
+
+func (addr *Addr) SetIsDelete(isDelete bool) {
+	addr.IsDelete = isDelete
+}

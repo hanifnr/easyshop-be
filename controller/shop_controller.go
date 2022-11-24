@@ -46,6 +46,10 @@ func (shopController *ShopController) FNew() functions.SQLFunction {
 	return nil
 }
 
+func (shopController *ShopController) FDelete() functions.SQLFunction {
+	return nil
+}
+
 func (shopController *ShopController) CreateModel() map[string]interface{} {
 	return nil
 }
@@ -59,6 +63,10 @@ func (shopController *ShopController) ViewModel(id int64) map[string]interface{}
 }
 
 func (shopController *ShopController) UpdateModel() map[string]interface{} {
+	return nil
+}
+
+func (shopController *ShopController) DeleteModel(id int64) map[string]interface{} {
 	return nil
 }
 

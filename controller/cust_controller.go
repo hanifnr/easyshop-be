@@ -56,6 +56,10 @@ func (custController *CustController) FNew() functions.SQLFunction {
 	return &functions.FCustNew{}
 }
 
+func (custController *CustController) FDelete() functions.SQLFunction {
+	return nil
+}
+
 func (custController *CustController) CreateModel() map[string]interface{} {
 
 	if retval := CreateModel(custController, func(m model.Model) {}); retval.ErrCode != 0 {
@@ -86,6 +90,10 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.MessageData(true, retModel)
+}
+
+func (custController *CustController) DeleteModel(id int64) map[string]interface{} {
+	return nil
 }
 
 func (custController *CustController) ListModel(param *utils.Param) map[string]interface{} {
