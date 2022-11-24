@@ -9,21 +9,21 @@ import (
 )
 
 type Order struct {
-	Id             int64     `json:"id"`
-	Trxno          string    `json:"trxno"`
-	Date           time.Time `json:"date"`
-	CustId         int64     `json:"cust_id"`
-	ProofLink      string    `json:"proof_link"`
-	PickDate       time.Time `json:"pick_date"`
-	TrackingNumber string    `json:"tracking_number"`
-	StatusCode     string    `json:"status_code"`
-	Total          float64   `json:"total" gorm:"DEFAULT:0"`
-	CreatedAt      time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
-	UpdatedAt      time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
-	IsDelete       bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
-	Passport       string    `json:"passport"`
-	AddrId         int64     `json:"addr_id"`
-	ArrivalDate    time.Time `json:"arrival_date"`
+	Id             int64      `json:"id"`
+	Trxno          string     `json:"trxno"`
+	Date           time.Time  `json:"date"`
+	CustId         int64      `json:"cust_id"`
+	ProofLink      string     `json:"proof_link"`
+	PickDate       *time.Time `json:"pick_date"`
+	TrackingNumber string     `json:"tracking_number"`
+	StatusCode     string     `json:"status_code"`
+	Total          float64    `json:"total" gorm:"DEFAULT:0"`
+	CreatedAt      time.Time  `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
+	UpdatedAt      time.Time  `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
+	IsDelete       bool       `json:"is_delete" gorm:"DEFAULT:FALSE"`
+	Passport       string     `json:"passport"`
+	AddrId         int64      `json:"addr_id"`
+	ArrivalDate    *time.Time `json:"arrival_date"`
 	OrderExt       `gorm:"-"`
 }
 
