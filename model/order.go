@@ -39,11 +39,10 @@ func (Order) TableName() string {
 
 func (order Order) Validate() error {
 	err := validation.Errors{
-		"Trxno":     validation.Validate(order.Trxno, validation.Required.Error(utils.FIELD_REQUIRED)),
-		"Date":      validation.Validate(order.Date, validation.Required.Error(utils.FIELD_REQUIRED)),
-		"Cust Id":   validation.Validate(order.CustId, validation.Required.Error(utils.FIELD_REQUIRED)),
-		"Pick Date": validation.Validate(order.PickDate, validation.Required.Error(utils.FIELD_REQUIRED)),
-		"Total":     validation.Validate(order.Total, validation.Required.Error(utils.FIELD_NOTNIL)),
+		"Trxno":   validation.Validate(order.Trxno, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Date":    validation.Validate(order.Date, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Cust Id": validation.Validate(order.CustId, validation.Required.Error(utils.FIELD_REQUIRED)),
+		"Total":   validation.Validate(order.Total, validation.Required.Error(utils.FIELD_NOTNIL)),
 	}.Filter()
 
 	return err
