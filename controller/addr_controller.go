@@ -111,7 +111,7 @@ func (addrController *AddrController) DeleteModel(id int64) map[string]interface
 	if retval := DeleteModel(id, addrController, func(m model.Model) utils.StatusReturn {
 		return utils.StatusReturnOK()
 	}); retval.ErrCode != 0 {
-		utils.MessageErr(false, retval.ErrCode, retval.Message)
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	return utils.Message(true)
 }
