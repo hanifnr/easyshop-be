@@ -9,7 +9,7 @@ import (
 type Purcd struct {
 	PurcId    int64   `json:"purc_id"`
 	Dno       int     `json:"dno"`
-	Productid string  `json:"productid"`
+	ProductId string  `json:"product_id"`
 	Name      string  `json:"name"`
 	OrderId   int64   `json:"order_id"`
 	OrderDno  int     `json:"order_dno"`

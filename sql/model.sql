@@ -179,7 +179,8 @@ ADD
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
 ALTER TABLE public.purcd ADD COLUMN productid VARCHAR; 
-ALTER TABLE public.purcd ADD COLUMN name VARCHAR; 
+ALTER TABLE public.purcd ADD COLUMN name VARCHAR;
+ALTER TABLE public.purcd RENAME COLUMN productid TO product_id;
 
 CREATE SEQUENCE public.wh_id_seq;
 CREATE TABLE public.wh(
