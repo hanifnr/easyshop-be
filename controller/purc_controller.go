@@ -62,14 +62,14 @@ func (purcController *PurcController) CreateTrans() map[string]interface{} {
 		for i := range purcController.Purcd {
 			purcd := &purcController.Purcd[i]
 			type OrderProduct struct {
-				Productid string
+				ProductId string
 				Name      string
 			}
 			orderProduct := &OrderProduct{}
-			if err := db.Select("productid,name").Table("orderd").Where("order_id=? AND dno=?", purcd.OrderId, purcd.Dno).Scan(&orderProduct).Error; err != nil {
+			if err := db.Select("product_id,name").Table("orderd").Where("order_id=? AND dno=?", purcd.OrderId, purcd.Dno).Scan(&orderProduct).Error; err != nil {
 				return err
 			}
-			purcd.Productid = orderProduct.Productid
+			purcd.ProductId = orderProduct.ProductId
 			purcd.Name = orderProduct.Name
 			purcController.Details = append(purcController.Details, &purcController.Purcd[i])
 		}
@@ -105,15 +105,15 @@ func (purcController *PurcController) UpdateTrans() map[string]interface{} {
 		for i := range purcController.Purcd {
 			purcd := &purcController.Purcd[i]
 			type OrderProduct struct {
-				productid string
-				name      string
+				ProductId string
+				Name      string
 			}
 			orderProduct := &OrderProduct{}
-			if err := db.Select("productid,name").Table("orderd").Where("order_id=? AND dno=?", purcd.OrderId, purcd.Dno).Scan(&orderProduct).Error; err != nil {
+			if err := db.Select("product_id,name").Table("orderd").Where("order_id=? AND dno=?", purcd.OrderId, purcd.Dno).Scan(&orderProduct).Error; err != nil {
 				return err
 			}
-			purcd.Productid = orderProduct.productid
-			purcd.Name = orderProduct.name
+			purcd.ProductId = orderProduct.ProductId
+			purcd.Name = orderProduct.Name
 			purcController.Details = append(purcController.Details, purcd)
 		}
 		return nil
