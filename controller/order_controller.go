@@ -6,7 +6,9 @@ import (
 	"easyshop/utils"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -60,6 +62,11 @@ var ListOrderd = func(w http.ResponseWriter, r *http.Request) {
 	orderController := &OrderController{}
 	resp := orderController.ListDetail(param)
 	utils.Respond(w, resp)
+}
+
+var UploadOrderProof = func(w http.ResponseWriter, r *http.Request) {
+	orderController := &OrderController{}
+	orderController.UploadOrderProof(w, r)
 }
 
 type OrderController struct {
@@ -174,4 +181,30 @@ func (orderController *OrderController) ListDetail(param *utils.Param) map[strin
 	return ListJoinModel("orderd", "order_id DESC,dno ASC", make([]*model.Orderd, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN \"order\" ON order_id = \"order\".id")
 	})
+}
+
+func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, r *http.Request) {
+	id, err := GetInt64Param("id", w, r)
+	if err != nil {
+		return
+	}
+	file, retval := utils.GetImageFile(w, r)
+	if retval.ErrCode != 0 {
+		utils.Respond(w, utils.MessageErr(false, retval.ErrCode, retval.Message))
+		return
+	}
+	imageUploader := utils.GetImageUploader()
+	currentTime := time.Now()
+	fileName := "payment-" + strconv.Itoa(int(id)) + "-" + currentTime.Format("20060102150405")
+	if err := imageUploader.UploadFile(file, fileName); err != nil {
+		utils.Respond(w, utils.MessageErr(false, utils.ErrIO, err.Error()))
+		return
+	}
+	resp := UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
+		order := m.(*model.Order)
+		order.ProofLink = fileName
+
+		return utils.StatusReturnOK()
+	})
+	utils.Respond(w, resp)
 }

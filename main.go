@@ -49,6 +49,7 @@ func main() {
 	router.HandleFunc("/order/track", c.TrackingNumber).Methods("PUT")
 	router.HandleFunc("/order/details", c.ListOrderd).Methods("GET")
 	router.HandleFunc("/order/log", c.ListOrderLog).Methods("GET")
+	router.HandleFunc("/order/proof/{id}", c.UploadOrderProof).Methods("POST")
 	router.HandleFunc("/passport", c.ListPassport).Methods("GET")
 	router.HandleFunc("/passport/view/{id}", c.ViewPassport).Methods("GET")
 	router.HandleFunc("/passport/create", c.CreatePassport).Methods("POST")

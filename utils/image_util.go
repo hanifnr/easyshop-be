@@ -1,23 +1,79 @@
 package utils
 
 import (
-	"io/ioutil"
+	"context"
+	"fmt"
+	"io"
+	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"time"
+
+	"cloud.google.com/go/storage"
 )
 
-func UploadFile(w http.ResponseWriter, r *http.Request) ([]byte, StatusReturn) {
-	r.ParseMultipartForm(10 << 20)
+const (
+	projectID  = "easy-shop-364408"
+	bucketName = "images-es-bucket"
+)
 
-	file, _, err := r.FormFile("image")
+type ClientUploader struct {
+	cl         *storage.Client
+	projectID  string
+	bucketName string
+	uploadPath string
+}
+
+var cl *storage.Client
+
+func init() {
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "/Users/hanifnr/.config/gcloud/application_default_credentials.json") // FILL IN WITH YOUR FILE PATH
+	client, err := storage.NewClient(context.Background())
 	if err != nil {
-		return nil, StatusReturn{ErrCode: ErrRequest, Message: err.Error()}
+		log.Fatalf("Failed to create client: %v", err)
 	}
-	defer file.Close()
 
-	fileBytes, err := ioutil.ReadAll(file)
+	cl = client
+}
+
+func GetImageUploader() *ClientUploader {
+	return &ClientUploader{
+		cl:         cl,
+		bucketName: bucketName,
+		projectID:  projectID,
+		uploadPath: "images/",
+	}
+}
+
+func GetImageFile(w http.ResponseWriter, r *http.Request) (multipart.File, StatusReturn) {
+	_, file, err := r.FormFile("image_file")
 	if err != nil {
 		return nil, StatusReturn{ErrCode: ErrIO, Message: err.Error()}
 	}
 
-	return fileBytes, StatusReturnOK()
+	blobFile, err := file.Open()
+	if err != nil {
+		return nil, StatusReturn{ErrCode: ErrIO, Message: err.Error()}
+	}
+
+	return blobFile, StatusReturnOK()
+}
+
+func (c *ClientUploader) UploadFile(file multipart.File, fileName string) error {
+	ctx := context.Background()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+
+	// Upload an object with storage.Writer.
+	wc := c.cl.Bucket(c.bucketName).Object(c.uploadPath + fileName).NewWriter(ctx)
+	if _, err := io.Copy(wc, file); err != nil {
+		return fmt.Errorf("io.Copy: %v", err)
+	}
+	if err := wc.Close(); err != nil {
+		return fmt.Errorf("Writer.Close: %v", err)
+	}
+
+	return nil
 }
