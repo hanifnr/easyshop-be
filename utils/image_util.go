@@ -7,7 +7,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -28,7 +27,7 @@ type ClientUploader struct {
 var cl *storage.Client
 
 func init() {
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "/Users/hanifnr/.config/gcloud/application_default_credentials.json") // FILL IN WITH YOUR FILE PATH
+	// os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "/Users/hanifnr/.config/gcloud/application_default_credentials.json")
 	client, err := storage.NewClient(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
