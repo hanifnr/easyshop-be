@@ -148,6 +148,8 @@ ADD
   NOT DEFERRABLE;
 ALTER TABLE public.purc ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.purc RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.purc DROP COLUMN status;
+ALTER TABLE public.purc ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
 
 CREATE TABLE public.purcd(
   purc_id BIGINT, 
@@ -204,6 +206,8 @@ ADD
   NOT DEFERRABLE;
 ALTER TABLE public.wh ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.wh RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.wh DROP COLUMN status;
+ALTER TABLE public.wh ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
 
 CREATE TABLE public.whd(
   wh_id BIGINT, 

@@ -49,8 +49,6 @@ func (whController *WhController) DetailsModel() []model.Model {
 
 func (whController *WhController) CreateTrans() map[string]interface{} {
 	if retval := CreateTrans(whController, func(db *gorm.DB) error {
-		wh := &whController.Wh
-		wh.Status = "P"
 		for i := range whController.Whd {
 			whd := &whController.Whd[i]
 			whController.Details = append(whController.Details, whd)

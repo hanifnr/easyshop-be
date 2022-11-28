@@ -5,7 +5,6 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"net/http"
-	"strings"
 
 	"gorm.io/gorm"
 )
@@ -30,13 +29,6 @@ var ListPurc = func(w http.ResponseWriter, r *http.Request) {
 	ListTransAction(purcController, w, r)
 }
 
-var HandlePurc = func(w http.ResponseWriter, r *http.Request) {
-	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
-		purcController := &PurcController{}
-		return purcController.HandlePurc(scu.Id, scu.Value)
-	})
-}
-
 type PurcController struct {
 	Purc    model.Purc    `json:"purc"`
 	Purcd   []model.Purcd `json:"purcd"`
@@ -57,8 +49,6 @@ func (purcController *PurcController) DetailsModel() []model.Model {
 
 func (purcController *PurcController) CreateTrans() map[string]interface{} {
 	if retval := CreateTrans(purcController, func(db *gorm.DB) error {
-		purc := &purcController.Purc
-		purc.Status = "P"
 		for i := range purcController.Purcd {
 			purcd := &purcController.Purcd[i]
 			type OrderProduct struct {
@@ -126,12 +116,4 @@ func (purcController *PurcController) UpdateTrans() map[string]interface{} {
 }
 func (purcController *PurcController) FNew() functions.SQLFunction {
 	return &functions.FPurcNew{}
-}
-
-func (purcController *PurcController) HandlePurc(id int64, status string) map[string]interface{} {
-	return UpdateFieldMaster(id, purcController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
-		purc := m.(*model.Purc)
-		purc.Status = strings.ToUpper(status)
-		return utils.StatusReturnOK()
-	})
 }

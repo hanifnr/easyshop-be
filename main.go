@@ -65,7 +65,6 @@ func main() {
 	router.HandleFunc("/purc/view/{id}", c.ViewPurc).Methods("GET")
 	router.HandleFunc("/purc/create", c.CreatePurc).Methods("POST")
 	router.HandleFunc("/purc/update", c.UpdatePurc).Methods("PUT")
-	router.HandleFunc("/purc/handle", c.HandlePurc).Methods("PUT")
 	router.HandleFunc("/wh", c.ListWh).Methods("GET")
 	router.HandleFunc("/wh/view/{id}", c.ViewWh).Methods("GET")
 	router.HandleFunc("/wh/create", c.CreateWh).Methods("POST")
