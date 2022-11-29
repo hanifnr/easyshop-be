@@ -17,6 +17,7 @@ type Purcd struct {
 	Qtywh     float32 `json:"qtywh" gorm:"DEFAULT:0"`
 	Price     float64 `json:"price" gorm:"DEFAULT:0"`
 	Subtotal  float64 `json:"subtotal" gorm:"DEFAULT:0"`
+	Imported  bool    `json:"imported" gorm:"DEFAULT:FALSE"`
 }
 
 func (Purcd) TableName() string {

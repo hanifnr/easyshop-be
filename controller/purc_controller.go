@@ -29,6 +29,13 @@ var ListPurc = func(w http.ResponseWriter, r *http.Request) {
 	ListTransAction(purcController, w, r)
 }
 
+var ListPurcd = func(w http.ResponseWriter, r *http.Request) {
+	param := utils.ProcessParam(r)
+	purcController := &PurcController{}
+	resp := purcController.ListDetail(param)
+	utils.Respond(w, resp)
+}
+
 type PurcController struct {
 	Purc    model.Purc    `json:"purc"`
 	Purcd   []model.Purcd `json:"purcd"`
@@ -116,4 +123,12 @@ func (purcController *PurcController) UpdateTrans() map[string]interface{} {
 }
 func (purcController *PurcController) FNew() functions.SQLFunction {
 	return &functions.FPurcNew{}
+}
+
+func (purcController *PurcController) ListDetail(param *utils.Param) map[string]interface{} {
+	imported := false
+	param.Imported = &imported
+	return ListJoinModel("purcd", "purc_id DESC,dno ASC", make([]*model.Purcd, 0), param, func(query *gorm.DB) {
+		query.Joins("JOIN purc ON purc_id = purc.id")
+	})
 }

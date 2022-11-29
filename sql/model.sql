@@ -13,8 +13,7 @@ CREATE TABLE public.cust(
   CONSTRAINT cust_pk PRIMARY KEY (id)
 );
 ALTER TABLE public.cust ALTER COLUMN isactive SET DEFAULT TRUE;
-ALTER TABLE public.cust ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
-ALTER TABLE public.cust RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.cust ADD COLUMN is_delete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.cust DROP COLUMN passport;
 ALTER TABLE public.cust DROP COLUMN status;
 ALTER TABLE public.cust RENAME COLUMN isactive TO is_active;
@@ -81,8 +80,7 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
-ALTER TABLE public.order ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
-ALTER TABLE public.order RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.order ADD COLUMN is_delete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.order ADD COLUMN passport VARCHAR;
 ALTER TABLE public.order ADD COLUMN addr_id BIGINT  ;
 ALTER TABLE public.order ADD COLUMN arrival_date TIMESTAMP;
@@ -146,8 +144,7 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
-ALTER TABLE public.purc ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
-ALTER TABLE public.purc RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.purc ADD COLUMN is_delete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.purc DROP COLUMN status;
 ALTER TABLE public.purc ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
 
@@ -183,6 +180,7 @@ ADD
 ALTER TABLE public.purcd ADD COLUMN productid VARCHAR; 
 ALTER TABLE public.purcd ADD COLUMN name VARCHAR;
 ALTER TABLE public.purcd RENAME COLUMN productid TO product_id;
+ALTER TABLE public.purcd ADD COLUMN imported BOOLEAN DEFAULT FALSE;
 
 CREATE SEQUENCE public.wh_id_seq;
 CREATE TABLE public.wh(
@@ -204,8 +202,7 @@ ADD
   ON DELETE RESTRICT 
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
-ALTER TABLE public.wh ADD COLUMN isdelete BOOLEAN DEFAULT FALSE;
-ALTER TABLE public.wh RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.wh ADD COLUMN is_delete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.wh DROP COLUMN status;
 ALTER TABLE public.wh ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
 
