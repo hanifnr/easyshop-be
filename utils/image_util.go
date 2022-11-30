@@ -76,3 +76,13 @@ func (c *ClientUploader) UploadFile(file multipart.File, fileName string) error 
 
 	return nil
 }
+
+func GenerateSignedUrl(objName string) string {
+	url, err := cl.Bucket(bucketName).SignedURL(objName, &storage.SignedURLOptions{
+		GoogleAccessID: "hanif.nr11@gmail.com",
+	})
+	if err != nil {
+		// TODO: Handle error.
+	}
+	return url
+}
