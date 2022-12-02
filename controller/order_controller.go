@@ -69,6 +69,11 @@ var UploadOrderProof = func(w http.ResponseWriter, r *http.Request) {
 	orderController.UploadOrderProof(w, r)
 }
 
+var LoadOrderProof = func(w http.ResponseWriter, r *http.Request) {
+	orderController := &OrderController{}
+	orderController.LoadOrderProof(w, r)
+}
+
 type OrderController struct {
 	Order   model.Order    `json:"order"`
 	Orderd  []model.Orderd `json:"orderd"`
@@ -206,5 +211,25 @@ func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, 
 
 		return utils.StatusReturnOK()
 	})
+	utils.Respond(w, resp)
+}
+
+func (orderController *OrderController) LoadOrderProof(w http.ResponseWriter, r *http.Request) {
+	id, err := GetInt64Param("id", w, r)
+	if err != nil {
+		return
+	}
+	order := &orderController.Order
+	if retval := ViewModel(id, order); retval.ErrCode != 0 {
+		utils.Respond(w, utils.MessageErr(false, retval.ErrCode, retval.Message))
+		return
+	}
+	url, retval := utils.GenerateSignedUrl(order.ProofLink)
+	if retval.ErrCode != 0 {
+		utils.Respond(w, utils.MessageErr(false, retval.ErrCode, retval.Message))
+		return
+	}
+	resp := make(map[string]interface{})
+	resp["url"] = url
 	utils.Respond(w, resp)
 }

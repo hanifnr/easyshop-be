@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 const (
 	projectID  = "easy-shop-364408"
 	bucketName = "images-es-bucket"
+	path       = "/images"
 )
 
 type ClientUploader struct {
@@ -41,7 +43,7 @@ func GetImageUploader() *ClientUploader {
 		cl:         cl,
 		bucketName: bucketName,
 		projectID:  projectID,
-		uploadPath: "images/",
+		uploadPath: path,
 	}
 }
 
@@ -77,12 +79,22 @@ func (c *ClientUploader) UploadFile(file multipart.File, fileName string) error 
 	return nil
 }
 
-func GenerateSignedUrl(objName string) string {
-	url, err := cl.Bucket(bucketName).SignedURL(objName, &storage.SignedURLOptions{
-		GoogleAccessID: "hanif.nr11@gmail.com",
-	})
+func GenerateSignedUrl(objName string) (string, StatusReturn) {
+	pkey, err := ioutil.ReadFile("storage.pem")
 	if err != nil {
-		// TODO: Handle error.
+		return "", StatusReturn{ErrCode: ErrIO, Message: err.Error()}
 	}
-	return url
+	opts := &storage.SignedURLOptions{
+		GoogleAccessID: "storage-service@easy-shop-364408.iam.gserviceaccount.com",
+		PrivateKey:     pkey,
+		Scheme:         storage.SigningSchemeV4,
+		Method:         "GET",
+		Expires:        time.Now().Add(15 * time.Minute),
+	}
+
+	url, err := cl.Bucket(bucketName+path).SignedURL(objName, opts)
+	if err != nil {
+		return "", StatusReturn{ErrCode: ErrIO, Message: err.Error()}
+	}
+	return url, StatusReturnOK()
 }
