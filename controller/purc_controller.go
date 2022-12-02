@@ -99,6 +99,7 @@ func (purcController *PurcController) UpdateTrans() map[string]interface{} {
 		purcSrc.Date = purcTemp.Date
 		purcSrc.ShopId = purcTemp.ShopId
 		purcSrc.Total = purcTemp.Total
+		purcSrc.Refno = purcTemp.Refno
 		for i := range purcController.Purcd {
 			purcd := &purcController.Purcd[i]
 			type OrderProduct struct {

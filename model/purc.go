@@ -18,6 +18,7 @@ type Purc struct {
 	UpdatedAt time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 	IsDelete  bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
 	IsActive  bool      `json:"is_active" gorm:"DEFAULT:TRUE"`
+	Refno     string    `json:"refno"`
 	PurcExt   `gorm:"-"`
 }
 

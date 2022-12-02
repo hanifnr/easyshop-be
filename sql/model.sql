@@ -147,6 +147,7 @@ ADD
 ALTER TABLE public.purc ADD COLUMN is_delete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.purc DROP COLUMN status;
 ALTER TABLE public.purc ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.purc ADD COLUMN refno VARCHAR;
 
 CREATE TABLE public.purcd(
   purc_id BIGINT, 
