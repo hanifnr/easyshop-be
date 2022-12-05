@@ -5,6 +5,7 @@ import (
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"gorm.io/gorm"
 )
 
 type Passport struct {
@@ -17,6 +18,10 @@ type Passport struct {
 	CreatedAt       time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt       time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 	IsDelete        bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
+	PassportExt     `gorm:"-"`
+}
+type PassportExt struct {
+	CustName string `json:"cust_name"`
 }
 
 func (passport Passport) ID() int64 {
@@ -44,4 +49,8 @@ func (passport *Passport) SetCreatedAt(time time.Time) {
 
 func (passport *Passport) SetUpdatedAt(time time.Time) {
 	passport.UpdatedAt = time
+}
+
+func (passport *Passport) SetValueModelExt(db *gorm.DB) {
+	db.Select("name").Table("cust").Where("id = ?", passport.CustId).Scan(&passport.CustName)
 }
