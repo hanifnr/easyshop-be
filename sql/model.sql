@@ -265,6 +265,11 @@ FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE C
 NOT DEFERRABLE;
 CREATE UNIQUE INDEX passport_cust_id_index ON public.passport (cust_id);
 ALTER TABLE public.passport RENAME COLUMN isdelete TO is_delete;
+ALTER TABLE public.passport DROP COLUMN name;
+ALTER TABLE public.passport DROP COLUMN country_code;
+ALTER TABLE public.passport DROP COLUMN issue_date;
+ALTER TABLE public.passport DROP COLUMN exp_date;
+ALTER TABLE public.passport ADD COLUMN status_residence VARCHAR;
 
 CREATE SEQUENCE public.addr_id_seq;
 CREATE TABLE public.addr(
@@ -324,3 +329,14 @@ ALTER TABLE public.order_log
 ADD CONSTRAINT order_log_rel_status_fk
 FOREIGN KEY (status_code) REFERENCES public.status (code) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
+
+CREATE SEQUENCE public.email_verif_id_seq;
+CREATE TABLE public.email_verif(
+  id BIGINT NOT NULL DEFAULT nextval('public.email_verif_id_seq'),
+	email         VARCHAR NOT NULL,
+	verif_code    VARCHAR,
+	verified      BOOLEAN,
+	verified_at   TIMESTAMP,
+	generated_at  TIMESTAMP,
+  CONSTRAINT email_verif_pk PRIMARY KEY (id)
+);

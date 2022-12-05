@@ -31,7 +31,7 @@ func QueryListFind(table, order string, list *interface{}, param *Param, fJoin f
 	}
 	fJoin(query)
 	param.ProcessFilter(query)
-	query.Find(list)
+	query.Debug().Find(list)
 
 	if err := query.Error; err != nil {
 		return nil, err

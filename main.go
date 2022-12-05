@@ -36,6 +36,8 @@ func main() {
 	router.HandleFunc("/cust/create", c.CreateCust).Methods("POST")
 	router.HandleFunc("/cust/update", c.UpdateCust).Methods("PUT")
 	router.HandleFunc("/cust/combo", c.ListComboCust).Methods("GET")
+	router.HandleFunc("/cust/email/register", c.RegisterEmail).Methods("POST")
+	router.HandleFunc("/cust/email/verify", c.VerifyEmail).Methods("POST")
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/view/{id}", c.ViewShop).Methods("GET")
 	router.HandleFunc("/shop/combo", c.ListComboShop).Methods("GET")

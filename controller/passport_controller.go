@@ -69,13 +69,10 @@ func (passportController *PassportController) UpdateModel() map[string]interface
 		passportSrc := modelSrc.(*model.Passport)
 		passportTemp := modelTemp.(*model.Passport)
 
-		passportSrc.Name = passportTemp.Name
-		passportSrc.CountryCode = passportTemp.CountryCode
 		passportSrc.Number = passportTemp.Number
 		passportSrc.Nationality = passportTemp.Nationality
 		passportSrc.BirthDate = passportTemp.BirthDate
-		passportSrc.IssueDate = passportTemp.IssueDate
-		passportSrc.ExpDate = passportTemp.ExpDate
+		passportSrc.StatusResidence = passportTemp.StatusResidence
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
