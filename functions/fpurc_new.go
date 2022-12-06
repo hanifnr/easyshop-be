@@ -19,7 +19,9 @@ func (f FPurcNew) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 			purcd.Qty, purcd.OrderId, purcd.OrderDno).Error; err != nil {
 			return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
 		}
+		if err := db.Exec("UPDATE public.order SET status_code = 'IP' WHERE id = ?", purcd.OrderId).Error; err != nil {
+			return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
+		}
 	}
-
 	return utils.StatusReturnOK()
 }

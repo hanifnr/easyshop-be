@@ -6,6 +6,7 @@ import (
 	"easyshop/utils"
 	"encoding/json"
 	"net/http"
+	"runtime"
 	"time"
 )
 
@@ -64,6 +65,7 @@ func (emailVerifController *EmailVerifController) CreateModel() map[string]inter
 		}); retval.ErrCode != 0 {
 			return utils.MessageErr(false, retval.ErrCode, retval.Message)
 		}
+		SendOtp(emailVerif.Email, emailVerif.VerifCode)
 		return utils.Message(true)
 	}
 }
@@ -84,6 +86,8 @@ func (emailVerifController *EmailVerifController) UpdateModel() map[string]inter
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
+	emailVerif := emailVerifController.EmailVerif
+	SendOtp(emailVerif.Email, emailVerif.VerifCode)
 	return utils.Message(true)
 }
 
@@ -136,4 +140,14 @@ func (emailVerifController *EmailVerifController) VerifyEmail(w http.ResponseWri
 		utils.Respond(w, utils.MessageErr(false, utils.ErrExist, "Email not yet registered!"))
 	}
 	db.Commit()
+}
+
+func SendOtp(to, code string) {
+	templateData := struct {
+		Code string
+	}{
+		code,
+	}
+	runtime.GOMAXPROCS(1)
+	go utils.SendEmailOtp(to, templateData)
 }
