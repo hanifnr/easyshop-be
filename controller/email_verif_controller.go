@@ -106,14 +106,14 @@ func (emailVerifController *EmailVerifController) ViewModel(id int64) map[string
 }
 
 func (emailVerifController *EmailVerifController) UpdateModel() map[string]interface{} {
-	retval, _ := UpdateModel(emailVerifController, &model.EmailVerif{}, func(modelSrc, modelTemp model.Model) {
+	retval, m := UpdateModel(emailVerifController, &model.EmailVerif{}, func(modelSrc, modelTemp model.Model) {
 		emailVerif := modelSrc.(*model.EmailVerif)
 		emailVerif.GenerateCode(emailVerifController.Mode)
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
-	emailVerif := emailVerifController.EmailVerif
+	emailVerif := m.(*model.EmailVerif)
 	if emailVerifController.Mode == model.EMAIL_VERIF_REGISTER {
 		SendOtp(emailVerif.Email, emailVerif.VerifCode)
 	} else if emailVerifController.Mode == model.EMAIL_VERIF_AUTH {
