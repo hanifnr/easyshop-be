@@ -114,7 +114,11 @@ func (emailVerifController *EmailVerifController) UpdateModel() map[string]inter
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	emailVerif := emailVerifController.EmailVerif
-	SendOtp(emailVerif.Email, emailVerif.VerifCode)
+	if emailVerifController.Mode == model.EMAIL_VERIF_REGISTER {
+		SendOtp(emailVerif.Email, emailVerif.VerifCode)
+	} else if emailVerifController.Mode == model.EMAIL_VERIF_AUTH {
+		SendOtp(emailVerif.Email, emailVerif.AuthCode)
+	}
 	return utils.Message(true)
 }
 
