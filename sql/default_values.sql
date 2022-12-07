@@ -175,6 +175,15 @@ VALUES
     5,
     NOW(),
     NOW()
+  ),
+  (
+    'Easy Shop"',
+    'logo_easyshop.png.png',
+    'https://www.easyshop-jp.com/',
+    'https://www.easyshop-jp.com/product/',
+    1,
+    NOW(),
+    NOW()
   );
 
   INSERT INTO ncount (code,name,number,length)

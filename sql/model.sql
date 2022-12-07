@@ -51,10 +51,10 @@ ADD
   ON UPDATE CASCADE 
   NOT DEFERRABLE;
 ALTER TABLE public.shop ADD COLUMN scrape_image VARCHAR;
-ALTER TABLE public.shop ADD COLUMN isactive BOOLEAN;
+ALTER TABLE public.shop ADD COLUMN is_active BOOLEAN;
 ALTER TABLE public.shop RENAME COLUMN scrap_item_name TO scrape_item_name;
 ALTER TABLE public.shop RENAME COLUMN scrap_item_price TO scrape_item_price;
-ALTER TABLE public.shop RENAME COLUMN isactive TO is_active;
+ALTER TABLE public.shop ADD COLUMN idx BIGINT;
 
 CREATE SEQUENCE public.order_id_seq;
 CREATE TABLE public.order(
@@ -340,3 +340,4 @@ CREATE TABLE public.email_verif(
 	generated_at  TIMESTAMP,
   CONSTRAINT email_verif_pk PRIMARY KEY (id)
 );
+ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;

@@ -2,12 +2,13 @@ package model
 
 import (
 	"easyshop/utils"
-	"math/rand"
-	"strconv"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 )
+
+const EMAIL_VERIF_REGISTER = 0
+const EMAIL_VERIF_AUTH = 1
 
 type EmailVerif struct {
 	Id          int64     `json:"id" gorm:"primary_key;auto_increment"`
@@ -16,6 +17,7 @@ type EmailVerif struct {
 	Verified    bool      `json:"verified"`
 	VerifiedAt  time.Time `json:"verified_at"`
 	GeneratedAt time.Time `json:"generated_at"`
+	AuthCode    string    `json:"auth_code"`
 }
 
 func (email EmailVerif) ID() int64 {
@@ -34,7 +36,11 @@ func (email EmailVerif) Validate() error {
 	return err
 }
 
-func (email *EmailVerif) GenerateCode() {
-	email.VerifCode = strconv.Itoa(rand.Intn(10000))
+func (email *EmailVerif) GenerateCode(mode int) {
+	if mode == EMAIL_VERIF_REGISTER {
+		email.VerifCode = utils.RandInt(4)
+	} else if mode == EMAIL_VERIF_AUTH {
+		email.AuthCode = utils.RandInt(4)
+	}
 	email.GeneratedAt = time.Now()
 }

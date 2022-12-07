@@ -11,13 +11,18 @@ import (
 )
 
 var RegisterEmail = func(w http.ResponseWriter, r *http.Request) {
-	emailVerifController := &EmailVerifController{}
+	emailVerifController := &EmailVerifController{Mode: model.EMAIL_VERIF_REGISTER}
 	CreateModelAction(emailVerifController, w, r)
 }
 
 var UpdateEmailVerif = func(w http.ResponseWriter, r *http.Request) {
 	emailVerifController := &EmailVerifController{}
 	UpdateModelAction(emailVerifController, w, r)
+}
+
+var AuthEmail = func(w http.ResponseWriter, r *http.Request) {
+	emailVerifController := &EmailVerifController{Mode: model.EMAIL_VERIF_AUTH}
+	emailVerifController.AuthEmail(w, r)
 }
 
 var ViewEmailVerif = func(w http.ResponseWriter, r *http.Request) {
@@ -30,13 +35,19 @@ var ListEmailVerif = func(w http.ResponseWriter, r *http.Request) {
 	ListModelAction(emailVerifController, w, r)
 }
 
-var VerifyEmail = func(w http.ResponseWriter, r *http.Request) {
-	emailVerifController := &EmailVerifController{}
+var VerifyRegisterEmail = func(w http.ResponseWriter, r *http.Request) {
+	emailVerifController := &EmailVerifController{Mode: model.EMAIL_VERIF_REGISTER}
+	emailVerifController.VerifyEmail(w, r)
+}
+
+var VerifyAuthEmail = func(w http.ResponseWriter, r *http.Request) {
+	emailVerifController := &EmailVerifController{Mode: model.EMAIL_VERIF_AUTH}
 	emailVerifController.VerifyEmail(w, r)
 }
 
 type EmailVerifController struct {
 	EmailVerif model.EmailVerif
+	Mode       int
 }
 
 func (emailVerifController *EmailVerifController) Model() model.Model {
@@ -61,13 +72,29 @@ func (emailVerifController *EmailVerifController) CreateModel() map[string]inter
 		return emailVerifController.UpdateModel()
 	} else {
 		if retval := CreateModel(emailVerifController, func(m model.Model) {
-			emailVerif.GenerateCode()
+			emailVerif.GenerateCode(emailVerifController.Mode)
 		}); retval.ErrCode != 0 {
 			return utils.MessageErr(false, retval.ErrCode, retval.Message)
 		}
 		SendOtp(emailVerif.Email, emailVerif.VerifCode)
 		return utils.Message(true)
 	}
+}
+
+func (emailVerifController *EmailVerifController) AuthEmail(w http.ResponseWriter, r *http.Request) {
+	if err := json.NewDecoder(r.Body).Decode(emailVerifController.Model()); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	db := utils.GetDB()
+	emailVerif := &emailVerifController.EmailVerif
+	row := db.Where("UPPER(email) = UPPER(?) AND verified = TRUE", emailVerif.Email).Find(emailVerif).RowsAffected
+	if row > 0 {
+		utils.Respond(w, emailVerifController.UpdateModel())
+		return
+	}
+	utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "This email not yet verified!"))
 }
 
 func (emailVerifController *EmailVerifController) ViewModel(id int64) map[string]interface{} {
@@ -81,7 +108,7 @@ func (emailVerifController *EmailVerifController) ViewModel(id int64) map[string
 func (emailVerifController *EmailVerifController) UpdateModel() map[string]interface{} {
 	retval, _ := UpdateModel(emailVerifController, &model.EmailVerif{}, func(modelSrc, modelTemp model.Model) {
 		emailVerif := modelSrc.(*model.EmailVerif)
-		emailVerif.GenerateCode()
+		emailVerif.GenerateCode(emailVerifController.Mode)
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
@@ -120,21 +147,29 @@ func (emailVerifController *EmailVerifController) VerifyEmail(w http.ResponseWri
 	emailData := &model.EmailVerif{}
 	row := db.Where("UPPER(email) = UPPER(?)", email.Email).Find(&emailData).RowsAffected
 	if row > 0 {
-		if emailData.Verified {
-			utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "This email has already verified!"))
-			return
-		}
-		if email.Code == emailData.VerifCode {
-			emailData.Verified = true
-			emailData.VerifiedAt = time.Now()
-			if err := model.Save(emailData, db); err != nil {
-				db.Rollback()
-				utils.Respond(w, utils.MessageErr(false, utils.ErrSQLCreate, err.Error()))
+		if emailVerifController.Mode == model.EMAIL_VERIF_REGISTER {
+			if emailData.Verified {
+				utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "This email has already verified!"))
 				return
 			}
-			utils.Respond(w, utils.Message(true))
-		} else {
-			utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "Wrong verification code!"))
+			if email.Code == emailData.VerifCode {
+				emailData.Verified = true
+				emailData.VerifiedAt = time.Now()
+				if err := model.Save(emailData, db); err != nil {
+					db.Rollback()
+					utils.Respond(w, utils.MessageErr(false, utils.ErrSQLCreate, err.Error()))
+					return
+				}
+				utils.Respond(w, utils.Message(true))
+			} else {
+				utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "Wrong verification code!"))
+			}
+		} else if emailVerifController.Mode == model.EMAIL_VERIF_AUTH {
+			if email.Code == emailData.AuthCode {
+				utils.Respond(w, utils.Message(true))
+			} else {
+				utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "Wrong authentication code!"))
+			}
 		}
 	} else {
 		utils.Respond(w, utils.MessageErr(false, utils.ErrExist, "Email not yet registered!"))

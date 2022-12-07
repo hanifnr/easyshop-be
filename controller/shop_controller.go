@@ -71,9 +71,9 @@ func (shopController *ShopController) DeleteModel(id int64) map[string]interface
 }
 
 func (shopController *ShopController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("shop", "id ASC", make([]*model.Shop, 0), param)
+	return ListModel("shop", "idx ASC", make([]*model.Shop, 0), param)
 }
 
 func ComboShop(page int, param *utils.Param) map[string]interface{} {
-	return GetCombo(page, "shop", "id ASC", param)
+	return GetCombo(page, "shop", "idx ASC", param)
 }

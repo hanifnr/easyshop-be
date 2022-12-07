@@ -5,6 +5,7 @@ import (
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"gorm.io/gorm"
 )
 
 type Wh struct {
@@ -16,6 +17,11 @@ type Wh struct {
 	UpdatedAt time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
 	IsDelete  bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
 	IsActive  bool      `json:"is_active" gorm:"DEFAULT:TRUE"`
+	WhExt     `gorm:"-"`
+}
+
+type WhExt struct {
+	ShopName string `json:"shop_name"`
 }
 
 func (Wh) TableName() string {
@@ -50,4 +56,8 @@ func (wh *Wh) SetCreatedAt(time time.Time) {
 
 func (wh *Wh) SetUpdatedAt(time time.Time) {
 	wh.UpdatedAt = time
+}
+
+func (wh *Wh) SetValueModelExt(db *gorm.DB) {
+	db.Select("name").Table("shop").Where("id = ?", wh.ShopId).Scan(&wh.ShopName)
 }
