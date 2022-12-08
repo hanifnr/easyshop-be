@@ -95,8 +95,11 @@ func ViewModelCust(passportController *PassportController, w http.ResponseWriter
 	}
 	db := utils.GetDB()
 	passport := &passportController.Passport
-	if err := db.Where("cust_id = ?", custId).Find(passport).Error; err != nil {
+	query := db.Where("cust_id = ?", custId).Find(passport)
+	if err := query.Error; err != nil {
 		utils.Respond(w, utils.MessageErr(false, utils.ErrSQLLoad, err.Error()))
+	} else if query.RowsAffected == 0 {
+		utils.Respond(w, utils.MessageErr(false, utils.ErrSQLLoad, utils.RESPONSE_NOT_FOUND))
 	} else {
 		utils.Respond(w, utils.MessageData(true, passport))
 	}

@@ -56,3 +56,5 @@ const ErrSQLUpdate = 1007
 const ErrExist = 1008
 const ErrRequest = 1009
 const ErrIO = 1010
+
+const RESPONSE_NOT_FOUND = "data not found"
