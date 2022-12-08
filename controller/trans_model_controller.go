@@ -134,7 +134,7 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 func ListTrans(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListFind(table, order, &list, param, func(query *gorm.DB) {})
+	respPage, err := utils.QueryListFind(table, order, &list, param, func(query *gorm.DB) {}, func(query *gorm.DB) {})
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}

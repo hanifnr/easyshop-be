@@ -223,5 +223,6 @@ VALUES
 ('PR', 'Payment Rejected'),
 ('PA', 'Payment Accepted'),
 ('IP', 'Purchasing Items'),
+('IC', 'Purchasing Items Complete'),
 ('IR', 'Items Ready To Ship'),
 ('IS', 'Items Shipped');

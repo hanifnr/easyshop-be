@@ -131,5 +131,5 @@ func (purcController *PurcController) ListDetail(param *utils.Param) map[string]
 	param.Imported = &imported
 	return ListJoinModel("purcd", "purc_id DESC,dno ASC", make([]*model.Purcd, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN purc ON purc_id = purc.id")
-	})
+	}, func(query *gorm.DB) {})
 }

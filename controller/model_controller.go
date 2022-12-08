@@ -111,13 +111,13 @@ func DeleteModel(id int64, controller Controller, fAction func(m model.Model) ut
 }
 
 func ListModel(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
-	return ListJoinModel(table, order, list, param, func(query *gorm.DB) {})
+	return ListJoinModel(table, order, list, param, func(query *gorm.DB) {}, func(query *gorm.DB) {})
 }
 
-func ListJoinModel(table, order string, list interface{}, param *utils.Param, fJoin func(query *gorm.DB)) map[string]interface{} {
+func ListJoinModel(table, order string, list interface{}, param *utils.Param, fJoin func(query *gorm.DB), fFilter func(query *gorm.DB)) map[string]interface{} {
 	db := utils.GetDB()
 
-	respPage, err := utils.QueryListFind(table, order, &list, param, fJoin)
+	respPage, err := utils.QueryListFind(table, order, &list, param, fJoin, fFilter)
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())
 	}
