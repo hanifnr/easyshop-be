@@ -93,5 +93,5 @@ func (whController *WhController) UpdateTrans() map[string]interface{} {
 
 }
 func (whController *WhController) FNew() functions.SQLFunction {
-	return nil
+	return &functions.FWhNew{}
 }
