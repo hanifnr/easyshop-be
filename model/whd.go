@@ -4,6 +4,7 @@ import (
 	"easyshop/utils"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"gorm.io/gorm"
 )
 
 type Whd struct {
@@ -12,6 +13,11 @@ type Whd struct {
 	PurcId  int64   `json:"purc_id"`
 	PurcDno int     `json:"purc_dno"`
 	Qty     float32 `json:"qty" gorm:"DEFAULT:0"`
+	WhdExt  `gorm:"-"`
+}
+
+type WhdExt struct {
+	OrderTrxno string `json:"order_trxno"`
 }
 
 func (Whd) TableName() string {
@@ -34,4 +40,8 @@ func (whd Whd) ID() int64 {
 
 func (whd *Whd) SetMasterId(id int64) {
 	whd.WhId = id
+}
+
+func (whd *Whd) SetValueModelExt(db *gorm.DB) {
+	db.Select("trxno").Table("order").Where("id = (SELECT order_id FROM purcd WHERE purc_id = ? AND dno = ?)", whd.PurcId, whd.PurcDno).Scan(&whd.OrderTrxno)
 }

@@ -87,6 +87,12 @@ func ViewTrans(id int64, controller TransController, fLoadDetail func(db *gorm.D
 	if v, ok := controller.MasterModel().(model.ModelExt); ok {
 		v.SetValueModelExt(db)
 	}
+
+	for _, d := range controller.DetailsModel() {
+		if v, ok := d.(model.ModelExt); ok {
+			v.SetValueModelExt(db)
+		}
+	}
 	return utils.StatusReturnOK()
 }
 

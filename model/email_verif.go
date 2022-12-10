@@ -18,6 +18,7 @@ type EmailVerif struct {
 	VerifiedAt  time.Time `json:"verified_at"`
 	GeneratedAt time.Time `json:"generated_at"`
 	AuthCode    string    `json:"auth_code"`
+	WaitTime    int       `json:"wait_time"`
 }
 
 func (email EmailVerif) ID() int64 {
@@ -43,4 +44,21 @@ func (email *EmailVerif) GenerateCode(mode int) {
 		email.AuthCode = utils.RandInt(4)
 	}
 	email.GeneratedAt = time.Now()
+	email.setWaitTime()
+}
+
+func (email *EmailVerif) setWaitTime() {
+	listSecond := [6]int{0, 30, 60, 300, 600, 1800}
+	index, _ := utils.GetIndexSliceInt(email.WaitTime, listSecond)
+	if index < 6 {
+		email.WaitTime = listSecond[index+1]
+	}
+}
+
+func (email *EmailVerif) ValidateTime() (bool, string) {
+	strFormat := "2006-01-02 15:04:05"
+	currentTime := time.Now().Format(strFormat)
+	delayedTime := email.GeneratedAt.Add(time.Second * time.Duration(email.WaitTime)).Format(strFormat)
+
+	return currentTime > delayedTime, delayedTime
 }

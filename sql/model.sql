@@ -341,3 +341,4 @@ CREATE TABLE public.email_verif(
   CONSTRAINT email_verif_pk PRIMARY KEY (id)
 );
 ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;
+ALTER TABLE public.email_verif ADD COLUMN wait_time int;

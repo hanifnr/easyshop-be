@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/rand"
+	"errors"
 	"io"
 )
 
@@ -17,4 +18,13 @@ func RandInt(max int) string {
 		b[i] = table[int(b[i])%len(table)]
 	}
 	return string(b)
+}
+
+func GetIndexSliceInt(value int, slice [6]int) (int, error) {
+	for i, v := range slice {
+		if value == v {
+			return i, nil
+		}
+	}
+	return -1, errors.New("value not exist")
 }

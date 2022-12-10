@@ -80,6 +80,9 @@ func (purcController *PurcController) CreateTrans() map[string]interface{} {
 func (purcController *PurcController) ViewTrans(id int64) map[string]interface{} {
 	if retval := ViewTrans(id, purcController, func(db *gorm.DB) error {
 		err := db.Where("purc_id = ?", id).Find(&purcController.Purcd).Error
+		for i := range purcController.Purcd {
+			purcController.Details = append(purcController.Details, &purcController.Purcd[i])
+		}
 		return err
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)

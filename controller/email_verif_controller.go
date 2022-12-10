@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"runtime"
 	"time"
@@ -106,20 +107,25 @@ func (emailVerifController *EmailVerifController) ViewModel(id int64) map[string
 }
 
 func (emailVerifController *EmailVerifController) UpdateModel() map[string]interface{} {
-	retval, m := UpdateModel(emailVerifController, &model.EmailVerif{}, func(modelSrc, modelTemp model.Model) {
-		emailVerif := modelSrc.(*model.EmailVerif)
-		emailVerif.GenerateCode(emailVerifController.Mode)
-	})
-	if retval.ErrCode != 0 {
-		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	b, delayedTime := emailVerifController.EmailVerif.ValidateTime()
+	if b {
+		retval, m := UpdateModel(emailVerifController, &model.EmailVerif{}, func(modelSrc, modelTemp model.Model) {
+			emailVerif := modelSrc.(*model.EmailVerif)
+			emailVerif.GenerateCode(emailVerifController.Mode)
+		})
+		if retval.ErrCode != 0 {
+			return utils.MessageErr(false, retval.ErrCode, retval.Message)
+		}
+		emailVerif := m.(*model.EmailVerif)
+		if emailVerifController.Mode == model.EMAIL_VERIF_REGISTER {
+			SendOtp(emailVerif.Email, emailVerif.VerifCode)
+		} else if emailVerifController.Mode == model.EMAIL_VERIF_AUTH {
+			SendOtp(emailVerif.Email, emailVerif.AuthCode)
+		}
+		return utils.Message(true)
+	} else {
+		return utils.MessageErr(false, utils.ErrValidate, fmt.Sprintf("try again after %s", delayedTime))
 	}
-	emailVerif := m.(*model.EmailVerif)
-	if emailVerifController.Mode == model.EMAIL_VERIF_REGISTER {
-		SendOtp(emailVerif.Email, emailVerif.VerifCode)
-	} else if emailVerifController.Mode == model.EMAIL_VERIF_AUTH {
-		SendOtp(emailVerif.Email, emailVerif.AuthCode)
-	}
-	return utils.Message(true)
 }
 
 func (emailVerifController *EmailVerifController) DeleteModel(id int64) map[string]interface{} {
@@ -159,6 +165,7 @@ func (emailVerifController *EmailVerifController) VerifyEmail(w http.ResponseWri
 			if email.Code == emailData.VerifCode {
 				emailData.Verified = true
 				emailData.VerifiedAt = time.Now()
+				emailData.WaitTime = 0
 				if err := model.Save(emailData, db); err != nil {
 					db.Rollback()
 					utils.Respond(w, utils.MessageErr(false, utils.ErrSQLCreate, err.Error()))
@@ -170,6 +177,8 @@ func (emailVerifController *EmailVerifController) VerifyEmail(w http.ResponseWri
 			}
 		} else if emailVerifController.Mode == model.EMAIL_VERIF_AUTH {
 			if email.Code == emailData.AuthCode {
+				emailData.WaitTime = 0
+				db.Save(emailData)
 				utils.Respond(w, utils.Message(true))
 			} else {
 				utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "Wrong authentication code!"))

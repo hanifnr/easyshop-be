@@ -4,6 +4,7 @@ import (
 	"easyshop/utils"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"gorm.io/gorm"
 )
 
 type Purcd struct {
@@ -18,6 +19,11 @@ type Purcd struct {
 	Price     float64 `json:"price" gorm:"DEFAULT:0"`
 	Subtotal  float64 `json:"subtotal" gorm:"DEFAULT:0"`
 	Imported  bool    `json:"imported" gorm:"DEFAULT:FALSE"`
+	PurcdExt  `gorm:"-"`
+}
+
+type PurcdExt struct {
+	OrderTrxno string `json:"order_trxno"`
 }
 
 func (Purcd) TableName() string {
@@ -43,4 +49,8 @@ func (purcd Purcd) ID() int64 {
 
 func (purcd *Purcd) SetMasterId(id int64) {
 	purcd.PurcId = id
+}
+
+func (purcd *Purcd) SetValueModelExt(db *gorm.DB) {
+	db.Select("trxno").Table("order").Where("id = ?", purcd.OrderId).Scan(&purcd.OrderTrxno)
 }

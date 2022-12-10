@@ -63,6 +63,9 @@ func (whController *WhController) CreateTrans() map[string]interface{} {
 func (whController *WhController) ViewTrans(id int64) map[string]interface{} {
 	if retval := ViewTrans(id, whController, func(db *gorm.DB) error {
 		err := db.Where("wh_id = ?", id).Find(&whController.Whd).Error
+		for i := range whController.Whd {
+			whController.Details = append(whController.Details, &whController.Whd[i])
+		}
 		return err
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
