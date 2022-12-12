@@ -198,10 +198,25 @@ func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, 
 		utils.Respond(w, utils.MessageErr(false, retval.ErrCode, retval.Message))
 		return
 	}
-	imageUploader := utils.GetImageUploader()
+	imageWritter := utils.GetImageWritter()
 	currentTime := time.Now()
+
+	retval = ViewModel(id, &orderController.Order)
+	if retval.ErrCode != 0 {
+		utils.Respond(w, utils.MessageErr(false, retval.ErrCode, retval.Message))
+		return
+	} else {
+		proofLink := orderController.Order.ProofLink
+		if proofLink != "" {
+			if err := imageWritter.DeleteFile(proofLink); err != nil {
+				utils.Respond(w, utils.MessageErr(false, utils.ErrIO, err.Error()))
+				return
+			}
+		}
+	}
+
 	fileName := "payment-" + strconv.Itoa(int(id)) + "-" + currentTime.Format("20060102150405")
-	if err := imageUploader.UploadFile(file, fileName); err != nil {
+	if err := imageWritter.UploadFile(file, fileName); err != nil {
 		utils.Respond(w, utils.MessageErr(false, utils.ErrIO, err.Error()))
 		return
 	}

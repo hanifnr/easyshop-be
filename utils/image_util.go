@@ -16,14 +16,14 @@ import (
 const (
 	projectID  = "easy-shop-364408"
 	bucketName = "images-es-bucket"
-	path       = "/images"
+	path       = "images/"
 )
 
-type ClientUploader struct {
+type ClientWritter struct {
 	cl         *storage.Client
 	projectID  string
 	bucketName string
-	uploadPath string
+	path       string
 }
 
 var cl *storage.Client
@@ -38,12 +38,12 @@ func init() {
 	cl = client
 }
 
-func GetImageUploader() *ClientUploader {
-	return &ClientUploader{
+func GetImageWritter() *ClientWritter {
+	return &ClientWritter{
 		cl:         cl,
 		bucketName: bucketName,
 		projectID:  projectID,
-		uploadPath: path,
+		path:       path,
 	}
 }
 
@@ -61,19 +61,34 @@ func GetImageFile(w http.ResponseWriter, r *http.Request) (multipart.File, Statu
 	return blobFile, StatusReturnOK()
 }
 
-func (c *ClientUploader) UploadFile(file multipart.File, fileName string) error {
+func (c *ClientWritter) UploadFile(file multipart.File, fileName string) error {
 	ctx := context.Background()
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
 
 	// Upload an object with storage.Writer.
-	wc := c.cl.Bucket(c.bucketName).Object(c.uploadPath + fileName).NewWriter(ctx)
+	wc := c.cl.Bucket(c.bucketName).Object(c.path + fileName).NewWriter(ctx)
 	if _, err := io.Copy(wc, file); err != nil {
 		return fmt.Errorf("io.Copy: %v", err)
 	}
 	if err := wc.Close(); err != nil {
 		return fmt.Errorf("Writer.Close: %v", err)
+	}
+
+	return nil
+}
+
+func (c *ClientWritter) DeleteFile(fileName string) error {
+	ctx := context.Background()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+
+	o := c.cl.Bucket(c.bucketName).Object(c.path + fileName)
+
+	if err := o.Delete(ctx); err != nil {
+		return fmt.Errorf("Object(%q).Delete: %v", fileName, err)
 	}
 
 	return nil
