@@ -18,6 +18,12 @@ type Whd struct {
 
 type WhdExt struct {
 	OrderTrxno string `json:"order_trxno"`
+	PurcdWhd
+}
+
+type PurcdWhd struct {
+	ProductId string `json:"product_id"`
+	Name      string `json:"name"`
 }
 
 func (Whd) TableName() string {
@@ -44,4 +50,5 @@ func (whd *Whd) SetMasterId(id int64) {
 
 func (whd *Whd) SetValueModelExt(db *gorm.DB) {
 	db.Select("trxno").Table("order").Where("id = (SELECT order_id FROM purcd WHERE purc_id = ? AND dno = ?)", whd.PurcId, whd.PurcDno).Scan(&whd.OrderTrxno)
+	db.Select("product_id, name").Table("purcd").Where("purc_id = ? AND dno = ?", whd.PurcId, whd.PurcDno).Scan(&whd.PurcdWhd)
 }
