@@ -64,3 +64,7 @@ func (purc *Purc) SetUpdatedAt(time time.Time) {
 func (purc *Purc) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("shop").Where("id = ?", purc.ShopId).Scan(&purc.ShopName)
 }
+
+func (purc *Purc) SetIsDelete(isDelete bool) {
+	purc.IsDelete = isDelete
+}

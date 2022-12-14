@@ -73,3 +73,7 @@ func (order *Order) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("addr").Where("id = ?", order.AddrId).Scan(&order.AddrName)
 	db.Select("name").Table("status").Where("code = ?", order.StatusCode).Scan(&order.StatusName)
 }
+
+func (order *Order) SetIsDelete(isDelete bool) {
+	order.IsDelete = isDelete
+}
