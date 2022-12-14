@@ -19,6 +19,11 @@ var UpdatePurc = func(w http.ResponseWriter, r *http.Request) {
 	UpdateTransAction(purcController, w, r)
 }
 
+var DeletePurc = func(w http.ResponseWriter, r *http.Request) {
+	purcController := &PurcController{}
+	DeleteTransAction(purcController, w, r)
+}
+
 var ViewPurc = func(w http.ResponseWriter, r *http.Request) {
 	purcController := &PurcController{}
 	ViewTransAction(purcController, w, r)
@@ -125,13 +130,29 @@ func (purcController *PurcController) UpdateTrans() map[string]interface{} {
 	return utils.MessageData(true, purcController)
 
 }
+
+func (purcController *PurcController) DeleteTrans(id int64) map[string]interface{} {
+	if retval := DeleteTrans(id, purcController, func() utils.StatusReturn {
+		return utils.StatusReturnOK()
+	}); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.Message(true)
+}
+
 func (purcController *PurcController) FNew() functions.SQLFunction {
 	return &functions.FPurcNew{}
 }
 
+func (purcController *PurcController) FDelete() functions.SQLFunction {
+	return &functions.FPurcDelete{}
+}
+
 func (purcController *PurcController) ListDetail(param *utils.Param) map[string]interface{} {
 	imported := false
+	isDeleted := false
 	param.Imported = &imported
+	param.IsDelete = &isDeleted
 	return ListJoinModel("purcd", "purc_id DESC,dno ASC", make([]*model.Purcd, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN purc ON purc_id = purc.id")
 	}, func(query *gorm.DB) {})

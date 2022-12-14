@@ -16,7 +16,9 @@ type TransController interface {
 	ViewTrans(id int64) map[string]interface{}
 	ListTrans(param *utils.Param) map[string]interface{}
 	UpdateTrans() map[string]interface{}
+	DeleteTrans(id int64) map[string]interface{}
 	FNew() functions.SQLFunction
+	FDelete() functions.SQLFunction
 	MasterField() string
 }
 
@@ -52,6 +54,15 @@ func UpdateTransAction(controller TransController, w http.ResponseWriter, r *htt
 		return
 	}
 	resp := controller.UpdateTrans()
+	utils.Respond(w, resp)
+}
+
+func DeleteTransAction(controller TransController, w http.ResponseWriter, r *http.Request) {
+	id, err := GetInt64Param("id", w, r)
+	if err != nil {
+		return
+	}
+	resp := controller.DeleteTrans(int64(id))
 	utils.Respond(w, resp)
 }
 

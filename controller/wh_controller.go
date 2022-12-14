@@ -95,6 +95,20 @@ func (whController *WhController) UpdateTrans() map[string]interface{} {
 	return utils.MessageData(true, whController)
 
 }
+
+func (whController *WhController) DeleteTrans(id int64) map[string]interface{} {
+	if retval := DeleteTrans(id, whController, func() utils.StatusReturn {
+		return utils.StatusReturnOK()
+	}); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.Message(true)
+}
+
 func (whController *WhController) FNew() functions.SQLFunction {
 	return &functions.FWhNew{}
+}
+
+func (whController *WhController) FDelete() functions.SQLFunction {
+	return nil
 }

@@ -137,6 +137,37 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 	return utils.StatusReturnOK()
 }
 
+func DeleteTrans(id int64, controller TransController, fAction func() utils.StatusReturn) utils.StatusReturn {
+	db := utils.GetDB().Begin()
+	m := controller.MasterModel()
+	fDelete := controller.FDelete()
+
+	if retval := ViewModel(id, m); retval.ErrCode != 0 {
+		return retval
+	}
+	if deleteField, ok := m.(model.DeleteField); ok {
+		deleteField.SetIsDelete(true)
+	}
+	if timeField, ok := m.(model.TimeField); ok {
+		timeField.SetUpdatedAt(time.Now())
+	}
+	if retval := fAction(); retval.ErrCode != 0 {
+		return retval
+	}
+	if err := model.Save(m, db); err != nil {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
+	}
+	if fDelete != nil {
+		if retval := fDelete.Run(m, db); retval.ErrCode != 0 {
+			db.Rollback()
+			return retval
+		}
+	}
+	db.Commit()
+	return utils.StatusReturnOK()
+}
+
 func ListTrans(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
 

@@ -152,8 +152,22 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 	return utils.MessageData(true, orderController)
 
 }
+
+func (orderController *OrderController) DeleteTrans(id int64) map[string]interface{} {
+	if retval := DeleteTrans(id, orderController, func() utils.StatusReturn {
+		return utils.StatusReturnOK()
+	}); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.Message(true)
+}
+
 func (orderController *OrderController) FNew() functions.SQLFunction {
 	return &functions.FOrderNew{}
+}
+
+func (orderController *OrderController) FDelete() functions.SQLFunction {
+	return nil
 }
 
 func (orderController *OrderController) HandleOrder(id int64, status, note string) map[string]interface{} {
@@ -180,7 +194,9 @@ func (orderController *OrderController) TrackingNumber(id int64, trackingNumber 
 
 func (orderController *OrderController) ListDetail(param *utils.Param) map[string]interface{} {
 	imported := false
+	isDelete := false
 	param.Imported = &imported
+	param.IsDelete = &isDelete
 	return ListJoinModel("orderd", "order_id DESC,dno ASC", make([]*model.Orderd, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN \"order\" ON order_id = \"order\".id")
 	}, func(query *gorm.DB) {
