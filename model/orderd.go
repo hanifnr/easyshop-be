@@ -4,6 +4,7 @@ import (
 	"easyshop/utils"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"gorm.io/gorm"
 )
 
 type Orderd struct {
@@ -20,6 +21,11 @@ type Orderd struct {
 	Url       string  `json:"url"`
 	Image     string  `json:"image"`
 	Imported  bool    `json:"imported" gorm:"DEFAULT:FALSE"`
+	OrderdExt `gorm:"-"`
+}
+
+type OrderdExt struct {
+	OrderTrxno string `json:"order_trxno"`
 }
 
 func (Orderd) TableName() string {
@@ -45,4 +51,8 @@ func (orderd Orderd) ID() int64 {
 
 func (orderd *Orderd) SetMasterId(id int64) {
 	orderd.OrderId = id
+}
+
+func (orderd *Orderd) SetValueModelExt(db *gorm.DB) {
+	db.Select("trxno").Table("order").Where("id = ?", orderd.OrderId).Scan(&orderd.OrderTrxno)
 }
