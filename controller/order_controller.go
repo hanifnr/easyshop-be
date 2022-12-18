@@ -122,6 +122,9 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 func (orderController *OrderController) ViewTrans(id int64) map[string]interface{} {
 	if retval := ViewTrans(id, orderController, func(db *gorm.DB) error {
 		err := db.Where("order_id = ?", id).Find(&orderController.Orderd).Error
+		for i := range orderController.Orderd {
+			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
+		}
 		return err
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
