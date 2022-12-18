@@ -28,6 +28,11 @@ var ViewOrder = func(w http.ResponseWriter, r *http.Request) {
 	ViewTransAction(orderController, w, r)
 }
 
+var DeleteOrder = func(w http.ResponseWriter, r *http.Request) {
+	orderController := &OrderController{}
+	DeleteTransAction(orderController, w, r)
+}
+
 var ListOrder = func(w http.ResponseWriter, r *http.Request) {
 	orderController := &OrderController{}
 	ListTransAction(orderController, w, r)
@@ -167,7 +172,7 @@ func (orderController *OrderController) FNew() functions.SQLFunction {
 }
 
 func (orderController *OrderController) FDelete() functions.SQLFunction {
-	return nil
+	return &functions.FOrderDelete{}
 }
 
 func (orderController *OrderController) HandleOrder(id int64, status, note string) map[string]interface{} {

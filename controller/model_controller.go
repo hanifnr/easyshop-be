@@ -93,6 +93,9 @@ func DeleteModel(id int64, controller Controller, fAction func(m model.Model) ut
 	if deleteField, ok := m.(model.DeleteField); ok {
 		deleteField.SetIsDelete(true)
 	}
+	if timeField, ok := m.(model.TimeField); ok {
+		timeField.SetUpdatedAt(time.Now())
+	}
 	if retval := fAction(m); retval.ErrCode != 0 {
 		return retval
 	}

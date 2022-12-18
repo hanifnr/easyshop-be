@@ -61,3 +61,7 @@ func (wh *Wh) SetUpdatedAt(time time.Time) {
 func (wh *Wh) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("shop").Where("id = ?", wh.ShopId).Scan(&wh.ShopName)
 }
+
+func (wh *Wh) SetIsDelete(isDelete bool) {
+	wh.IsDelete = isDelete
+}

@@ -45,3 +45,7 @@ func (cust *Cust) SetCreatedAt(time time.Time) {
 func (cust *Cust) SetUpdatedAt(time time.Time) {
 	cust.UpdatedAt = time
 }
+
+func (cust *Cust) SetIsDelete(isDelete bool) {
+	cust.IsDelete = isDelete
+}

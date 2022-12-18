@@ -54,3 +54,7 @@ func (passport *Passport) SetUpdatedAt(time time.Time) {
 func (passport *Passport) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("cust").Where("id = ?", passport.CustId).Scan(&passport.CustName)
 }
+
+func (passport *Passport) SetIsDelete(isDelete bool) {
+	passport.IsDelete = isDelete
+}

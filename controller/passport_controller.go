@@ -22,6 +22,11 @@ var ViewPassport = func(w http.ResponseWriter, r *http.Request) {
 	ViewModelAction(passportController, w, r)
 }
 
+var DeletePassport = func(w http.ResponseWriter, r *http.Request) {
+	passportController := &PassportController{}
+	DeleteModelAction(passportController, w, r)
+}
+
 var ListPassport = func(w http.ResponseWriter, r *http.Request) {
 	passportController := &PassportController{}
 	ListModelAction(passportController, w, r)
@@ -81,7 +86,12 @@ func (passportController *PassportController) UpdateModel() map[string]interface
 }
 
 func (passportController *PassportController) DeleteModel(id int64) map[string]interface{} {
-	return nil
+	if retval := DeleteModel(id, passportController, func(m model.Model) utils.StatusReturn {
+		return utils.StatusReturnOK()
+	}); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.Message(true)
 }
 
 func (passportController *PassportController) ListModel(param *utils.Param) map[string]interface{} {

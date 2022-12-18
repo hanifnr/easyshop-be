@@ -23,6 +23,11 @@ var ViewCust = func(w http.ResponseWriter, r *http.Request) {
 	ViewModelAction(custController, w, r)
 }
 
+var DeleteCust = func(w http.ResponseWriter, r *http.Request) {
+	custController := &CustController{}
+	DeleteModelAction(custController, w, r)
+}
+
 var ListCust = func(w http.ResponseWriter, r *http.Request) {
 	custController := &CustController{}
 	ListModelAction(custController, w, r)
@@ -93,7 +98,12 @@ func (custController *CustController) UpdateModel() map[string]interface{} {
 }
 
 func (custController *CustController) DeleteModel(id int64) map[string]interface{} {
-	return nil
+	if retval := DeleteModel(id, custController, func(m model.Model) utils.StatusReturn {
+		return utils.StatusReturnOK()
+	}); retval.ErrCode != 0 {
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+	}
+	return utils.Message(true)
 }
 
 func (custController *CustController) ListModel(param *utils.Param) map[string]interface{} {

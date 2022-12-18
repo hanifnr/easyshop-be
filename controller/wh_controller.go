@@ -24,6 +24,11 @@ var ViewWh = func(w http.ResponseWriter, r *http.Request) {
 	ViewTransAction(whController, w, r)
 }
 
+var DeleteWh = func(w http.ResponseWriter, r *http.Request) {
+	whController := &WhController{}
+	DeleteTransAction(whController, w, r)
+}
+
 var ListWh = func(w http.ResponseWriter, r *http.Request) {
 	whController := &WhController{}
 	ListTransAction(whController, w, r)
@@ -110,5 +115,5 @@ func (whController *WhController) FNew() functions.SQLFunction {
 }
 
 func (whController *WhController) FDelete() functions.SQLFunction {
-	return nil
+	return &functions.FWhDelete{}
 }
