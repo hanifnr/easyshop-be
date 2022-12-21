@@ -86,6 +86,7 @@ ALTER TABLE public.order ADD COLUMN addr_id BIGINT  ;
 ALTER TABLE public.order ADD COLUMN arrival_date TIMESTAMP;
 ALTER TABLE public.order RENAME COLUMN status TO status_code;
 ALTER TABLE public.order ALTER COLUMN status_code TYPE VARCHAR(2);
+ALTER TABLE public.order ADD COLUMN exchange_rate NUMERIC(19,4) DEFAULT 1;
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 
@@ -342,3 +343,15 @@ CREATE TABLE public.email_verif(
 );
 ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;
 ALTER TABLE public.email_verif ADD COLUMN wait_time int;
+
+-- CREATE SEQUENCE public.user_id_seq;
+-- CREATE TABLE public.user(
+--   id BIGINT NOT NULL DEFAULT nextval('public.user_id_seq'),
+--   name VARCHAR NOT NULL,
+--   password VARCHAR NOT NULL,
+--   email VARCHAR NOT NULL,
+--   created_at TIMESTAMP, 
+--   updated_at TIMESTAMP,
+--   isdelete BOOLEAN DEFAULT FALSE,
+--   CONSTRAINT user_pk PRIMARY KEY (id)
+-- );

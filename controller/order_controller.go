@@ -215,6 +215,12 @@ func (orderController *OrderController) ListDetail(param *utils.Param) map[strin
 func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, r *http.Request) {
 	id, err := GetInt64Param("id", w, r)
 	if err != nil {
+		utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, err.Error()))
+		return
+	}
+	exchangeRate, err := strconv.ParseFloat(r.FormValue("exchange_rate"), 64)
+	if err != nil {
+		utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, err.Error()))
 		return
 	}
 	file, retval := utils.GetImageFile(w, r)
@@ -247,6 +253,7 @@ func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, 
 	resp := UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		order := m.(*model.Order)
 		order.ProofLink = fileName
+		order.ExchangeRate = exchangeRate
 
 		return utils.StatusReturnOK()
 	})

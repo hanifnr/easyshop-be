@@ -88,6 +88,7 @@ func DeleteModel(id int64, controller Controller, fAction func(m model.Model) ut
 	fDelete := controller.FDelete()
 
 	if retval := ViewModel(id, m); retval.ErrCode != 0 {
+		db.Rollback()
 		return retval
 	}
 	if deleteField, ok := m.(model.DeleteField); ok {
@@ -97,6 +98,7 @@ func DeleteModel(id int64, controller Controller, fAction func(m model.Model) ut
 		timeField.SetUpdatedAt(time.Now())
 	}
 	if retval := fAction(m); retval.ErrCode != 0 {
+		db.Rollback()
 		return retval
 	}
 	if err := model.Save(m, db); err != nil {
@@ -156,9 +158,11 @@ func UpdateFieldModel(id int64, controller Controller, fAction func(m model.Mode
 	db := utils.GetDB().Begin()
 	m := controller.Model()
 	if retval := ViewModel(id, m); retval.ErrCode != 0 {
+		db.Rollback()
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	if retval := fAction(m); retval.ErrCode != 0 {
+		db.Rollback()
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	if err := model.Save(m, db); err != nil {

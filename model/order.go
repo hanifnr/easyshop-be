@@ -24,6 +24,7 @@ type Order struct {
 	Passport       string     `json:"passport"`
 	AddrId         int64      `json:"addr_id"`
 	ArrivalDate    *time.Time `json:"arrival_date"`
+	ExchangeRate   float64    `json:"exchange_rate"`
 	OrderExt       `gorm:"-"`
 }
 
