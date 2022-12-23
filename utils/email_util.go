@@ -9,9 +9,9 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-const EmailHost = "smtp.gmail.com"
-const EmailUsername = "easyshop011022@gmail.com"
-const EmailPassword = "aosvojlffmutdlqo"
+const EmailHost = "smtp.hostinger.com"
+const EmailUsername = "no-reply@easyshop-jp.com"
+const EmailPassword = "No-reply1"
 const EmailPort = 587
 
 func SendEmailOtp(to string, data interface{}) {
@@ -33,7 +33,7 @@ func SendEmail(to string, subject string, data interface{}, templateFile string)
 		return err
 	}
 	m := gomail.NewMessage()
-	m.SetHeader("From", "support@easyshop.jp")
+	m.SetHeader("From", "no-reply@easyshop-jp.com")
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", result)

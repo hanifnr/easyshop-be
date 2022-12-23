@@ -344,6 +344,37 @@ CREATE TABLE public.email_verif(
 ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;
 ALTER TABLE public.email_verif ADD COLUMN wait_time int;
 
+-- CREATE SEQUENCE public.grp_id_seq;
+-- CREATE TABLE public.grp(
+--   id BIGINT NOT NULL DEFAULT nextval('public.grp_id_seq'),
+--   code VARCHAR NOT NULL,
+--   name VARCHAR NOT NULL,
+--   CONSTRAINT grp_pk PRIMARY KEY (id)
+-- );
+
+-- CREATE SEQUENCE public.prv_id_seq;
+-- CREATE TABLE public.prv(
+--   id BIGINT NOT NULL DEFAULT nextval('public.prv_id_seq'),
+--   code VARCHAR NOT NULL,
+--   name VARCHAR NOT NULL,
+--   CONSTRAINT prv_pk PRIMARY KEY (id)
+-- );
+
+-- CREATE SEQUENCE public.grpprv_id_seq;
+-- CREATE TABLE public.grpprv(
+--   id BIGINT NOT NULL DEFAULT nextval('public.grpprv_id_seq'),
+--   grp_id BIGINT NOT NULL,
+--   prv_id BIGINT NOT NULL,
+--   enable BOOLEAN
+--   CONSTRAINT grpprv_pk PRIMARY KEY (id)
+-- );
+
+-- CREATE SEQUENCE public.grpprv_id_seq;
+-- CREATE TABLE public.grpprv(
+-- id BIGINT NOT NULL DEFAULT nextval('public.grpprv_id_seq'),
+-- CONSTRAINT grpprv_pk PRIMARY KEY (id)
+-- );
+
 -- CREATE SEQUENCE public.user_id_seq;
 -- CREATE TABLE public.user(
 --   id BIGINT NOT NULL DEFAULT nextval('public.user_id_seq'),
