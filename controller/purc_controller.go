@@ -41,6 +41,12 @@ var ListPurcd = func(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, resp)
 }
 
+var ListPurcShop = func(w http.ResponseWriter, r *http.Request) {
+	purcController := &PurcController{}
+	resp := purcController.ListShop()
+	utils.Respond(w, resp)
+}
+
 type PurcController struct {
 	Purc    model.Purc    `json:"purc"`
 	Purcd   []model.Purcd `json:"purcd"`
@@ -156,4 +162,24 @@ func (purcController *PurcController) ListDetail(param *utils.Param) map[string]
 	return ListJoinModel("purcd", "purc_id DESC,dno ASC", make([]*model.Purcd, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN purc ON purc_id = purc.id")
 	}, func(query *gorm.DB) {})
+}
+
+func (purcController *PurcController) ListShop() map[string]interface{} {
+	db := utils.GetDB()
+
+	type ShopOrder struct {
+		Name string
+		Qty  float64
+	}
+
+	list := make([]*ShopOrder, 0)
+	db.Select("shop.name, SUM(orderd.qty-orderd.qtypurc) AS qty").
+		Table("orderd").
+		Joins("JOIN \"order\" ON \"order\".id = orderd.order_id").
+		Joins("JOIN shop ON shop.id = orderd.shop_id").
+		Where("status_code IN ('PA','IP') AND imported = FALSE").
+		Group("shop.name, shop.idx").Order("shop.idx").
+		Scan(&list)
+
+	return utils.MessageData(true, list)
 }

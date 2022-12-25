@@ -21,8 +21,12 @@ func (f FPurcDelete) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 	listPurcd := make([]*model.Purcd, 0)
 	db.Where("purc_id=?", purc.Id).Find(&listPurcd)
 	for _, purcd := range listPurcd {
-		if err := db.Exec("UPDATE orderd SET qtypurc = 0, imported = FALSE WHERE order_id = ? AND dno = ?",
-			purcd.OrderId, purcd.OrderDno).Error; err != nil {
+		orderd := &model.Orderd{}
+		db.Where("order_id = ? AND dno =?", purcd.OrderId, purcd.OrderDno).Find(&orderd)
+
+		qtyPurc := orderd.Qtypurc - purcd.Qty
+		if err := db.Exec("UPDATE orderd SET qtypurc = ?, imported = FALSE WHERE order_id = ? AND dno = ?",
+			qtyPurc, purcd.OrderId, purcd.OrderDno).Error; err != nil {
 			return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
 		}
 		var importedOrderPurc int

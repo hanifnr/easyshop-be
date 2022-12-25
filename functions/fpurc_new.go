@@ -15,12 +15,21 @@ func (f FPurcNew) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 	listPurcd := make([]*model.Purcd, 0)
 	db.Where("purc_id=?", purc.Id).Find(&listPurcd)
 	for _, purcd := range listPurcd {
-		if err := db.Exec("UPDATE orderd SET qtypurc = ?, imported = TRUE WHERE order_id = ? AND dno = ?",
-			purcd.Qty, purcd.OrderId, purcd.OrderDno).Error; err != nil {
+		orderd := &model.Orderd{}
+		db.Where("order_id = ? AND dno =?", purcd.OrderId, purcd.OrderDno).Find(&orderd)
+
+		qtyPurc := orderd.Qtypurc + purcd.Qty
+		if orderd.Qty < qtyPurc {
+			return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Qty purchasing over qty order!"}
+		}
+
+		imported := orderd.Qty == qtyPurc
+		if err := db.Exec("UPDATE orderd SET qtypurc = ?, imported = ? WHERE order_id = ? AND dno = ?",
+			qtyPurc, imported, purcd.OrderId, purcd.OrderDno).Error; err != nil {
 			return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
 		}
 		var importedOrderPurc int
-		db.Select("COUNT(*)").Table("orderd").Where("order_id = ? AND qtypurc = 0", purcd.OrderId).Scan(&importedOrderPurc)
+		db.Select("COUNT(*)").Table("orderd").Where("order_id = ? AND imported = FALSE", purcd.OrderId).Scan(&importedOrderPurc)
 		if importedOrderPurc == 0 {
 			if err := db.Exec("UPDATE public.order SET status_code = 'IC' WHERE id = ?", purcd.OrderId).Error; err != nil {
 				return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
