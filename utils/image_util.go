@@ -16,7 +16,7 @@ import (
 const (
 	projectID  = "easy-shop-364408"
 	bucketName = "images-es-bucket"
-	path       = "images/"
+	path       = "images"
 )
 
 type ClientWritter struct {
@@ -68,7 +68,7 @@ func (c *ClientWritter) UploadFile(file multipart.File, fileName string) error {
 	defer cancel()
 
 	// Upload an object with storage.Writer.
-	wc := c.cl.Bucket(c.bucketName).Object(c.path + fileName).NewWriter(ctx)
+	wc := c.cl.Bucket(c.bucketName).Object(c.path + "/" + fileName).NewWriter(ctx)
 	if _, err := io.Copy(wc, file); err != nil {
 		return fmt.Errorf("io.Copy: %v", err)
 	}
@@ -85,7 +85,7 @@ func (c *ClientWritter) DeleteFile(fileName string) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
 
-	o := c.cl.Bucket(c.bucketName).Object(c.path + fileName)
+	o := c.cl.Bucket(c.bucketName).Object(c.path + "/" + fileName)
 
 	if err := o.Delete(ctx); err != nil {
 		return fmt.Errorf("Object(%q).Delete: %v", fileName, err)
@@ -107,7 +107,7 @@ func GenerateSignedUrl(objName string) (string, StatusReturn) {
 		Expires:        time.Now().Add(15 * time.Minute),
 	}
 
-	url, err := cl.Bucket(bucketName+path).SignedURL(objName, opts)
+	url, err := cl.Bucket(bucketName+"/"+path).SignedURL(objName, opts)
 	if err != nil {
 		return "", StatusReturn{ErrCode: ErrIO, Message: err.Error()}
 	}
