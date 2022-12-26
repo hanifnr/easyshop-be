@@ -215,17 +215,17 @@ func (orderController *OrderController) ListDetail(param *utils.Param) map[strin
 func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, r *http.Request) {
 	id, err := GetInt64Param("id", w, r)
 	if err != nil {
-		utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, err.Error()))
+		utils.RespondError(w, utils.MessageErr(false, utils.ErrRequest, err.Error()), http.StatusBadRequest)
 		return
 	}
 	exchangeRate, err := strconv.ParseFloat(r.FormValue("exchange_rate"), 64)
 	if err != nil {
-		utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, err.Error()))
+		utils.RespondError(w, utils.MessageErr(false, utils.ErrRequest, err.Error()), http.StatusBadRequest)
 		return
 	}
 	file, retval := utils.GetImageFile(w, r)
 	if retval.ErrCode != 0 {
-		utils.Respond(w, utils.MessageErr(false, retval.ErrCode, retval.Message))
+		utils.RespondError(w, utils.MessageErr(false, retval.ErrCode, retval.Message), http.StatusUnsupportedMediaType)
 		return
 	}
 	imageWritter := utils.GetImageWritter()
@@ -239,7 +239,7 @@ func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, 
 		proofLink := orderController.Order.ProofLink
 		if proofLink != "" {
 			if err := imageWritter.DeleteFile(proofLink); err != nil {
-				utils.Respond(w, utils.MessageErr(false, utils.ErrIO, err.Error()))
+				utils.RespondError(w, utils.MessageErr(false, utils.ErrIO, err.Error()), http.StatusNotFound)
 				return
 			}
 		}
@@ -247,7 +247,7 @@ func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, 
 
 	fileName := "payment-" + strconv.Itoa(int(id)) + "-" + currentTime.Format("20060102150405")
 	if err := imageWritter.UploadFile(file, fileName); err != nil {
-		utils.Respond(w, utils.MessageErr(false, utils.ErrIO, err.Error()))
+		utils.RespondError(w, utils.MessageErr(false, utils.ErrIO, err.Error()), http.StatusUnsupportedMediaType)
 		return
 	}
 	resp := UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {

@@ -40,9 +40,9 @@ func Respond(w http.ResponseWriter, data map[string]interface{}) {
 	json.NewEncoder(w).Encode(data)
 }
 
-func RespondError(w http.ResponseWriter, data map[string]interface{}, errcode int) {
+func RespondError(w http.ResponseWriter, data map[string]interface{}, statusCode int) {
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(errcode)
+	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(data)
 }
 
