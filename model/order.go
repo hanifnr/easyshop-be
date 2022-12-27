@@ -29,9 +29,14 @@ type Order struct {
 }
 
 type OrderExt struct {
-	CustName   string `json:"cust_name"`
-	AddrName   string `json:"addr_name"`
-	StatusName string `json:"status_name"`
+	CustName string `json:"cust_name"`
+	AddrName string `json:"addr_name"`
+	OrderStatus
+}
+
+type OrderStatus struct {
+	Idx  string `json:"status_idx"`
+	Name string `json:"status_name"`
 }
 
 func (Order) TableName() string {
@@ -72,7 +77,7 @@ func (order *Order) SetUpdatedAt(time time.Time) {
 func (order *Order) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("cust").Where("id = ?", order.CustId).Scan(&order.CustName)
 	db.Select("name").Table("addr").Where("id = ?", order.AddrId).Scan(&order.AddrName)
-	db.Select("name").Table("status").Where("code = ?", order.StatusCode).Scan(&order.StatusName)
+	db.Select("idx, name").Table("status").Where("code = ?", order.StatusCode).Scan(&order.OrderStatus)
 }
 
 func (order *Order) SetIsDelete(isDelete bool) {

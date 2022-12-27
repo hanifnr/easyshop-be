@@ -10,6 +10,7 @@ type Status struct {
 	Id   int64  `json:"id" gorm:"primary_key;auto_increment"`
 	Code string `json:"code"`
 	Name string `json:"name"`
+	Idx  string `json:"idx"`
 }
 
 func (status Status) ID() int64 {

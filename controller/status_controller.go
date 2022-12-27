@@ -78,5 +78,5 @@ func (statusController *StatusController) DeleteModel(id int64) map[string]inter
 }
 
 func (statusController *StatusController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("status", "id ASC", make([]*model.Status, 0), param)
+	return ListModel("status", "idx ASC", make([]*model.Status, 0), param)
 }

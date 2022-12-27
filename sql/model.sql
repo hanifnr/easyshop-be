@@ -308,6 +308,7 @@ CREATE TABLE public.status(
   CONSTRAINT status_pk PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX status_code_index ON public.status (code);
+ALTER TABLE public.status ADD COLUMN idx BIGINT;
 ALTER TABLE public.order
 ADD CONSTRAINT order_rel_status_fk
 FOREIGN KEY (status_code) REFERENCES public.status (code) ON DELETE RESTRICT ON UPDATE CASCADE
