@@ -25,6 +25,7 @@ func main() {
 		"/wh",
 		"/status",
 		"/status",
+		"/product",
 	})
 
 	router := mux.NewRouter()
@@ -82,6 +83,8 @@ func main() {
 	router.HandleFunc("/wh/update", c.UpdateWh).Methods("PUT")
 	router.HandleFunc("/status", c.ListStatus).Methods("GET")
 	router.HandleFunc("/status/view/{id}", c.ViewStatus).Methods("GET")
+	router.HandleFunc("/product/list", c.ListProduct).Methods("GET")
+	router.HandleFunc("/product", c.ViewProduct).Methods("GET")
 
 	router.Use(u.JwtAuthentication)
 
