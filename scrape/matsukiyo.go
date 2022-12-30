@@ -16,7 +16,7 @@ func (m *Matsukiyo) GetProduct(shopId int64, url string) *Product {
 		url,
 		"div.ctBox01.clearfix",
 		func(e *colly.HTMLElement) {
-			code := e.ChildText("div.goodsBox.main > p.cpde")
+			code := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.cpde"))
 			name := e.ChildText("div.goodsBox.main > div.spHide > h3")
 			image := e.ChildAttr("div > div > div > ul > li > a", "style")
 			price := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.price > span > span:first-of-type"))

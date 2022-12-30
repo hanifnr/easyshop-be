@@ -7,5 +7,7 @@ import (
 
 func FormatPrice(text string) string {
 	text = strings.Replace(text, "10%", "", -1)
-	return regexp.MustCompile(`[^a-zA-Z0-9 ,]+`).ReplaceAllString(text, "")
+	text = regexp.MustCompile(`[^a-z0-9, ]+`).ReplaceAllString(text, "")
+	text = strings.Replace(text, " ", "", -1)
+	return text
 }
