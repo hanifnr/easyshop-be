@@ -22,14 +22,19 @@ func (f FWhDelete) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 
 		purcd := &model.Purcd{}
 		db.Where("purc_id = ? AND dno = ?", whd.PurcId, whd.PurcDno).Find(&purcd)
-		if err := db.Exec("UPDATE orderd SET qtywh = 0 WHERE order_id = ? AND dno = ?",
-			purcd.OrderId, purcd.OrderDno).Error; err != nil {
+
+		orderd := &model.Orderd{}
+		db.Where("order_id = ? AND dno =?", purcd.OrderId, purcd.OrderDno).Find(&orderd)
+
+		qtyWh := orderd.Qtywh - whd.Qty
+		if err := db.Exec("UPDATE orderd SET qtywh = ? WHERE order_id = ? AND dno = ?",
+			qtyWh, purcd.OrderId, purcd.OrderDno).Error; err != nil {
 			return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
 		}
 
 		//cek apabila item order sudah diimport ke wh semua set status IR
 		var importedOrderWh int
-		db.Select("COUNT(*)").Table("orderd").Where("order_id = ? AND qtywh = 0", purcd.OrderId).Scan(&importedOrderWh)
+		db.Select("COUNT(*)").Table("orderd").Where("order_id = ? AND qty <> qtywh", purcd.OrderId).Scan(&importedOrderWh)
 
 		order := &model.Order{}
 		db.Where("id = ?", purcd.OrderId).Find(&order)
