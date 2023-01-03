@@ -81,6 +81,7 @@ func main() {
 	router.HandleFunc("/wh/delete/{id}", c.DeleteWh).Methods("DELETE")
 	router.HandleFunc("/wh/create", c.CreateWh).Methods("POST")
 	router.HandleFunc("/wh/update", c.UpdateWh).Methods("PUT")
+	router.HandleFunc("/wh/handle", c.HandleWh).Methods("PUT")
 	router.HandleFunc("/status", c.ListStatus).Methods("GET")
 	router.HandleFunc("/status/view/{id}", c.ViewStatus).Methods("GET")
 	router.HandleFunc("/product/list", c.ListProduct).Methods("GET")

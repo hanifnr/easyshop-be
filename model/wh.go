@@ -9,15 +9,16 @@ import (
 )
 
 type Wh struct {
-	Id        int64     `json:"id"`
-	Trxno     string    `json:"trxno"`
-	Date      time.Time `json:"date"`
-	ShopId    int64     `json:"shop_id"`
-	CreatedAt time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
-	IsDelete  bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
-	IsActive  bool      `json:"is_active" gorm:"DEFAULT:TRUE"`
-	WhExt     `gorm:"-"`
+	Id         int64     `json:"id"`
+	Trxno      string    `json:"trxno"`
+	Date       time.Time `json:"date"`
+	ShopId     int64     `json:"shop_id"`
+	StatusCode string    `json:"status_code"`
+	CreatedAt  time.Time `json:"created_at" gorm:"CURRENT_TIMESTAMP"`
+	UpdatedAt  time.Time `json:"updated_at" gorm:"CURRENT_TIMESTAMP"`
+	IsDelete   bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
+	IsActive   bool      `json:"is_active" gorm:"DEFAULT:TRUE"`
+	WhExt      `gorm:"-"`
 }
 
 type WhExt struct {

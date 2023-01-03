@@ -207,6 +207,7 @@ ADD
 ALTER TABLE public.wh ADD COLUMN is_delete BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.wh DROP COLUMN status;
 ALTER TABLE public.wh ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.wh ADD COLUMN status_code VARCHAR;
 
 CREATE TABLE public.whd(
   wh_id BIGINT, 
@@ -344,6 +345,21 @@ CREATE TABLE public.email_verif(
 );
 ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;
 ALTER TABLE public.email_verif ADD COLUMN wait_time int;
+
+-- CREATE SEQUENCE public.status_detail_id_seq;
+-- CREATE TABLE public.status_detail(
+--   id BIGINT NOT NULL DEFAULT nextval('public.status_detail_id_seq'),
+--   idx BIGINT,
+--   code VARCHAR NOT NULL,
+--   name VARCHAR NOT NULL,
+--   CONSTRAINT status_pk PRIMARY KEY (id)
+-- );
+-- CREATE UNIQUE INDEX status_detail_code_index ON public.status_detail (code);
+-- ALTER TABLE public.status ADD COLUMN idx BIGINT;
+-- ALTER TABLE public.order
+-- ADD CONSTRAINT order_rel_status_fk
+-- FOREIGN KEY (status_code) REFERENCES public.status (code) ON DELETE RESTRICT ON UPDATE CASCADE
+-- NOT DEFERRABLE;
 
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(

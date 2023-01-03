@@ -4,7 +4,9 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+	"encoding/json"
 	"net/http"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -34,6 +36,22 @@ var ListWh = func(w http.ResponseWriter, r *http.Request) {
 	ListTransAction(whController, w, r)
 }
 
+var HandleWh = func(w http.ResponseWriter, r *http.Request) {
+	type Wh struct {
+		Id    int64
+		Value string
+	}
+	wh := &Wh{}
+	if err := json.NewDecoder(r.Body).Decode(&wh); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	whController := &WhController{}
+	resp := whController.HandleOrder(wh.Id, wh.Value)
+	utils.Respond(w, resp)
+}
+
 type WhController struct {
 	Wh      model.Wh      `json:"wh"`
 	Whd     []model.Whd   `json:"whd"`
@@ -54,6 +72,7 @@ func (whController *WhController) DetailsModel() []model.Model {
 
 func (whController *WhController) CreateTrans() map[string]interface{} {
 	if retval := CreateTrans(whController, func(db *gorm.DB) error {
+		whController.Wh.StatusCode = "IW"
 		for i := range whController.Whd {
 			whd := &whController.Whd[i]
 			whController.Details = append(whController.Details, whd)
@@ -116,4 +135,12 @@ func (whController *WhController) FNew() functions.SQLFunction {
 
 func (whController *WhController) FDelete() functions.SQLFunction {
 	return &functions.FWhDelete{}
+}
+
+func (whController *WhController) HandleOrder(id int64, status string) map[string]interface{} {
+	return UpdateFieldMaster(id, whController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
+		wh := m.(*model.Wh)
+		wh.StatusCode = strings.ToUpper(status)
+		return utils.StatusReturnOK()
+	})
 }
