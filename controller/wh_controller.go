@@ -48,7 +48,7 @@ var HandleWh = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	whController := &WhController{}
-	resp := whController.HandleOrder(wh.Id, wh.Value)
+	resp := whController.HandleWh(wh.Id, wh.Value)
 	utils.Respond(w, resp)
 }
 
@@ -137,10 +137,18 @@ func (whController *WhController) FDelete() functions.SQLFunction {
 	return &functions.FWhDelete{}
 }
 
-func (whController *WhController) HandleOrder(id int64, status string) map[string]interface{} {
+func (whController *WhController) HandleWh(id int64, status string) map[string]interface{} {
 	return UpdateFieldMaster(id, whController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		wh := m.(*model.Wh)
-		wh.StatusCode = strings.ToUpper(status)
+		status := strings.ToUpper(status)
+		wh.StatusCode = status
+
+		fWhHandle := &functions.FWhHandle{
+			Status: status,
+		}
+		if retval := fWhHandle.Run(wh, db); retval.ErrCode != 0 {
+			return utils.StatusReturn{ErrCode: retval.ErrCode, Message: retval.Message}
+		}
 		return utils.StatusReturnOK()
 	})
 }

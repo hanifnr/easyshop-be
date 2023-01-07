@@ -27,7 +27,7 @@ func (f FWhDelete) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 		db.Where("order_id = ? AND dno =?", purcd.OrderId, purcd.OrderDno).Find(&orderd)
 
 		qtyWh := orderd.Qtywh - whd.Qty
-		if err := db.Exec("UPDATE orderd SET qtywh = ? WHERE order_id = ? AND dno = ?",
+		if err := db.Exec("UPDATE orderd SET qtywh = ? WHERE order_id = ? AND dno = ? AND arrived = FALSE",
 			qtyWh, purcd.OrderId, purcd.OrderDno).Error; err != nil {
 			return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
 		}

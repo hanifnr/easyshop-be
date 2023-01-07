@@ -21,6 +21,7 @@ type Orderd struct {
 	Url       string  `json:"url"`
 	Image     string  `json:"image"`
 	Imported  bool    `json:"imported" gorm:"DEFAULT:FALSE"`
+	Arrived   bool    `json:"arrived" gorm:"DEFAULT:FALSE"`
 	OrderdExt `gorm:"-"`
 }
 

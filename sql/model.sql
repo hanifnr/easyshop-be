@@ -123,6 +123,7 @@ ALTER TABLE public.orderd ADD COLUMN image VARCHAR;
 ALTER TABLE public.orderd ADD COLUMN url VARCHAR;
 ALTER TABLE public.orderd ADD COLUMN imported BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.orderd RENAME COLUMN productid TO product_id;
+ALTER TABLE public.orderd ADD COLUMN arrived BOOLEAN DEFAULT FALSE;
 
 CREATE SEQUENCE public.purc_seq_id;
 CREATE TABLE public.purc(
@@ -345,21 +346,6 @@ CREATE TABLE public.email_verif(
 );
 ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;
 ALTER TABLE public.email_verif ADD COLUMN wait_time int;
-
--- CREATE SEQUENCE public.status_detail_id_seq;
--- CREATE TABLE public.status_detail(
---   id BIGINT NOT NULL DEFAULT nextval('public.status_detail_id_seq'),
---   idx BIGINT,
---   code VARCHAR NOT NULL,
---   name VARCHAR NOT NULL,
---   CONSTRAINT status_pk PRIMARY KEY (id)
--- );
--- CREATE UNIQUE INDEX status_detail_code_index ON public.status_detail (code);
--- ALTER TABLE public.status ADD COLUMN idx BIGINT;
--- ALTER TABLE public.order
--- ADD CONSTRAINT order_rel_status_fk
--- FOREIGN KEY (status_code) REFERENCES public.status (code) ON DELETE RESTRICT ON UPDATE CASCADE
--- NOT DEFERRABLE;
 
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(
