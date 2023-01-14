@@ -24,11 +24,17 @@ func QueryListFind(table, order string, list *interface{}, param *Param, fJoin f
 	param.ProcessFilter(query)
 	fFilter(query)
 	query.Scan(&totalRow)
+	var orderBy string
+	if param.OrderBy != nil {
+		orderBy = *param.OrderBy
+	} else {
+		orderBy = order
+	}
 	if page == 0 {
-		query = db.Order(order)
+		query = db.Order(orderBy)
 	} else {
 		offset, limit := GetOffsetLimit(page)
-		query = db.Offset(offset).Order(order).Limit(limit)
+		query = db.Offset(offset).Order(orderBy).Limit(limit)
 	}
 	fJoin(query)
 	param.ProcessFilter(query)

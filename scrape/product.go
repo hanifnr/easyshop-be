@@ -8,4 +8,5 @@ type Product struct {
 	Price    string `json:"price,omitempty"`
 	PriceTax string `json:"price_tax,omitempty"`
 	Url      string `json:"url,omitempty"`
+	Size     string `json:"size,omitempty"`
 }

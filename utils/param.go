@@ -26,6 +26,7 @@ type Param struct {
 	IsDelete    *bool
 	OrderId     *int64
 	Email       *string
+	OrderBy     *string
 }
 
 func ProcessParam(r *http.Request) *Param {
@@ -45,6 +46,7 @@ func ProcessParam(r *http.Request) *Param {
 	paramIsDelete := ParamToBool(r.URL.Query().Get("is_delete"))
 	paramOrderId := ParamToInt64(r.URL.Query().Get("order_id"))
 	paramEmail := ParamToString(r.URL.Query().Get("email"))
+	paramOrderBy := ParamToString(r.URL.Query().Get("order_by"))
 
 	return &Param{
 		Page:        paramPage,
@@ -63,6 +65,7 @@ func ProcessParam(r *http.Request) *Param {
 		IsDelete:    paramIsDelete,
 		OrderId:     paramOrderId,
 		Email:       paramEmail,
+		OrderBy:     paramOrderBy,
 	}
 }
 

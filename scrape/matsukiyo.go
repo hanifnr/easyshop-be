@@ -3,6 +3,7 @@ package scrape
 import (
 	"easyshop/utils"
 	"fmt"
+	"regexp"
 
 	"github.com/gocolly/colly"
 )
@@ -18,7 +19,7 @@ func (m *Matsukiyo) GetProduct(shopId int64, url string) *Product {
 		func(e *colly.HTMLElement) {
 			code := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.cpde"))
 			name := e.ChildText("div.goodsBox.main > div.spHide > h3")
-			image := e.ChildAttr("div > div > div > ul > li > a", "style")
+			image := e.ChildAttr("div > div > div > ul > li:nth-of-type(1) > a", "style")
 			price := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.price > span > span:first-of-type"))
 			priceTax := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.price > span > span.small"))
 
@@ -31,6 +32,16 @@ func (m *Matsukiyo) GetProduct(shopId int64, url string) *Product {
 				Price:    price,
 				PriceTax: priceTax,
 			}
+		},
+	)
+	doScrap(
+		url,
+		"div.goodsDetail",
+		func(e *colly.HTMLElement) {
+			size := e.ChildText("div:nth-of-type(7) > div > p:nth-of-type(2)")
+			size = regexp.MustCompile(`^([^0-9])+`).ReplaceAllString(size, "")
+
+			product.Size = size
 		},
 	)
 	return product
