@@ -40,6 +40,10 @@ func (m *Matsukiyo) GetProduct(shopId int64, url string) *Product {
 		func(e *colly.HTMLElement) {
 			size := e.ChildText("div:nth-of-type(7) > div > p:nth-of-type(2)")
 			size = regexp.MustCompile(`^([^0-9])+`).ReplaceAllString(size, "")
+			if size == "" {
+				size = e.ChildText("div:nth-of-type(8) > div > p:nth-of-type(2)")
+				size = regexp.MustCompile(`^([^0-9])+`).ReplaceAllString(size, "")
+			}
 
 			product.Size = size
 		},
