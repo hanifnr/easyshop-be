@@ -1,6 +1,10 @@
 package utils
 
-import "gorm.io/gorm"
+import (
+	"strings"
+
+	"gorm.io/gorm"
+)
 
 func QueryStringValue(query *gorm.DB) (string, error) {
 	var result string
@@ -26,7 +30,12 @@ func QueryListFind(table, order string, list *interface{}, param *Param, fJoin f
 	query.Scan(&totalRow)
 	var orderBy string
 	if param.OrderBy != nil {
-		orderBy = *param.OrderBy
+		orderBy = strings.ToUpper(*param.OrderBy)
+		if strings.Contains(orderBy, "DESCENDING") {
+			orderBy = strings.Replace(orderBy, "DESCENDING", "DESC", -1)
+		} else if strings.Contains(orderBy, "ASCENDING") {
+			orderBy = strings.Replace(orderBy, "ASCENDING", "ASC", -1)
+		}
 	} else {
 		orderBy = order
 	}
