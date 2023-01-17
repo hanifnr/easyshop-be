@@ -31,10 +31,10 @@ func QueryListFind(table, order string, list *interface{}, param *Param, fJoin f
 	var orderBy string
 	if param.OrderBy != nil {
 		orderBy = strings.ToUpper(*param.OrderBy)
-		if strings.Contains(orderBy, "DESCENDING") {
-			orderBy = strings.Replace(orderBy, "DESCENDING", "DESC", -1)
-		} else if strings.Contains(orderBy, "ASCENDING") {
-			orderBy = strings.Replace(orderBy, "ASCENDING", "ASC", -1)
+		if strings.Contains(orderBy, "DESCEND") {
+			orderBy = strings.Replace(orderBy, "DESCEND", "DESC", -1)
+		} else if strings.Contains(orderBy, "ASCEND") {
+			orderBy = strings.Replace(orderBy, "ASCEND", "ASC", -1)
 		}
 	} else {
 		orderBy = order
