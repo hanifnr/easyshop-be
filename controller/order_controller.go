@@ -6,10 +6,12 @@ import (
 	"easyshop/utils"
 	"encoding/json"
 	"net/http"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"gorm.io/gorm"
 )
 
@@ -116,6 +118,8 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
+	cust, notifOrder := getDataNotifOrder(orderController)
+	SendEmailNotifOrder(cust, *notifOrder)
 	return utils.MessageData(true, orderController)
 }
 
@@ -278,4 +282,72 @@ func (orderController *OrderController) LoadOrderProof(w http.ResponseWriter, r 
 	resp := make(map[string]interface{})
 	resp["url"] = url
 	utils.Respond(w, resp)
+}
+
+type NotifOrder struct {
+	Custname string
+	Trxno    string
+	Trxdate  string
+	Addr     string
+	Country  string
+	Phone    string
+	Email    string
+	Total    string
+	Orderd   []DetailNotifOrder
+}
+
+func SendEmailNotifOrder(cust *model.Cust, notifOrder NotifOrder) {
+	adminEmail := "tokyo@easyshop-jp.com"
+
+	SendNotifOrder(cust.Email, notifOrder)
+	SendNotifOrder(adminEmail, notifOrder)
+}
+
+func SendNotifOrder(to string, notifOrder NotifOrder) {
+	runtime.GOMAXPROCS(1)
+	go utils.SendEmailNotifOrder(to, notifOrder)
+}
+
+type DetailNotifOrder struct {
+	Subtotal string
+	model.Orderd
+}
+
+func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrder) {
+	db := utils.GetDB()
+
+	order := orderController.Order
+
+	var orderd []DetailNotifOrder
+	for _, data := range orderController.Orderd {
+		// subtotal := strconv.FormatFloat(data.Subtotal, 'f', 0, 64)
+		// p := message.NewPrinter(language.English)
+		subtotal := humanize.Comma(int64(data.Subtotal))
+		// subtotal := FormatFloat("$#,###.##", afloat)
+		detail := &DetailNotifOrder{
+			Subtotal: subtotal,
+			Orderd:   data,
+		}
+		orderd = append(orderd, *detail)
+	}
+
+	addr := &model.Addr{}
+	db.Where("id = ?", order.AddrId).Find(addr)
+
+	cust := &model.Cust{}
+	db.Where("id = ?", order.CustId).Find(&cust)
+
+	notifOrder := &NotifOrder{
+		Custname: order.CustName,
+		Trxno:    order.Trxno,
+		Trxdate:  utils.FormatTimeToDate(order.Date),
+		Addr:     addr.FullAddress,
+		Country:  addr.CountryCode,
+		Phone:    cust.PhoneNumber,
+		Email:    cust.Email,
+		Total:    humanize.Comma(int64(order.Total)),
+		Orderd:   orderd,
+	}
+
+	return cust, notifOrder
 }

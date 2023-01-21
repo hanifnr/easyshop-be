@@ -27,6 +27,19 @@ func SendEmailOtp(to string, data interface{}) {
 	}
 }
 
+func SendEmailNotifOrder(to string, data interface{}) {
+	var err error
+	path, _ := os.Getwd()
+	template := path + "/template/order-notif.html"
+	subject := "Easy Shop Order Notification"
+	err = SendEmail(to, subject, data, template)
+	if err == nil {
+		fmt.Println("send email '" + subject + "' success")
+	} else {
+		fmt.Println(err)
+	}
+}
+
 func SendEmail(to string, subject string, data interface{}, templateFile string) error {
 	result, err := ParseTemplate(templateFile, data)
 	if err != nil {
