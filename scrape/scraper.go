@@ -13,6 +13,10 @@ func GetProduct(shopId int64, url string) map[string]interface{} {
 		matsukiyo := &Matsukiyo{}
 		data := matsukiyo.GetProduct(shopId, url)
 		return utils.MessageData(true, data)
+	case 4:
+		tokyuHands := &TokyuHands{}
+		data := tokyuHands.GetProduct(shopId, url)
+		return utils.MessageData(true, data)
 	}
 	return utils.MessageErr(false, utils.ErrExist, "Product not found!")
 }
@@ -31,6 +35,14 @@ func GetListProducts(name string) []*Product {
 			matsukiyo := &Matsukiyo{}
 			products := matsukiyo.GetListProduct(name)
 			result = append(result, products...)
+		case 4:
+			tokyuHands := &TokyuHands{}
+			products := tokyuHands.GetListProduct(name)
+			result = append(result, products...)
+			// case 5:
+			// 	loft := &Loft{}
+			// 	products := loft.GetListProduct(name)
+			// 	result = append(result, products...)
 		}
 	}
 
