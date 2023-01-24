@@ -2,19 +2,17 @@ package scrape
 
 import (
 	"easyshop/utils"
-	"fmt"
-	"net/url"
 
 	"github.com/gocolly/colly"
 )
 
-type Loft struct{}
+type Yodobashi struct{}
 
-func (l *Loft) GetProduct(shopId int64, url string) *Product {
+func (y *Yodobashi) GetProduct(shopId int64, url string) *Product {
 	var product *Product
 	doScrap(
 		url,
-		"main#detail.content:nth-of-type(1)>div.modContainer.content:nth-of-type(1)",
+		"html",
 		func(e *colly.HTMLElement) {
 			code := utils.FormatPrice(e.ChildText("section#modItemDetail>div.detail>div#item-info>div.itemCode"))
 			name := e.ChildText("section#modItemDetail>div.detail>h1.title")
@@ -36,22 +34,20 @@ func (l *Loft) GetProduct(shopId int64, url string) *Product {
 	return product
 }
 
-func (m *Loft) GetListProduct(name string) []*Product {
+func (m *Yodobashi) GetListProduct(name string) []*Product {
 	result := make([]*Product, 0)
-	link, _ := url.ParseQuery("q=" + name)
 	doScrap(
-		"https://www.loft.co.jp/store/goods/search.aspx?search=x&category=&keyword=&"+link.Encode(),
-		"ul.itemlist.style-t>li",
+		"https://www.yodobashi.com/?word=%E5%89%8D%E3%81%AE%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%B8%E6%88%BB%E3%82%8B",
+		"html",
 		func(e *colly.HTMLElement) {
-			fmt.Println(e)
-			name := e.ChildText("div>div>ul>li>a.js-enhanced-ecommerce-goods-name")
-			image := e.ChildAttr("div.imgarea>div.imgbox>a>img.lazyloaded", "src")
-			price := utils.FormatPrice(e.ChildText("div>div>ul>li.sellingprice>span.txtprice"))
+			name := e.ChildText("div.pName.fs14")
+			image := ""
+			price := ""
 			priceTax := ""
-			productUrl := e.ChildAttr("div>div>a", "href")
+			productUrl := ""
 
 			product := &Product{
-				ShopId:   4,
+				ShopId:   11,
 				Name:     name,
 				Image:    image,
 				Price:    price,

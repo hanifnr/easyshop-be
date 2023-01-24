@@ -137,7 +137,10 @@ func (orderController *OrderController) ViewTrans(id int64) map[string]interface
 }
 
 func (orderController *OrderController) ListTrans(param *utils.Param) map[string]interface{} {
-	return ListTrans("order", "id ASC", make([]*model.Order, 0), param)
+	return ListJoinModel("\"order\"", "id ASC", make([]*model.Order, 0), param, func(query *gorm.DB) {
+		query.Joins("JOIN status ON status_code = status.code")
+	}, func(query *gorm.DB) {})
+	// return ListTrans("order", "id ASC", make([]*model.Order, 0), param)
 }
 
 func (orderController *OrderController) UpdateTrans() map[string]interface{} {
@@ -320,10 +323,7 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 
 	var orderd []DetailNotifOrder
 	for _, data := range orderController.Orderd {
-		// subtotal := strconv.FormatFloat(data.Subtotal, 'f', 0, 64)
-		// p := message.NewPrinter(language.English)
 		subtotal := humanize.Comma(int64(data.Subtotal))
-		// subtotal := FormatFloat("$#,###.##", afloat)
 		detail := &DetailNotifOrder{
 			Subtotal: subtotal,
 			Orderd:   data,

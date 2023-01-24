@@ -43,6 +43,10 @@ func GetListProducts(name string) []*Product {
 			// 	loft := &Loft{}
 			// 	products := loft.GetListProduct(name)
 			// 	result = append(result, products...)
+			// case 11:
+			// 	yodobashi := &Yodobashi{}
+			// 	products := yodobashi.GetListProduct(name)
+			// 	result = append(result, products...)
 		}
 	}
 
