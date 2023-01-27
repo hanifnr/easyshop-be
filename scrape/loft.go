@@ -19,11 +19,6 @@ func (l *Loft) GetProduct(shopId int64, url string) *Product {
 		func(e *colly.HTMLElement) {
 			code := utils.FormatPrice(e.ChildText("div.itemspec-container>div.tablebox>dl:nth-of-type(1)>dd"))
 			name := e.ChildText("div.itemdetail-container>div>div.itemnamebox>ul>li.itemname")
-			image := e.ChildText("div.itemdetail-container>div>form>div>ul>li>a>div>img")
-			e.ForEach("div.itemdetail-container>div>form>div.selectcolorbox:nth-of-type(1)>ul>li:nth-of-type(1)>a:nth-of-type(1)", func(i int, h *colly.HTMLElement) {
-				image := h.Attr("href")
-				fmt.Println(image)
-			})
 			price := utils.FormatPrice(e.ChildText("div.itemdetail-container>div>div.pricebox>ul>li>dl>dd>ul>li>span.txtprice"))
 			priceTax := utils.FormatPrice(e.ChildText("div.itemdetail-container>div>div.pricebox>ul>li>dl>dd>ul>li>span.txtzeinuki>span"))
 			size := e.ChildText("div.itemspec-container>div.tablebox>dl:nth-of-type(4)>dd")
@@ -31,11 +26,18 @@ func (l *Loft) GetProduct(shopId int64, url string) *Product {
 			product = &Product{
 				Code:     code,
 				Name:     name,
-				Image:    image,
 				Price:    price,
 				PriceTax: priceTax,
 				Size:     strings.Replace(size, "(パッケージ)", "", -1),
 			}
+		},
+	)
+	doScrap(
+		url,
+		"head",
+		func(e *colly.HTMLElement) {
+			image := e.ChildAttr("meta:nth-of-type(11)", "content")
+			product.Image = image
 		},
 	)
 	return product
@@ -49,45 +51,27 @@ func (m *Loft) GetListProduct(name string) []*Product {
 		"ul.itemlist.style-t",
 		func(e *colly.HTMLElement) {
 			fmt.Println(e)
-			var product *Product
 			e.ForEach("div.detailbox", func(i int, h *colly.HTMLElement) {
 				name := h.ChildText("div>div>ul>li>a.js-enhanced-ecommerce-goods-name")
 				price := utils.FormatPrice(h.ChildText("div>div>ul>li.sellingprice>span.txtprice"))
 				priceTax := ""
 				productUrl := h.ChildAttr("div>div>ul>li>a", "href")
 
-				product = &Product{
+				product := &Product{
 					ShopId:   4,
 					Name:     name,
 					Price:    price,
 					PriceTax: priceTax,
 					Url:      productUrl,
 				}
+				result = append(result, product)
 			})
 			e.ForEach("div.imgbox>a>img", func(i int, h *colly.HTMLElement) {
 				image := h.Attr("data-src")
-				product.Image = "https://www.loft.co.jp" + image
+				result[i].Image = "https://www.loft.co.jp" + image
 			})
 
-			result = append(result, product)
 		},
 	)
-	// doScrap(
-	// 	"https://www.loft.co.jp/store/goods/search.aspx?search=x&category=&keyword=&"+link.Encode(),
-	// 	"div.imgbox>a>img",
-	// 	func(e *colly.HTMLElement) {
-	// 		image := e.Attr("data-src")
-
-	// 		product := &Product{
-	// 			ShopId:   4,
-	// 			Name:     name,
-	// 			Image:    image,
-	// 			Price:    price,
-	// 			PriceTax: priceTax,
-	// 			Url:      productUrl,
-	// 		}
-	// 		result = append(result, product)
-	// 	},
-	// )
 	return result
 }
