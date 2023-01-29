@@ -117,7 +117,7 @@ func (addrController *AddrController) DeleteModel(id int64) map[string]interface
 }
 
 func (addrController *AddrController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("addr", "id ASC", make([]*model.Addr, 0), param)
+	return ListModel("addr", "id ASC", &addrController.Addr, make([]*model.Addr, 0), param)
 }
 
 func ComboAddr(page int, param *utils.Param) map[string]interface{} {

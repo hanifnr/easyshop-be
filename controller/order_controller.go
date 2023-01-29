@@ -137,10 +137,10 @@ func (orderController *OrderController) ViewTrans(id int64) map[string]interface
 }
 
 func (orderController *OrderController) ListTrans(param *utils.Param) map[string]interface{} {
+	param.SetDefaultDelete()
 	return ListJoinModel("\"order\"", "id ASC", make([]*model.Order, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN status ON status_code = status.code")
 	}, func(query *gorm.DB) {})
-	// return ListTrans("order", "id ASC", make([]*model.Order, 0), param)
 }
 
 func (orderController *OrderController) UpdateTrans() map[string]interface{} {
@@ -209,9 +209,8 @@ func (orderController *OrderController) TrackingNumber(id int64, trackingNumber 
 
 func (orderController *OrderController) ListDetail(param *utils.Param) map[string]interface{} {
 	imported := false
-	isDelete := false
 	param.Imported = &imported
-	param.IsDelete = &isDelete
+	param.SetDefaultDelete()
 	return ListJoinModel("orderd", "order_id DESC,dno ASC", make([]*model.Orderd, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN \"order\" ON order_id = \"order\".id")
 	}, func(query *gorm.DB) {

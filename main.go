@@ -86,6 +86,7 @@ func main() {
 	router.HandleFunc("/status/view/{id}", c.ViewStatus).Methods("GET")
 	router.HandleFunc("/product/list", c.ListProduct).Methods("GET")
 	router.HandleFunc("/product", c.ViewProduct).Methods("GET")
+	router.HandleFunc("/product/top", c.GetTopProduct).Methods("GET")
 
 	router.Use(u.JwtAuthentication)
 

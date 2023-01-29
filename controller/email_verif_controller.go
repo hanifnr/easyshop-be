@@ -137,7 +137,7 @@ func (emailVerifController *EmailVerifController) DeleteModel(id int64) map[stri
 	return utils.Message(true)
 }
 func (emailVerifController *EmailVerifController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("emailVerif", "id ASC", make([]*model.EmailVerif, 0), param)
+	return ListModel("emailVerif", "id ASC", &emailVerifController.EmailVerif, make([]*model.EmailVerif, 0), param)
 }
 
 func (emailVerifController *EmailVerifController) VerifyEmail(w http.ResponseWriter, r *http.Request) {

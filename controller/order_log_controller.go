@@ -72,5 +72,5 @@ func (orderLogController *OrderLogController) DeleteModel(id int64) map[string]i
 }
 
 func (orderLogController *OrderLogController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("order_log", "date ASC", make([]*model.OrderLog, 0), param)
+	return ListModel("order_log", "date ASC", &orderLogController.OrderLog, make([]*model.OrderLog, 0), param)
 }

@@ -18,3 +18,8 @@ var ViewProduct = func(w http.ResponseWriter, r *http.Request) {
 	resp := scrape.GetProduct(*shopId, url)
 	utils.Respond(w, resp)
 }
+
+var GetTopProduct = func(w http.ResponseWriter, r *http.Request) {
+	resp := scrape.GetTopProducts()
+	utils.Respond(w, utils.MessageData(true, resp))
+}

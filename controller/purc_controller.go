@@ -102,7 +102,7 @@ func (purcController *PurcController) ViewTrans(id int64) map[string]interface{}
 }
 
 func (purcController *PurcController) ListTrans(param *utils.Param) map[string]interface{} {
-	return ListTrans("purc", "id ASC", make([]*model.Purc, 0), param)
+	return ListTrans("purc", "id ASC", &purcController.Purc, make([]*model.Purc, 0), param)
 }
 
 func (purcController *PurcController) UpdateTrans() map[string]interface{} {
@@ -156,9 +156,8 @@ func (purcController *PurcController) FDelete() functions.SQLFunction {
 
 func (purcController *PurcController) ListDetail(param *utils.Param) map[string]interface{} {
 	imported := false
-	isDeleted := false
 	param.Imported = &imported
-	param.IsDelete = &isDeleted
+	param.SetDefaultDelete()
 	return ListJoinModel("purcd", "purc_id DESC,dno ASC", make([]*model.Purcd, 0), param, func(query *gorm.DB) {
 		query.Joins("JOIN purc ON purc_id = purc.id")
 	}, func(query *gorm.DB) {})

@@ -87,5 +87,5 @@ func (userController *UserController) DeleteModel(id int64) map[string]interface
 	return utils.Message(true)
 }
 func (userController *UserController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("user", "id ASC", make([]*model.User, 0), param)
+	return ListModel("user", "id ASC", &userController.User, make([]*model.User, 0), param)
 }

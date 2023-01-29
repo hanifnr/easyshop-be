@@ -78,3 +78,36 @@ func (m *Matsukiyo) GetListProduct(name string) []*Product {
 	)
 	return result
 }
+
+func (m *Matsukiyo) GetTopProduct() []*Product {
+	i := int(0)
+	result := make([]*Product, 0)
+	doScrap(
+		"https://www.matsukiyo.co.jp/store/api/recommend?id=topicalProducts&partsid=RC0012&account=EC&outputdesign=2&screenId=FONL01P01&_=1674963102017",
+		"div.featureList>div.featureListInner>div>div:nth-of-type(1)>div",
+		func(e *colly.HTMLElement) {
+			if i < 4 {
+				i++
+				baseUrl := "https://www.matsukiyo.co.jp"
+				baseUrlProduct := "https://www.matsukiyo.co.jp/store/online/p/"
+
+				name := e.ChildText("a>p.ttl")
+				image := e.ChildAttr("a>p.productImage > img", "src")
+				price := utils.FormatPrice(e.ChildText("a>p:nth-of-type(3)"))
+				priceTax := utils.FormatPrice(e.ChildText("a>p.price.inTax"))
+				code := e.ChildAttr("p>a", "data-code")
+
+				product := &Product{
+					ShopId:   1,
+					Name:     name,
+					Image:    baseUrl + image,
+					Price:    price,
+					PriceTax: priceTax,
+					Url:      baseUrlProduct + code,
+				}
+				result = append(result, product)
+			}
+		},
+	)
+	return result
+}

@@ -173,3 +173,10 @@ func ParamToBool(param string) *bool {
 func PercentText(text string) string {
 	return "%" + text + "%"
 }
+
+func (param *Param) SetDefaultDelete() {
+	if param.IsDelete == nil {
+		isDelete := false
+		param.IsDelete = &isDelete
+	}
+}

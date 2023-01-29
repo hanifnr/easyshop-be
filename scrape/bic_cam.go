@@ -6,9 +6,9 @@ import (
 	"github.com/gocolly/colly"
 )
 
-type Yodobashi struct{}
+type BicCam struct{}
 
-func (y *Yodobashi) GetProduct(shopId int64, url string) *Product {
+func (y *BicCam) GetProduct(shopId int64, url string) *Product {
 	var product *Product
 	doScrap(
 		url,
@@ -34,14 +34,15 @@ func (y *Yodobashi) GetProduct(shopId int64, url string) *Product {
 	return product
 }
 
-func (m *Yodobashi) GetListProduct(name string) []*Product {
+func (m *BicCam) GetListProduct(name string) []*Product {
 	result := make([]*Product, 0)
+	// link, _ := url.ParseQuery("q=" + name)
 	doScrap(
-		"https://www.yodobashi.com/?word=%E5%89%8D%E3%81%AE%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%B8%E6%88%BB%E3%82%8B",
-		"HTML",
+		"https://www.biccamera.com/bc/category/?q=%83%5E%83u%83%8B%90%EE+%83z%83%8F%83C%83g",
+		"html",
 		func(e *colly.HTMLElement) {
-			name := e.ChildText("div.pName.fs14")
-			image := ""
+			name := e.ChildAttr("li>p.bcs_title>a.bcs_item", "href")
+			image := e.ChildAttr("li>p.bcs_image>a>img", "src")
 			price := ""
 			priceTax := ""
 			productUrl := ""

@@ -98,7 +98,7 @@ func (whController *WhController) ViewTrans(id int64) map[string]interface{} {
 }
 
 func (whController *WhController) ListTrans(param *utils.Param) map[string]interface{} {
-	return ListTrans("wh", "id ASC", make([]*model.Wh, 0), param)
+	return ListTrans("wh", "id ASC", &whController.Wh, make([]*model.Wh, 0), param)
 }
 
 func (whController *WhController) UpdateTrans() map[string]interface{} {

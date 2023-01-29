@@ -107,7 +107,7 @@ func (custController *CustController) DeleteModel(id int64) map[string]interface
 }
 
 func (custController *CustController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("cust", "id ASC", make([]*model.Cust, 0), param)
+	return ListModel("cust", "id ASC", &custController.Cust, make([]*model.Cust, 0), param)
 }
 
 func ComboCust(page int, param *utils.Param) map[string]interface{} {

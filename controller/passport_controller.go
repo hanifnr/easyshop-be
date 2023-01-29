@@ -95,7 +95,7 @@ func (passportController *PassportController) DeleteModel(id int64) map[string]i
 }
 
 func (passportController *PassportController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("passport", "id ASC", make([]*model.Passport, 0), param)
+	return ListModel("passport", "id ASC", &passportController.Passport, make([]*model.Passport, 0), param)
 }
 
 func ViewModelCust(passportController *PassportController, w http.ResponseWriter, r *http.Request) {

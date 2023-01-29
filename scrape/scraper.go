@@ -47,6 +47,10 @@ func GetListProducts(name string) []*Product {
 			loft := &Loft{}
 			products := loft.GetListProduct(name)
 			result = append(result, products...)
+			// case 9:
+			// 	bicCam := &BicCam{}
+			// 	products := bicCam.GetListProduct(name)
+			// 	result = append(result, products...)
 			// case 11:
 			// 	yodobashi := &Yodobashi{}
 			// 	products := yodobashi.GetListProduct(name)
@@ -57,10 +61,42 @@ func GetListProducts(name string) []*Product {
 	return result
 }
 
+func GetTopProducts() []*Product {
+	result := make([]*Product, 0)
+
+	db := utils.GetDB()
+
+	listShop := make([]*model.Shop, 0)
+	db.Where("is_active = TRUE").Find(&listShop)
+
+	for _, shop := range listShop {
+		switch shop.Id {
+		case 1:
+			matsukiyo := &Matsukiyo{}
+			products := matsukiyo.GetTopProduct()
+			result = append(result, products...)
+		}
+	}
+
+	return result
+}
+
 func doScrap(url, selector string, f func(e *colly.HTMLElement)) {
 	c := colly.NewCollector()
 
 	c.OnHTML(selector, f)
+
+	c.OnResponse(func(r *colly.Response) {})
+
+	c.Visit(url)
+}
+
+func doScrapResponse(url, selector string, fH func(e *colly.HTMLElement), fR func(f *colly.Response)) {
+	c := colly.NewCollector()
+
+	c.OnHTML(selector, fH)
+
+	c.OnResponse(fR)
 
 	c.Visit(url)
 }

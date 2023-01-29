@@ -172,9 +172,9 @@ func DeleteTrans(id int64, controller TransController, fAction func() utils.Stat
 	return utils.StatusReturnOK()
 }
 
-func ListTrans(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
+func ListTrans(table, order string, m interface{}, list interface{}, param *utils.Param) map[string]interface{} {
 	db := utils.GetDB()
-
+	ProcessDefaultModelParam(m, param)
 	respPage, err := utils.QueryListFind(table, order, &list, param, func(query *gorm.DB) {}, func(query *gorm.DB) {})
 	if err != nil {
 		return utils.MessageErr(false, utils.ErrSQLList, err.Error())

@@ -115,7 +115,8 @@ func DeleteModel(id int64, controller Controller, fAction func(m model.Model) ut
 	return utils.StatusReturnOK()
 }
 
-func ListModel(table, order string, list interface{}, param *utils.Param) map[string]interface{} {
+func ListModel(table, order string, m interface{}, list interface{}, param *utils.Param) map[string]interface{} {
+	ProcessDefaultModelParam(m, param)
 	return ListJoinModel(table, order, list, param, func(query *gorm.DB) {}, func(query *gorm.DB) {})
 }
 
@@ -171,4 +172,10 @@ func UpdateFieldModel(id int64, controller Controller, fAction func(m model.Mode
 	}
 	db.Commit()
 	return utils.MessageData(true, m)
+}
+
+func ProcessDefaultModelParam(m interface{}, param *utils.Param) {
+	if _, ok := m.(model.DeleteField); ok {
+		param.SetDefaultDelete()
+	}
 }
