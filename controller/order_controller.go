@@ -64,6 +64,14 @@ var TrackingNumber = func(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+var ShippingCost = func(w http.ResponseWriter, r *http.Request) {
+	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
+		orderController := &OrderController{}
+		value, _ := strconv.ParseFloat(scu.Value, 64)
+		return orderController.ShippingCost(scu.Id, value)
+	})
+}
+
 var ListOrderd = func(w http.ResponseWriter, r *http.Request) {
 	param := utils.ProcessParam(r)
 	orderController := &OrderController{}
@@ -203,6 +211,14 @@ func (orderController *OrderController) TrackingNumber(id int64, trackingNumber 
 	return UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		order := m.(*model.Order)
 		order.TrackingNumber = strings.ToUpper(trackingNumber)
+		return utils.StatusReturnOK()
+	})
+}
+
+func (orderController *OrderController) ShippingCost(id int64, cost float64) map[string]interface{} {
+	return UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
+		order := m.(*model.Order)
+		order.ShippingCost = cost
 		return utils.StatusReturnOK()
 	})
 }

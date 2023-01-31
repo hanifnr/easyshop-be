@@ -54,6 +54,7 @@ func main() {
 	router.HandleFunc("/order/update", c.UpdateOrder).Methods("PUT")
 	router.HandleFunc("/order/handle", c.HandleOrder).Methods("PUT")
 	router.HandleFunc("/order/track", c.TrackingNumber).Methods("PUT")
+	router.HandleFunc("/order/shipping", c.ShippingCost).Methods("PUT")
 	router.HandleFunc("/order/details", c.ListOrderd).Methods("GET")
 	router.HandleFunc("/order/log", c.ListOrderLog).Methods("GET")
 	router.HandleFunc("/order/proof/create/{id}", c.UploadOrderProof).Methods("POST")

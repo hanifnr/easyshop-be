@@ -25,6 +25,7 @@ type Order struct {
 	AddrId         int64      `json:"addr_id"`
 	ArrivalDate    *time.Time `json:"arrival_date"`
 	ExchangeRate   float64    `json:"exchange_rate"`
+	ShippingCost   float64    `json:"shipping_cost"`
 	OrderExt       `gorm:"-"`
 }
 
