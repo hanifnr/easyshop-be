@@ -58,7 +58,7 @@ func (m *Loft) GetListProduct(name string) []*Product {
 				productUrl := h.ChildAttr("div>div>ul>li>a", "href")
 
 				product := &Product{
-					ShopId:   4,
+					ShopId:   5,
 					Name:     name,
 					Price:    price,
 					PriceTax: priceTax,
