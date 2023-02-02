@@ -117,6 +117,7 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 		order.Trxno = "AUTO"
 		order.StatusCode = "W"
 		order.Passport = passport
+		order.GrandTotal = order.Total
 		for i := range orderController.Orderd {
 			orderd := &orderController.Orderd[i]
 			orderd.Dno = i + 1
@@ -160,6 +161,7 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 		orderSrc.Date = orderTemp.Date
 		orderSrc.PickDate = orderTemp.PickDate
 		orderSrc.Total = orderTemp.Total
+		orderSrc.GrandTotal = orderTemp.Total + orderSrc.ShippingCost
 		orderSrc.Trxno = orderTemp.Trxno
 		orderSrc.AddrId = orderTemp.AddrId
 		orderSrc.ArrivalDate = orderTemp.ArrivalDate
@@ -219,6 +221,7 @@ func (orderController *OrderController) ShippingCost(id int64, cost float64) map
 	return UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		order := m.(*model.Order)
 		order.ShippingCost = cost
+		order.GrandTotal = order.Total + cost
 		return utils.StatusReturnOK()
 	})
 }
