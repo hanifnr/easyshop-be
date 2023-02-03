@@ -126,6 +126,7 @@ ALTER TABLE public.orderd ADD COLUMN url VARCHAR;
 ALTER TABLE public.orderd ADD COLUMN imported BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.orderd RENAME COLUMN productid TO product_id;
 ALTER TABLE public.orderd ADD COLUMN arrived BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.orderd ADD COLUMN note TEXT;
 
 CREATE SEQUENCE public.purc_seq_id;
 CREATE TABLE public.purc(

@@ -114,7 +114,7 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 		if err != nil {
 			return err
 		}
-		order.Trxno = "AUTO"
+		order.Trxno = GetOrderTrxno(order, db)
 		order.StatusCode = "W"
 		order.Passport = passport
 		order.GrandTotal = order.Total
@@ -368,4 +368,13 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 	}
 
 	return cust, notifOrder
+}
+
+func GetOrderTrxno(order *model.Order, db *gorm.DB) string {
+	addr := &model.Addr{}
+	db.Where("id = ?", order.AddrId).Find(&addr)
+	if strings.ToUpper(addr.CountryCode) == "JAPAN" {
+		return functions.FGetNewNo("JP", db)
+	}
+	return functions.FGetNewNo("LN", db)
 }
