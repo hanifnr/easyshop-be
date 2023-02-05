@@ -15,6 +15,15 @@ import (
 	"gorm.io/gorm"
 )
 
+// var adminEmail = "tokyo@easyshop-jp.com"
+var adminEmail = "hanif.nr11@gmail.com"
+
+const (
+	ORDER_NOTIFICATION = iota
+	APPROVED_NOTIFICATION
+	CANCELED_NOTIFICATION
+)
+
 var CreateOrder = func(w http.ResponseWriter, r *http.Request) {
 	orderController := &OrderController{}
 	CreateTransAction(orderController, w, r)
@@ -58,17 +67,18 @@ var HandleOrder = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var TrackingNumber = func(w http.ResponseWriter, r *http.Request) {
-	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
+	scuModel := &model.SingleStringColumnUpdate{}
+	model.GetSingleColumnUpdate(w, r, scuModel, func() map[string]interface{} {
 		orderController := &OrderController{}
-		return orderController.TrackingNumber(scu.Id, scu.Value)
+		return orderController.TrackingNumber(scuModel.Id, scuModel.Value)
 	})
 }
 
 var ShippingCost = func(w http.ResponseWriter, r *http.Request) {
-	model.GetSingleColumnUpdate(w, r, func(scu *model.SingleColumnUpdate) map[string]interface{} {
+	scuModel := &model.SingleNumericColumnUpdate{}
+	model.GetSingleColumnUpdate(w, r, scuModel, func() map[string]interface{} {
 		orderController := &OrderController{}
-		value, _ := strconv.ParseFloat(scu.Value, 64)
-		return orderController.ShippingCost(scu.Id, value)
+		return orderController.ShippingCost(scuModel.Id, scuModel.Value)
 	})
 }
 
@@ -128,7 +138,7 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	cust, notifOrder := getDataNotifOrder(orderController)
-	SendEmailNotifOrder(cust, *notifOrder)
+	SendEmailNotification(ORDER_NOTIFICATION, cust, *notifOrder)
 	return utils.MessageData(true, orderController)
 }
 
@@ -204,6 +214,12 @@ func (orderController *OrderController) HandleOrder(id int64, status, note strin
 		}
 		if retval := flsoNew.Run(order, db); retval.ErrCode != 0 {
 			return retval
+		}
+		cust, notifOrder := getDataNotifOrder(orderController)
+		if status == "A" {
+			SendEmailNotification(APPROVED_NOTIFICATION, cust, *notifOrder)
+		} else if status == "C" {
+			SendEmailNotification(CANCELED_NOTIFICATION, cust, *notifOrder)
 		}
 		return utils.StatusReturnOK()
 	})
@@ -317,16 +333,17 @@ type NotifOrder struct {
 	Orderd   []DetailNotifOrder
 }
 
-func SendEmailNotifOrder(cust *model.Cust, notifOrder NotifOrder) {
-	adminEmail := "tokyo@easyshop-jp.com"
-
-	SendNotifOrder(cust.Email, notifOrder)
-	SendNotifOrder(adminEmail, notifOrder)
-}
-
-func SendNotifOrder(to string, notifOrder NotifOrder) {
+func SendEmailNotification(mode int, cust *model.Cust, notifOrder NotifOrder) {
 	runtime.GOMAXPROCS(1)
-	go utils.SendEmailNotifOrder(to, notifOrder)
+	switch mode {
+	case ORDER_NOTIFICATION:
+		go utils.SendEmailNotifOrder(adminEmail, cust.Email, notifOrder, notifOrder.Trxno)
+	case APPROVED_NOTIFICATION:
+		go utils.SendEmailNotifApprove(adminEmail, cust.Email, notifOrder, notifOrder.Trxno)
+	case CANCELED_NOTIFICATION:
+		go utils.SendEmailNotifCanceled(adminEmail, cust.Email, notifOrder, notifOrder.Trxno)
+	}
+
 }
 
 type DetailNotifOrder struct {
@@ -338,6 +355,13 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 	db := utils.GetDB()
 
 	order := orderController.Order
+
+	if len(orderController.Orderd) == 0 {
+		db.Where("order_id = ?", order.Id).Find(&orderController.Orderd)
+		for i := range orderController.Orderd {
+			orderController.Details = append(orderController.Details, &orderController.Orderd[i])
+		}
+	}
 
 	var orderd []DetailNotifOrder
 	for _, data := range orderController.Orderd {

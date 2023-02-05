@@ -27,14 +27,48 @@ func SendEmailOtp(to string, data interface{}) {
 	}
 }
 
-func SendEmailNotifOrder(to string, data interface{}) {
-	var err error
+func SendEmailNotifOrder(toAdmin, toCustomer string, data interface{}, trxno string) {
+	SendEmailNotif(
+		toAdmin,
+		toCustomer,
+		"order-notif.html",
+		"[Easyshop]: New order #"+trxno,
+		data,
+	)
+}
+
+func SendEmailNotifApprove(toAdmin, toCustomer string, data interface{}, trxno string) {
+	SendEmailNotif(
+		toAdmin,
+		toCustomer,
+		"order-approved-notif.html",
+		"[Easyshop] Payment request for your order #"+trxno,
+		data,
+	)
+}
+
+func SendEmailNotifCanceled(toAdmin, toCustomer string, data interface{}, trxno string) {
+	SendEmailNotif(
+		toAdmin,
+		toCustomer,
+		"order-canceled-notif.html",
+		"[Easyshop] Cancellation of your order #"+trxno,
+		data,
+	)
+}
+
+func SendEmailNotif(toAdmin, toCustomer, templateName, subject string, data interface{}) {
 	path, _ := os.Getwd()
-	template := path + "/template/order-notif.html"
-	subject := "Easy Shop Order Notification"
-	err = SendEmail(to, subject, data, template)
+	template := path + "/template/" + templateName
+	err := SendEmail(toAdmin, subject, data, template)
+	err2 := SendEmail(toCustomer, subject, data, template)
 	if err == nil {
-		fmt.Println("send email '" + subject + "' success")
+		fmt.Println("send email '" + subject + toAdmin + "' success")
+	} else {
+		fmt.Println(err)
+	}
+	if err2 == nil {
+		fmt.Println("send email '" + subject + toCustomer + "' success")
 	} else {
 		fmt.Println(err)
 	}

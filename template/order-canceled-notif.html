@@ -1,0 +1,116 @@
+<table border="1" cellspacing="0" cellpadding="0" width="600" style="width:450pt;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;border:1pt solid rgb(222,222,222)">
+    <tbody><tr>
+     <td valign="top" style="border:none;padding:0mm">
+     <div align="center">
+     <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;background:rgb(150,88,138)">
+      <tbody><tr>
+       <td style="padding:27pt 36pt">
+       <p class="MsoNormal" align="left" style="line-height:33.75pt;margin:0mm;font-size:10.5pt;font-family:游明朝,serif"><span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;color:white">Cancellation for Order:&nbsp;</span><span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;color:black;">#{{.Trxno}}</span><span lang="EN-US" style="font-size:22pt;font-family:Helvetica,sans-serif"></span></p>
+       </td>
+      </tr>
+     </tbody></table>
+     </div>
+     </td>
+    </tr>
+    <tr>
+     <td valign="top" style="border:none;padding:0mm">
+     <div align="center">
+     <table border="0" cellspacing="0" cellpadding="0" width="600" style="width:450pt">
+      <tbody><tr>
+       <td valign="top" style="background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0mm">
+       <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%">
+        <tbody><tr>
+         <td valign="top" style="padding:36pt 36pt 24pt">
+         <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif"><span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial">Dear&nbsp;&nbsp;</span><span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;">{{.Custname}}</span><span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black">&nbsp;</span><span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">Thank
+         you for shopping with easyshop. Status of your order now is “Cancelled”. Please
+         check details of your order which has been cancelled below and keep this
+         email as reference. </span></p>
+         <h2 style="color:rgb(150,88,138);display:block;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0px 0px 18px;text-align:left">
+            <span ><a href="https://www.easyshop-jp.com/wp-admin/post.php?post=7827&amp;action=edit" style="font-weight:normal;text-decoration:underline;color:rgb(150,88,138)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://www.easyshop-jp.com/wp-admin/post.php?post%3D7827%26action%3Dedit&amp;source=gmail&amp;ust=1674368634777000&amp;usg=AOvVaw0OiidTd_oOvhH2p0RPe41J">[Order #{{.Trxno}}]</a> ({{.Trxdate}}) -&gt; ORDER DETAILS&nbsp;</span>
+         </h2>
+         <div style="color:rgb(99,99,99);margin-bottom:40px">
+            <table cellspacing="0" cellpadding="6" border="1" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;width:100%;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif" width="100%">
+               <thead>
+                  <tr>
+                     <th scope="col" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">Product</th>
+                     <th scope="col" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">Quantity</th>
+                     <th scope="col" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">Price</th>
+                  </tr>
+               </thead>
+               <tbody>
+                 {{ range .Orderd}}
+                  <tr>
+                     <td style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);padding:12px;text-align:left;vertical-align:middle;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif" align="left">
+                        {{.Name}}<br><br>
+                        <!-- <p style="margin:0px 0px 16px">Category: Cosmetics</p> -->
+                        (#{{.ProductId}})		
+                     </td>
+                     <td style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);padding:12px;text-align:left;vertical-align:middle;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif" align="left">
+                        {{.Qty}}		
+                     </td>
+                     <td style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);padding:12px;text-align:left;vertical-align:middle;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif" align="left">
+                        <span><span>¥</span>{{.Subtotal}}</span>		
+                     </td>
+                  </tr>
+                  {{ end}}
+               </tbody>
+               <tfoot>
+                  <tr>
+                     <th scope="row" colspan="2" style="color:rgb(99,99,99);border-width:4px 1px 1px;border-style:solid;border-color:rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left"><br></th>
+                     <td style="color:rgb(99,99,99);border-width:4px 1px 1px;border-style:solid;border-color:rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left"><br></td>
+                  </tr>
+                  <tr>
+                     <th scope="row" colspan="2" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">Total:</th>
+                     <td style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left"><span><span>¥</span>{{.Total}}</span></td>
+                  </tr>
+               </tfoot>
+            </table>
+         </div>
+         <div style="color:rgb(99,99,99);margin-bottom:40px">
+            <table cellspacing="0" cellpadding="6" border="1" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;width:100%;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif" width="100%">
+               <tbody>
+                  <tr id="m_-1643888895621709743m_6014141923663657201tr-billing_wooccm26">
+                     <td scope="col" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">
+                        Pick Up Address*              
+                     </td>
+                     <td scope="col" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">
+                        {{.Addr}}            
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+         <table id="m_-1643888895621709743m_6014141923663657201addresses" cellspacing="0" cellpadding="0" border="0" style="color:rgb(99,99,99);width:100%;vertical-align:top;margin-bottom:40px;padding:0px" width="100%">
+            <tbody>
+               <tr>
+                  <td valign="top" width="50%" style="text-align:left;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;border:0px;padding:0px" align="left">
+                     <h2 style="color:rgb(150,88,138);display:block;font-family:Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0px 0px 18px;text-align:left"><span >Customer information</span></h2>
+                     <address style="padding:12px;color:rgb(99,99,99);border:1px solid rgb(229,229,229)">
+                        {{.Custname}}
+                        <br>{{.Country}}									
+                        <br><a href="tel:85800134" style="color:rgb(150,88,138);font-weight:normal;text-decoration:underline" target="_blank">{{.Phone}}</a>													
+                        <br><a href="mailto:kardy@sift-ag.com" target="_blank">{{.Email}}</a>							
+                     </address>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%">
+          <tbody><tr>
+           <td width="100%" valign="top" style="width:100%;padding:0mm">
+           </td>
+          </tr>
+         </tbody></table>
+         <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif"><span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">&nbsp;</span></p>
+         <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif"><span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">Please
+         contact our admin or send us email if you have any inquiries. </span></p>
+         </td>
+        </tr>
+       </tbody></table>
+       </td>
+      </tr>
+     </tbody></table>
+     </div>
+     </td>
+    </tr>
+   </tbody></table>

@@ -9,9 +9,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type SingleColumnUpdate struct {
+type SingleStringColumnUpdate struct {
 	Id    int64
 	Value string
+}
+
+type SingleNumericColumnUpdate struct {
+	Id    int64
+	Value float64
 }
 
 type Model interface {
@@ -42,13 +47,12 @@ type ModelExt interface {
 	SetValueModelExt(db *gorm.DB)
 }
 
-func GetSingleColumnUpdate(w http.ResponseWriter, r *http.Request, fAction func(scu *SingleColumnUpdate) map[string]interface{}) {
-	scu := &SingleColumnUpdate{}
-	if err := json.NewDecoder(r.Body).Decode(&scu); err != nil {
+func GetSingleColumnUpdate(w http.ResponseWriter, r *http.Request, model interface{}, fAction func() map[string]interface{}) {
+	if err := json.NewDecoder(r.Body).Decode(&model); err != nil {
 		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
 		utils.RespondError(w, data, http.StatusBadRequest)
 		return
 	}
-	resp := fAction(scu)
+	resp := fAction()
 	utils.Respond(w, resp)
 }
