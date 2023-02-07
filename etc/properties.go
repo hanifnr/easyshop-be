@@ -1,3 +1,9 @@
 package etc
 
-const SERVER_MODE = "DEV"
+import "os"
+
+func ReadProps() map[string]interface{} {
+	return map[string]interface{}{
+		"mode": os.Getenv("MODE"),
+	}
+}

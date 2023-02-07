@@ -15,7 +15,8 @@
                 "DB_USER": "bits",
                 "DB_PASS": "help1milBsnsBEEFR33",
                 "DB_NAME": "easy-shop",
-                "APP_PORT": "8080"
+                "APP_PORT": "8080",
+                "MODE": "LOCAL"
             }
         }
     ]

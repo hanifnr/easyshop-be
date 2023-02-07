@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"runtime"
 	"strconv"
@@ -380,11 +381,13 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 	cust := &model.Cust{}
 	db.Where("id = ?", order.CustId).Find(&cust)
 
+	fullAddr := fmt.Sprintf("%s,\n%s, %s, %s - %s", addr.FullAddress, addr.City, addr.Province, addr.CountryCode, addr.ZipCode)
+
 	notifOrder := &NotifOrder{
 		Custname: order.CustName,
 		Trxno:    order.Trxno,
 		Trxdate:  utils.FormatTimeToDate(order.Date),
-		Addr:     addr.FullAddress,
+		Addr:     fullAddr,
 		Country:  addr.CountryCode,
 		Phone:    cust.PhoneNumber,
 		Email:    cust.Email,
