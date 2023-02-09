@@ -81,6 +81,11 @@ func GetTopProducts() []*Product {
 	return result
 }
 
+func GetEasyShopProducts(category string) []*Product {
+	easyshop := &EasyShop{}
+	return easyshop.GetProducts(category)
+}
+
 func doScrap(url, selector string, f func(e *colly.HTMLElement)) {
 	c := colly.NewCollector()
 
