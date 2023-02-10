@@ -78,61 +78,7 @@ func (m *EasyShop) GetProducts(category string) []*Product {
 			productUrl := e.ChildAttr("a", "href")
 
 			product := &Product{
-				ShopId:   0,
-				Name:     name,
-				Image:    image,
-				Price:    price,
-				PriceTax: priceTax,
-				Url:      productUrl,
-			}
-			result = append(result, product)
-		},
-	)
-	return result
-}
-
-func (m *EasyShop) GetCosmeticProduct() []*Product {
-	result := make([]*Product, 0)
-	doScrap(
-		"https://www.easyshop-jp.com/cosmetics-3",
-		"ul.products.elementor-grid.columns-4>li",
-		func(e *colly.HTMLElement) {
-			fmt.Println(e)
-			name := e.ChildText("h2.woocommerce-loop-product__title")
-			image := e.ChildAttr("a>img", "src")
-			price := utils.FormatPrice(e.ChildText("span.woocommerce-Price-amount.amount>bdi"))
-			priceTax := ""
-			productUrl := e.ChildAttr("a", "href")
-
-			product := &Product{
-				ShopId:   0,
-				Name:     name,
-				Image:    image,
-				Price:    price,
-				PriceTax: priceTax,
-				Url:      productUrl,
-			}
-			result = append(result, product)
-		},
-	)
-	return result
-}
-
-func (m *EasyShop) GetLiquorProduct() []*Product {
-	result := make([]*Product, 0)
-	doScrap(
-		"https://www.easyshop-jp.com/liquor",
-		"ul.products.elementor-grid.columns-4>li",
-		func(e *colly.HTMLElement) {
-			fmt.Println(e)
-			name := e.ChildText("h2.woocommerce-loop-product__title")
-			image := e.ChildAttr("a>img", "src")
-			price := utils.FormatPrice(e.ChildText("span.woocommerce-Price-amount.amount>bdi"))
-			priceTax := ""
-			productUrl := e.ChildAttr("a", "href")
-
-			product := &Product{
-				ShopId:   0,
+				ShopId:   19,
 				Name:     name,
 				Image:    image,
 				Price:    price,
