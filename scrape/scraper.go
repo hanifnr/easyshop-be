@@ -96,7 +96,7 @@ func doScrap(url, selector string, f func(e *colly.HTMLElement)) {
 	c.Visit(url)
 }
 
-func doScrapResponse(url, selector string, fH func(e *colly.HTMLElement), fR func(f *colly.Response)) {
+func DoScrapResponse(url, selector string, fH func(e *colly.HTMLElement), fR func(f *colly.Response)) {
 	c := colly.NewCollector()
 
 	c.OnHTML(selector, fH)
@@ -104,4 +104,9 @@ func doScrapResponse(url, selector string, fH func(e *colly.HTMLElement), fR fun
 	c.OnResponse(fR)
 
 	c.Visit(url)
+}
+
+func GetPage(page int) (int, int) {
+	start, _ := utils.GetOffsetLimit(page)
+	return start + 1, start + 20
 }

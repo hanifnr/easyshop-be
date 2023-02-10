@@ -1,6 +1,7 @@
 package scrape
 
 type Product struct {
+	Index    int64  `json:"idx,omitempty"`
 	ShopId   int64  `json:"shop_id,omitempty"`
 	Code     string `json:"code,omitempty"`
 	Name     string `json:"name"`

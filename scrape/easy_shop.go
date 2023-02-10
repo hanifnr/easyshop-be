@@ -68,13 +68,13 @@ func (m *EasyShop) GetProducts(category string, page int) ([]*Product, map[strin
 		url = "https://www.easyshop-jp.com/supplement-vitamin-and-food"
 	}
 
-	start, end := utils.GetOffsetLimit(page)
-	index := 0
+	start, end := GetPage(page)
+	index := 1
 	doScrap(
 		url,
 		"ul.products.elementor-grid.columns-4>li",
 		func(e *colly.HTMLElement) {
-			if index >= start && index < end {
+			if index >= start && index <= end {
 				fmt.Println(e)
 				name := e.ChildText("h2.woocommerce-loop-product__title")
 				image := e.ChildAttr("a>img", "src")
@@ -83,6 +83,7 @@ func (m *EasyShop) GetProducts(category string, page int) ([]*Product, map[strin
 				productUrl := e.ChildAttr("a", "href")
 
 				product := &Product{
+					Index:    int64(index),
 					ShopId:   19,
 					Name:     name,
 					Image:    image,
@@ -95,5 +96,5 @@ func (m *EasyShop) GetProducts(category string, page int) ([]*Product, map[strin
 			index++
 		},
 	)
-	return result, utils.RespPage(page, int(index+1))
+	return result, utils.RespPage(page, int(index-1))
 }
