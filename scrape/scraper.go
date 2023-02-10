@@ -81,9 +81,9 @@ func GetTopProducts() []*Product {
 	return result
 }
 
-func GetEasyShopProducts(category string) []*Product {
+func GetEasyShopProducts(category string, page int) ([]*Product, map[string]interface{}) {
 	easyshop := &EasyShop{}
-	return easyshop.GetProducts(category)
+	return easyshop.GetProducts(category, page)
 }
 
 func doScrap(url, selector string, f func(e *colly.HTMLElement)) {

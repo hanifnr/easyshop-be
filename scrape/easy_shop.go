@@ -49,8 +49,9 @@ func (l *EasyShop) GetProduct(shopId int64, url string) *Product {
 	return product
 }
 
-func (m *EasyShop) GetProducts(category string) []*Product {
+func (m *EasyShop) GetProducts(category string, page int) ([]*Product, map[string]interface{}) {
 	result := make([]*Product, 0)
+
 	var url string
 	switch strings.ToUpper(category) {
 	case COSMETIC:
@@ -66,27 +67,33 @@ func (m *EasyShop) GetProducts(category string) []*Product {
 	case SUPPLEMENT:
 		url = "https://www.easyshop-jp.com/supplement-vitamin-and-food"
 	}
+
+	start, end := utils.GetOffsetLimit(page)
+	index := 0
 	doScrap(
 		url,
 		"ul.products.elementor-grid.columns-4>li",
 		func(e *colly.HTMLElement) {
-			fmt.Println(e)
-			name := e.ChildText("h2.woocommerce-loop-product__title")
-			image := e.ChildAttr("a>img", "src")
-			price := utils.FormatPrice(e.ChildText("span.woocommerce-Price-amount.amount>bdi"))
-			priceTax := ""
-			productUrl := e.ChildAttr("a", "href")
+			if index >= start && index < end {
+				fmt.Println(e)
+				name := e.ChildText("h2.woocommerce-loop-product__title")
+				image := e.ChildAttr("a>img", "src")
+				price := utils.FormatPrice(e.ChildText("span.woocommerce-Price-amount.amount>bdi"))
+				priceTax := ""
+				productUrl := e.ChildAttr("a", "href")
 
-			product := &Product{
-				ShopId:   19,
-				Name:     name,
-				Image:    image,
-				Price:    price,
-				PriceTax: priceTax,
-				Url:      productUrl,
+				product := &Product{
+					ShopId:   19,
+					Name:     name,
+					Image:    image,
+					Price:    price,
+					PriceTax: priceTax,
+					Url:      productUrl,
+				}
+				result = append(result, product)
 			}
-			result = append(result, product)
+			index++
 		},
 	)
-	return result
+	return result, utils.RespPage(page, int(index+1))
 }

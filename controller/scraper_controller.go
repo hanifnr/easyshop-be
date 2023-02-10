@@ -26,6 +26,7 @@ var GetTopProduct = func(w http.ResponseWriter, r *http.Request) {
 
 var GetEasyShopProduct = func(w http.ResponseWriter, r *http.Request) {
 	category := r.URL.Query().Get("category")
-	resp := scrape.GetEasyShopProducts(category)
-	utils.Respond(w, utils.MessageData(true, resp))
+	page := utils.ParamToInt(r.URL.Query().Get("page"))
+	resp, respPage := scrape.GetEasyShopProducts(category, *page)
+	utils.Respond(w, utils.MessageListData(true, resp, respPage))
 }
