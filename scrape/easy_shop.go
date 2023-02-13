@@ -21,13 +21,13 @@ func (l *EasyShop) GetProduct(shopId int64, url string) *Product {
 	var product *Product
 	doScrap(
 		url,
-		"div.itemcontetnt-container>div.itemcontetnt-container",
+		"div:nth-of-type(3) > section:nth-of-type(1) > div:nth-of-type(1)",
 		func(e *colly.HTMLElement) {
-			code := utils.FormatPrice(e.ChildText("div.itemspec-container>div.tablebox>dl:nth-of-type(1)>dd"))
-			name := e.ChildText("div.itemdetail-container>div>div.itemnamebox>ul>li.itemname")
-			price := utils.FormatPrice(e.ChildText("div.itemdetail-container>div>div.pricebox>ul>li>dl>dd>ul>li>span.txtprice"))
-			priceTax := utils.FormatPrice(e.ChildText("div.itemdetail-container>div>div.pricebox>ul>li>dl>dd>ul>li>span.txtzeinuki>span"))
-			size := e.ChildText("div.itemspec-container>div.tablebox>dl:nth-of-type(4)>dd")
+			code := strings.Replace(utils.FormatPrice(e.ChildText("span.sku_wrapper.detail-container")), "ode", "", -1)
+			name := e.ChildText("div:nth-of-type(2) > div > div > div > h1")
+			price := utils.FormatPrice(e.ChildText("div:nth-of-type(2) > div > div:nth-of-type(4) > div > p > span > bdi"))
+			priceTax := ""
+			size := e.ChildText("div:nth-of-type(2) > div > div:nth-of-type(6) > div > div > table > tbody > tr > td.marked-element")
 
 			product = &Product{
 				Code:     code,
@@ -40,9 +40,10 @@ func (l *EasyShop) GetProduct(shopId int64, url string) *Product {
 	)
 	doScrap(
 		url,
-		"head",
+		"div[data-id=\"4b679c0\"]>div>div>div>div",
 		func(e *colly.HTMLElement) {
-			image := e.ChildAttr("meta:nth-of-type(11)", "content")
+			selectDiv := e.DOM
+			image := selectDiv.Children().Children().Children().Nodes[0].Attr[0].Val
 			product.Image = image
 		},
 	)

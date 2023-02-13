@@ -8,18 +8,22 @@ import (
 )
 
 func GetProduct(shopId int64, url string) map[string]interface{} {
+	var data *Product
 	switch shopId {
 	case 1:
 		matsukiyo := &Matsukiyo{}
-		data := matsukiyo.GetProduct(shopId, url)
-		return utils.MessageData(true, data)
+		data = matsukiyo.GetProduct(shopId, url)
 	case 4:
 		tokyuHands := &TokyuHands{}
-		data := tokyuHands.GetProduct(shopId, url)
-		return utils.MessageData(true, data)
+		data = tokyuHands.GetProduct(shopId, url)
 	case 5:
 		loft := &Loft{}
-		data := loft.GetProduct(shopId, url)
+		data = loft.GetProduct(shopId, url)
+	case 19:
+		easyShop := &EasyShop{}
+		data = easyShop.GetProduct(shopId, url)
+	}
+	if data.Code != "" {
 		return utils.MessageData(true, data)
 	}
 	return utils.MessageErr(false, utils.ErrExist, "Product not found!")
