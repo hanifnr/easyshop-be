@@ -3,6 +3,9 @@ package utils
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 type StatusReturn struct {
@@ -44,6 +47,34 @@ func RespondError(w http.ResponseWriter, data map[string]interface{}, statusCode
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(data)
+}
+
+func ConvertToXls(response []map[string]interface{}, header []string) *excelize.File {
+	xlsx := excelize.NewFile()
+
+	sheet1Name := "Sheet 1"
+	xlsx.SetSheetName(xlsx.GetSheetName(1), sheet1Name)
+
+	for i, value := range header {
+		axis := string('A' - 1 + i + 1)
+		xlsx.SetCellValue(sheet1Name, axis+"1", value)
+	}
+
+	for i, each := range response {
+		for a, cell := range header {
+			axis := string('A' - 1 + a + 1)
+			xlsx.SetCellValue(sheet1Name, axis+strconv.Itoa(i+2), each[cell])
+		}
+	}
+
+	return xlsx
+}
+
+func SetXlsHeader(w http.ResponseWriter, filename string) {
+	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
+	w.Header().Set("Content-Type", "application/xlsx")
+	w.Header().Set("Content-Disposition", "attachment; filename="+filename+".xlsx")
+	w.Header().Set("Content-Transfer-Encoding", "binary")
 }
 
 const ErrValidate = 1001

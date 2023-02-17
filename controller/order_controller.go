@@ -102,6 +102,15 @@ var LoadOrderProof = func(w http.ResponseWriter, r *http.Request) {
 	orderController.LoadOrderProof(w, r)
 }
 
+var ExportOrderXls = func(w http.ResponseWriter, r *http.Request) {
+	id, err := GetInt64Param("id", w, r)
+	if err != nil {
+		return
+	}
+	orderController := &OrderController{}
+	orderController.ExportOrderXls(id, w)
+}
+
 type OrderController struct {
 	Order   model.Order    `json:"order"`
 	Orderd  []model.Orderd `json:"orderd"`
@@ -397,7 +406,7 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 		Country:  addr.CountryCode,
 		Phone:    cust.PhoneNumber,
 		Email:    cust.Email,
-		Total:    humanize.Comma(int64(order.Total)),
+		Total:    humanize.Comma(int64(order.GrandTotal)),
 		Orderd:   orderd,
 	}
 
@@ -411,4 +420,34 @@ func GetOrderTrxno(order *model.Order, db *gorm.DB) string {
 		return functions.FGetNewNo("JP", db)
 	}
 	return functions.FGetNewNo("LN", db)
+}
+
+func (orderController *OrderController) ExportOrderXls(orderId int64, w http.ResponseWriter) {
+	orderController.ViewTrans(orderId)
+	order := orderController.Order
+	details := orderController.Orderd
+
+	filename := "order_" + order.Trxno + "_" + utils.FormatTimeToDate(order.Date)
+
+	var header = []string{
+		"date",
+		"no",
+		"product_Id",
+		"qty",
+		"total",
+	}
+	data := make([]map[string]interface{}, 0)
+	for _, detail := range details {
+		mapDetail := make(map[string]interface{})
+		mapDetail["date"] = utils.FormatTimeToDate(order.Date)
+		mapDetail["no"] = order.Trxno
+		mapDetail["product_id"] = detail.ProductId
+		mapDetail["qty"] = detail.Qty
+		mapDetail["total"] = detail.Subtotal
+		data = append(data, mapDetail)
+	}
+	xls := utils.ConvertToXls(data, header)
+	utils.SetXlsHeader(w, filename)
+
+	xls.Write(w)
 }
