@@ -17,9 +17,9 @@ import (
 	"gorm.io/gorm"
 )
 
-// var adminEmail = "tokyo@easyshop-jp.com"
+var adminEmail = "tokyo@easyshop-jp.com"
 
-var adminEmail = "hanif.nr11@gmail.com"
+// var adminEmail = "hanif.nr11@gmail.com"
 
 const (
 	ORDER_NOTIFICATION = iota
