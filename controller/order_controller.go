@@ -17,9 +17,9 @@ import (
 	"gorm.io/gorm"
 )
 
-var adminEmail = "tokyo@easyshop-jp.com"
+// var adminEmail = "tokyo@easyshop-jp.com"
 
-// var adminEmail = "hanif.nr11@gmail.com"
+var adminEmail = "hanif.nr11@gmail.com"
 
 const (
 	ORDER_NOTIFICATION = iota
@@ -229,7 +229,11 @@ func (orderController *OrderController) HandleOrder(id int64, status, note strin
 		}
 		cust, notifOrder := getDataNotifOrder(orderController)
 		if status == "A" {
-			SendEmailNotification(APPROVED_NOTIFICATION, cust, *notifOrder)
+			if validateAcceptOrder(*order, db) {
+				SendEmailNotification(APPROVED_NOTIFICATION, cust, *notifOrder)
+			} else {
+				return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Please input shipping cost for order outside Japan!"}
+			}
 		} else if status == "C" {
 			SendEmailNotification(CANCELED_NOTIFICATION, cust, *notifOrder)
 		}
@@ -347,6 +351,8 @@ type NotifOrder struct {
 	Phone    string
 	Email    string
 	Total    string
+	Shipping string
+	Grand    string
 	Orderd   []DetailNotifOrder
 }
 
@@ -406,7 +412,9 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 		Country:  addr.CountryCode,
 		Phone:    cust.PhoneNumber,
 		Email:    cust.Email,
-		Total:    humanize.Comma(int64(order.GrandTotal)),
+		Total:    humanize.Comma(int64(order.Total)),
+		Shipping: humanize.Comma(int64(order.ShippingCost)),
+		Grand:    humanize.Comma(int64(order.GrandTotal)),
 		Orderd:   orderd,
 	}
 
@@ -414,9 +422,8 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 }
 
 func GetOrderTrxno(order *model.Order, db *gorm.DB) string {
-	addr := &model.Addr{}
-	db.Where("id = ?", order.AddrId).Find(&addr)
-	if strings.ToUpper(addr.CountryCode) == "JAPAN" {
+	country := model.GetAddrCountry(order.AddrId, db)
+	if strings.ToUpper(country) == "JAPAN" {
 		return functions.FGetNewNo("JP", db)
 	}
 	return functions.FGetNewNo("LN", db)
@@ -450,4 +457,9 @@ func (orderController *OrderController) ExportOrderXls(orderId int64, w http.Res
 	utils.SetXlsHeader(w, filename)
 
 	xls.Write(w)
+}
+
+func validateAcceptOrder(order model.Order, db *gorm.DB) bool {
+	country := model.GetAddrCountry(order.AddrId, db)
+	return !(strings.ToUpper(country) != "JAPAN" && order.ShippingCost == 0)
 }
