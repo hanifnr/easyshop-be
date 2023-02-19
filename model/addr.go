@@ -49,6 +49,12 @@ func (addr Addr) Validate() error {
 	return err
 }
 
+func GetAddrCountry(id int64, db *gorm.DB) string {
+	addr := &Addr{}
+	db.Where("id = ?", id).Find(&addr)
+	return addr.CountryCode
+}
+
 func (addr *Addr) SetCreatedAt(time time.Time) {
 	addr.CreatedAt = time
 }
