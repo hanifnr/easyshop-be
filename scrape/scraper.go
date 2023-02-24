@@ -19,6 +19,9 @@ func GetProduct(shopId int64, url string) map[string]interface{} {
 	case 5:
 		loft := &Loft{}
 		data = loft.GetProduct(shopId, url)
+	case 12:
+		abcMart := &ABCMart{}
+		data = abcMart.GetProduct(shopId, url)
 	case 19:
 		easyShop := &EasyShop{}
 		data = easyShop.GetProduct(shopId, url)
@@ -51,14 +54,18 @@ func GetListProducts(name string) []*Product {
 			loft := &Loft{}
 			products := loft.GetListProduct(name)
 			result = append(result, products...)
-			// case 9:
-			// 	bicCam := &BicCam{}
-			// 	products := bicCam.GetListProduct(name)
-			// 	result = append(result, products...)
-			// case 11:
-			// 	yodobashi := &Yodobashi{}
-			// 	products := yodobashi.GetListProduct(name)
-			// 	result = append(result, products...)
+		// case 9:
+		// 	bicCam := &BicCam{}
+		// 	products := bicCam.GetListProduct(name)
+		// 	result = append(result, products...)
+		// case 11:
+		// 	yodobashi := &Yodobashi{}
+		// 	products := yodobashi.GetListProduct(name)
+		// 	result = append(result, products...)
+		case 12:
+			abc := &ABCMart{}
+			products := abc.GetListProduct(name)
+			result = append(result, products...)
 		}
 	}
 
