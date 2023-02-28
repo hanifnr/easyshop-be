@@ -30,6 +30,6 @@ func GetIndexSliceInt(value int, slice [6]int) (int, error) {
 	return -1, errors.New("value not exist")
 }
 
-func FloatToString64(value float64) string {
+func Float64ToString(value float64) string {
 	return fmt.Sprintf("%f", value)
 }

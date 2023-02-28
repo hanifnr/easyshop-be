@@ -45,30 +45,30 @@ func GetListProducts(name string) []*Product {
 
 	for _, shop := range listShop {
 		switch shop.Id {
-		// case 1:
-		// 	matsukiyo := &Matsukiyo{}
-		// 	products := matsukiyo.GetListProduct(name)
+		case 1:
+			matsukiyo := &Matsukiyo{}
+			products := matsukiyo.GetListProduct(name)
+			result = append(result, products...)
+		case 4:
+			tokyuHands := &TokyuHands{}
+			products := tokyuHands.GetListProduct(name)
+			result = append(result, products...)
+		case 5:
+			loft := &Loft{}
+			products := loft.GetListProduct(name)
+			result = append(result, products...)
+		// case 9:
+		// 	bicCam := &BicCam{}
+		// 	products := bicCam.GetListProduct(name)
 		// 	result = append(result, products...)
-		// case 4:
-		// 	tokyuHands := &TokyuHands{}
-		// 	products := tokyuHands.GetListProduct(name)
+		// case 11:
+		// 	yodobashi := &Yodobashi{}
+		// 	products := yodobashi.GetListProduct(name)
 		// 	result = append(result, products...)
-		// case 5:
-		// 	loft := &Loft{}
-		// 	products := loft.GetListProduct(name)
-		// 	result = append(result, products...)
-		// // case 9:
-		// // 	bicCam := &BicCam{}
-		// // 	products := bicCam.GetListProduct(name)
-		// // 	result = append(result, products...)
-		// // case 11:
-		// // 	yodobashi := &Yodobashi{}
-		// // 	products := yodobashi.GetListProduct(name)
-		// // 	result = append(result, products...)
-		// case 12:
-		// 	abc := &ABCMart{}
-		// 	products := abc.GetListProduct(name)
-		// 	result = append(result, products...)
+		case 12:
+			abc := &ABCMart{}
+			products := abc.GetListProduct(name)
+			result = append(result, products...)
 		case 18:
 			bandai := &Bandai{}
 			products := bandai.GetListProduct(name)
