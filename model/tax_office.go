@@ -3,6 +3,7 @@ package model
 import (
 	"easyshop/utils"
 	"encoding/json"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -58,7 +59,7 @@ type TaxOfficeDetail struct {
 	LqIndividual string `json:"lqIndividual"`
 }
 
-func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum string, db *gorm.DB) (map[string]interface{}, utils.StatusReturn) {
+func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum string, w http.ResponseWriter, db *gorm.DB) (map[string]interface{}, utils.StatusReturn) {
 	streetNumber := "238"
 	place := "156-0054 Tokyo-To Setagaya-ku Sakuragaoka 2-13-8"
 
@@ -156,6 +157,11 @@ func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum strin
 	var resultMap map[string]interface{}
 	data, _ := json.Marshal(taxOffice)
 	json.Unmarshal(data, &resultMap)
+
+	// file, _ := json.MarshalIndent(data, "", "")
+	// ioutil.WriteFile(order.Trxno+"-"+utils.FormatTimeDetail(time.Now()), file, 0644)
+
+	utils.SetJsonHeader(w, order.Trxno+"-"+utils.FormatTimeDetail(time.Now()))
 
 	return resultMap, utils.StatusReturnOK()
 }

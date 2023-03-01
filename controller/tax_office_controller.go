@@ -17,11 +17,12 @@ var GetTaxOffice = func(w http.ResponseWriter, r *http.Request) {
 	paramLqTotalNum := r.URL.Query().Get("lq_total_num")
 
 	db := utils.GetDB()
-	data, statusReturn := model.GetTaxOffice(id, paramGeneralTotal, paramConsumTotal, paramLqTotal, paramLqTotalNum, db)
+	data, statusReturn := model.GetTaxOffice(id, paramGeneralTotal, paramConsumTotal, paramLqTotal, paramLqTotalNum, w, db)
 
 	if statusReturn.ErrCode != 0 {
 		utils.Respond(w, utils.MessageErr(false, statusReturn.ErrCode, statusReturn.Message))
 		return
 	}
+
 	utils.Respond(w, utils.MessageData(true, data))
 }

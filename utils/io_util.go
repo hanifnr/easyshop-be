@@ -77,6 +77,13 @@ func SetXlsHeader(w http.ResponseWriter, filename string) {
 	w.Header().Set("Content-Transfer-Encoding", "binary")
 }
 
+func SetJsonHeader(w http.ResponseWriter, filename string) {
+	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Disposition", "attachment; filename="+filename+".json")
+	w.Header().Set("Content-Transfer-Encoding", "binary")
+}
+
 const ErrValidate = 1001
 const ErrSQLCreate = 1002
 const ErrSQLLoad = 1003
