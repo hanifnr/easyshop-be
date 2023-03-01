@@ -58,7 +58,7 @@ type TaxOfficeDetail struct {
 	LqIndividual string `json:"lqIndividual"`
 }
 
-func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum float64, db *gorm.DB) (map[string]interface{}, utils.StatusReturn) {
+func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum string, db *gorm.DB) (map[string]interface{}, utils.StatusReturn) {
 	streetNumber := "238"
 	place := "156-0054 Tokyo-To Setagaya-ku Sakuragaoka 2-13-8"
 
@@ -82,14 +82,14 @@ func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum float
 	listTaxOfficeDetail := make([]*TaxOfficeDetail, 0)
 
 	var goodsType, reduced, lqIndividual int
-	lqExempt := lqTotal > 0 || lqTotalNum > 0
-	if generalTotal > 0 {
-		goodsType = 1
-	} else if consumTotal > 0 {
+	lqExempt := lqTotal != "0" || lqTotalNum != "0"
+	if consumTotal != "0" {
 		goodsType = 2
+	} else if generalTotal != "0" {
+		goodsType = 1
 	}
 
-	if consumTotal > 0 {
+	if consumTotal != "0" {
 		reduced = 1
 	} else {
 		reduced = 0
@@ -129,14 +129,13 @@ func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum float
 		SellTime:      utils.FormatTimeToyyyymmdd(&sellTime), //payment time
 		ReceiptNo:     order.Trxno,
 		TransOrNot:    "0",
-		GeneralTotal:  utils.Float64ToString(order.Total),
-		ConsumTotal:   utils.Float64ToString(consumTotal), //consumable item?
-		LqExemptOrNot: strconv.FormatBool(lqExempt),       //liquor?
-		Details:       listTaxOfficeDetail,
+		GeneralTotal:  generalTotal,
+		ConsumTotal:   consumTotal,                  //consumable item?
+		LqExemptOrNot: strconv.FormatBool(lqExempt), //liquor?
 	}
 	if lqExempt {
-		taxOffice.LqTotal = utils.Float64ToString(lqTotal)
-		taxOffice.LqTotalNum = utils.Float64ToString(lqTotalNum)
+		taxOffice.LqTotal = lqTotal
+		taxOffice.LqTotalNum = lqTotalNum
 	}
 	for _, orderd := range listOrderd {
 		taxOfficeDetail := &TaxOfficeDetail{
@@ -153,6 +152,7 @@ func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum float
 		}
 		listTaxOfficeDetail = append(listTaxOfficeDetail, taxOfficeDetail)
 	}
+	taxOffice.Details = listTaxOfficeDetail
 	var resultMap map[string]interface{}
 	data, _ := json.Marshal(taxOffice)
 	json.Unmarshal(data, &resultMap)

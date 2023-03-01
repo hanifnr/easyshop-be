@@ -60,7 +60,7 @@ func main() {
 	router.HandleFunc("/order/log", c.ListOrderLog).Methods("GET")
 	router.HandleFunc("/order/proof/create/{id}", c.UploadOrderProof).Methods("POST")
 	router.HandleFunc("/order/proof/view/{id}", c.LoadOrderProof).Methods("GET")
-	router.HandleFunc("/order/xls/{id}", c.ExportOrderXls).Methods("GET")
+	router.HandleFunc("/order/tax/{id}", c.GetTaxOffice).Methods("GET")
 	router.HandleFunc("/passport", c.ListPassport).Methods("GET")
 	router.HandleFunc("/passport/view/{id}", c.ViewPassport).Methods("GET")
 	router.HandleFunc("/passport/create", c.CreatePassport).Methods("POST")
