@@ -27,6 +27,7 @@ type Order struct {
 	ExchangeRate   float64    `json:"exchange_rate"`
 	ShippingCost   float64    `json:"shipping_cost"`
 	GrandTotal     float64    `json:"grand_total"`
+	Taxed          bool       `json:"taxed" gorm:"DEFAULT:FALSE"`
 	OrderExt       `gorm:"-"`
 }
 

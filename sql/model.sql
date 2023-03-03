@@ -304,6 +304,7 @@ ADD CONSTRAINT order_rel_addr_fk
 FOREIGN KEY (addr_id) REFERENCES public.addr (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 ALTER TABLE public.addr DROP COLUMN email;
+ALTER TABLE public.order ADD COLUMN taxed BOOLEAN DEFAULT FALSE;
 
 CREATE SEQUENCE public.status_id_seq;
 CREATE TABLE public.status(

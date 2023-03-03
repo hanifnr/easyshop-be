@@ -158,8 +158,7 @@ func GetTaxOffice(id int64, generalTotal, consumTotal, lqTotal, lqTotalNum strin
 	data, _ := json.Marshal(taxOffice)
 	json.Unmarshal(data, &resultMap)
 
-	// file, _ := json.MarshalIndent(data, "", "")
-	// ioutil.WriteFile(order.Trxno+"-"+utils.FormatTimeDetail(time.Now()), file, 0644)
+	db.Exec("UPDATE \"order\" SET taxed = TRUE WHERE id = ?", order.Id)
 
 	utils.SetJsonHeader(w, order.Trxno+"-"+utils.FormatTimeDetail(time.Now()))
 
