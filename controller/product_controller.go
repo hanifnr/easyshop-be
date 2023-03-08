@@ -77,6 +77,11 @@ func (trendingProductController *TrendingProductController) UpdateModel() map[st
 		trendingProductTemp := modelTemp.(*scrape.Product)
 
 		trendingProductSrc.Name = trendingProductTemp.Name
+		trendingProductSrc.Code = trendingProductTemp.Code
+		trendingProductSrc.Image = trendingProductTemp.Image
+		trendingProductSrc.Price = trendingProductTemp.Price
+		trendingProductSrc.PriceTax = trendingProductTemp.PriceTax
+		trendingProductSrc.Size = trendingProductTemp.Size
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
