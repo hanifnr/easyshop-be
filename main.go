@@ -95,6 +95,7 @@ func main() {
 	router.HandleFunc("/product/trending/view/{id}", c.ViewTrendingProduct).Methods("GET")
 	router.HandleFunc("/product/trending/create", c.CreateTrendingProduct).Methods("POST")
 	router.HandleFunc("/product/trending/update", c.UpdateTrendingProduct).Methods("PUT")
+	router.HandleFunc("/product/trending/delete/{id}", c.DeleteTrendingProduct).Methods("DELETE")
 	router.HandleFunc("/properties", c.GetProps).Methods("GET")
 
 	router.Use(u.JwtAuthentication)

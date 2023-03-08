@@ -29,6 +29,11 @@ var ListTrendingProduct = func(w http.ResponseWriter, r *http.Request) {
 	ListModelAction(trendingProductController, w, r)
 }
 
+var DeleteTrendingProduct = func(w http.ResponseWriter, r *http.Request) {
+	trendingProductController := &TrendingProductController{}
+	DeleteModelAction(trendingProductController, w, r)
+}
+
 type TrendingProductController struct {
 	TrendingProduct scrape.Product
 }
@@ -88,5 +93,5 @@ func (trendingProductController *TrendingProductController) DeleteModel(id int64
 	return utils.Message(true)
 }
 func (trendingProductController *TrendingProductController) ListModel(param *utils.Param) map[string]interface{} {
-	return ListModel("trendingProduct", "id ASC", &trendingProductController.TrendingProduct, make([]*scrape.Product, 0), param)
+	return ListModel("product", "id ASC", &trendingProductController.TrendingProduct, make([]*scrape.Product, 0), param)
 }
