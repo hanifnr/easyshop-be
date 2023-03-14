@@ -6,11 +6,20 @@ import (
 	"os"
 
 	c "easyshop/controller"
+	"easyshop/service"
 	u "easyshop/utils"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	firebase "firebase.google.com/go"
 )
+
+var app *firebase.App
+
+func init() {
+	service.InitFirebase()
+}
 
 func main() {
 	u.SetAuthSecret("1GN1T3CH")
@@ -27,6 +36,7 @@ func main() {
 		"/status",
 		"/product",
 		"/properties",
+		"/firebase",
 	})
 
 	router := mux.NewRouter()
@@ -96,6 +106,10 @@ func main() {
 	router.HandleFunc("/product/trending/create", c.CreateTrendingProduct).Methods("POST")
 	router.HandleFunc("/product/trending/update", c.UpdateTrendingProduct).Methods("PUT")
 	router.HandleFunc("/product/trending/delete/{id}", c.DeleteTrendingProduct).Methods("DELETE")
+	router.HandleFunc("/firebase/token", c.ListFirebaseToken).Methods("GET")
+	router.HandleFunc("/firebase/token/view/{id}", c.ViewFirebaseToken).Methods("GET")
+	router.HandleFunc("/firebase/token/create", c.CreateFirebaseToken).Methods("POST")
+	router.HandleFunc("/firebase/token/update", c.UpdateFirebaseToken).Methods("PUT")
 	router.HandleFunc("/properties", c.GetProps).Methods("GET")
 
 	router.Use(u.JwtAuthentication)

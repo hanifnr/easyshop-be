@@ -366,6 +366,18 @@ CREATE TABLE public.product(
   CONSTRAINT product_pk PRIMARY KEY (id)
 );
 
+CREATE SEQUENCE public.firebase_token_id_seq;
+CREATE TABLE public.firebase_token(
+  id  BIGINT NOT NULL DEFAULT nextval('public.firebase_token_id_seq'),
+  uid VARCHAR NOT NULL,
+  token VARCHAR NOT NULL,
+  type VARCHAR NOT NULL,
+  is_delete BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP, 
+  updated_at TIMESTAMP,
+  CONSTRAINT token_pk PRIMARY KEY (id)
+);
+
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(
 --   id BIGINT NOT NULL DEFAULT nextval('public.grp_id_seq'),

@@ -16,7 +16,8 @@
                 "DB_PASS": "help1milBsnsBEEFR33",
                 "DB_NAME": "easy-shop",
                 "APP_PORT": "8080",
-                "MODE": "DEV"
+                "MODE": "DEV",
+                "SERVICE_ACCOUNT_PATH":"/Users/hanifnr/Project/easyshop-be/easy-shop-364408-firebase-adminsdk-zruul-ada4ee1fcf.json"
             }
         }
     ]
