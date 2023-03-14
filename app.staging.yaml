@@ -1,4 +1,4 @@
-runtime: go116
+runtime: go117
 env_variables:
   INSTANCE_UNIX_SOCKET: 35.200.85.213
   DB_USER: admin
