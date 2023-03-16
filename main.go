@@ -13,12 +13,17 @@ import (
 	"github.com/gorilla/mux"
 
 	firebase "firebase.google.com/go"
+	"firebase.google.com/go/messaging"
 )
 
 var app *firebase.App
 
 func init() {
 	service.InitFirebase()
+	service.SendPushNotification(true, &messaging.Notification{
+		Title: "Test push notification admin",
+		Body:  "Body test push notification",
+	})
 }
 
 func main() {

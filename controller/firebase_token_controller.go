@@ -44,15 +44,19 @@ func (firebaseTokenController *FirebaseTokenController) FDelete() functions.SQLF
 }
 
 func (firebaseTokenController *FirebaseTokenController) CreateModel() map[string]interface{} {
+	isTokenExist, firebaseToken := TokenExist(firebaseTokenController.FirebaseToken.Token)
+	if !isTokenExist {
+		if retval := CreateModel(firebaseTokenController, func(m model.Model) {
+			currentTime := time.Now()
 
-	if retval := CreateModel(firebaseTokenController, func(m model.Model) {
-		currentTime := time.Now()
-
-		firebaseToken := m.(*model.FirebaseToken)
-		firebaseToken.CreatedAt = currentTime
-		firebaseToken.UpdatedAt = currentTime
-	}); retval.ErrCode != 0 {
-		return utils.MessageErr(false, retval.ErrCode, retval.Message)
+			firebaseToken := m.(*model.FirebaseToken)
+			firebaseToken.CreatedAt = currentTime
+			firebaseToken.UpdatedAt = currentTime
+		}); retval.ErrCode != 0 {
+			return utils.MessageErr(false, retval.ErrCode, retval.Message)
+		}
+	} else {
+		return utils.MessageData(true, firebaseToken)
 	}
 	return utils.MessageData(true, firebaseTokenController.FirebaseToken)
 }
@@ -88,4 +92,12 @@ func (firebaseTokenController *FirebaseTokenController) DeleteModel(id int64) ma
 }
 func (firebaseTokenController *FirebaseTokenController) ListModel(param *utils.Param) map[string]interface{} {
 	return ListModel("firebase_token", "id ASC", &firebaseTokenController.FirebaseToken, make([]*model.FirebaseToken, 0), param)
+}
+
+func TokenExist(token string) (bool, *model.FirebaseToken) {
+	db := utils.GetDB()
+
+	firebaseToken := &model.FirebaseToken{}
+	rows := db.Where("token = ?", token).Find(&firebaseToken).RowsAffected
+	return rows > 0, firebaseToken
 }

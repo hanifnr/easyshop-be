@@ -372,7 +372,7 @@ CREATE TABLE public.firebase_token(
   uid VARCHAR NOT NULL,
   token VARCHAR NOT NULL,
   type VARCHAR NOT NULL,
-  is_delete BOOLEAN DEFAULT FALSE,
+  is_deleted BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP, 
   updated_at TIMESTAMP,
   CONSTRAINT token_pk PRIMARY KEY (id)

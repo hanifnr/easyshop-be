@@ -45,18 +45,26 @@ func InitFirebase() {
 	}
 }
 
-func SendPushNotification() {
+func SendPushNotification(isAdmin bool, notification *messaging.Notification) {
 	db := utils.GetDB()
 
+	var tipe string
+	if isAdmin {
+		tipe = "ADMIN"
+	} else {
+		tipe = "CUST"
+	}
+
 	deviceTokens := make([]string, 0)
-	db.Select("token").Table("token").Where("is_deleted = FALSE").Scan(&deviceTokens)
+	db.Select("token").Table("firebase_token").Where("is_delete = FALSE AND type = ?", tipe).Scan(&deviceTokens)
 
 	_, err := fcmClient.SendMulticast(context.Background(), &messaging.MulticastMessage{
-		Notification: &messaging.Notification{
-			Title: "Congratulations!!",
-			Body:  "You have just implemented push notification",
-		},
-		Tokens: deviceTokens, // it's an array of device tokens
+		// Notification: &messaging.Notification{
+		// 	Title: "Congratulations!!",
+		// 	Body:  "You have just implemented push notification",
+		// },
+		Notification: notification,
+		Tokens:       deviceTokens, // it's an array of device tokens
 	})
 
 	if err != nil {
