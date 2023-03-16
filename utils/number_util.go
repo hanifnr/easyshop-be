@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"errors"
+	"fmt"
 	"io"
 )
 
@@ -27,4 +28,8 @@ func GetIndexSliceInt(value int, slice [6]int) (int, error) {
 		}
 	}
 	return -1, errors.New("value not exist")
+}
+
+func Float64ToString(value float64) string {
+	return fmt.Sprintf("%f", value)
 }
