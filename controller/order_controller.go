@@ -3,6 +3,7 @@ package controllers
 import (
 	"easyshop/functions"
 	"easyshop/model"
+	"easyshop/service"
 	"easyshop/utils"
 	"encoding/json"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"firebase.google.com/go/messaging"
 	"github.com/dustin/go-humanize"
 	"gorm.io/gorm"
 )
@@ -151,6 +153,7 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	}
 	cust, notifOrder := getDataNotifOrder(orderController)
 	SendEmailNotification(ORDER_NOTIFICATION, cust, *notifOrder)
+	SendNewOrderPushNotification(&orderController.Order)
 	return utils.MessageData(true, orderController)
 }
 
@@ -462,4 +465,11 @@ func (orderController *OrderController) ExportOrderXls(orderId int64, w http.Res
 func validateAcceptOrder(order model.Order, db *gorm.DB) bool {
 	country := model.GetAddrCountry(order.AddrId, db)
 	return !(strings.ToUpper(country) != "JAPAN" && order.ShippingCost == 0)
+}
+
+func SendNewOrderPushNotification(order *model.Order) {
+	service.SendPushNotification(true, &messaging.Notification{
+		Title: "New order received",
+		Body:  order.Trxno,
+	})
 }

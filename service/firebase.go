@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"easyshop/utils"
-	"encoding/base64"
 	"fmt"
 	"os"
 
@@ -13,18 +12,6 @@ import (
 )
 
 var fcmClient *messaging.Client
-
-func getDecodedFireBaseKey() ([]byte, error) {
-
-	fireBaseAuthKey := os.Getenv("FIREBASE_AUTH_KEY")
-
-	decodedKey, err := base64.StdEncoding.DecodeString(fireBaseAuthKey)
-	if err != nil {
-		return nil, err
-	}
-
-	return decodedKey, nil
-}
 
 func InitFirebase() {
 	SERVICE_ACCOUNT_PATH := os.Getenv("SERVICE_ACCOUNT_PATH")
