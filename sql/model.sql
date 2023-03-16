@@ -304,6 +304,7 @@ ADD CONSTRAINT order_rel_addr_fk
 FOREIGN KEY (addr_id) REFERENCES public.addr (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 ALTER TABLE public.addr DROP COLUMN email;
+ALTER TABLE public.order ADD COLUMN taxed BOOLEAN DEFAULT FALSE;
 
 CREATE SEQUENCE public.status_id_seq;
 CREATE TABLE public.status(
@@ -349,6 +350,21 @@ CREATE TABLE public.email_verif(
 );
 ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;
 ALTER TABLE public.email_verif ADD COLUMN wait_time int;
+
+CREATE SEQUENCE public.product_id_seq;
+CREATE TABLE public.product(
+  id          BIGINT NOT NULL DEFAULT nextval('public.product_id_seq'),
+  code        VARCHAR NOT NULL,
+  name        VARCHAR NOT NULL,
+	image       VARCHAR,
+	price       VARCHAR,
+	price_tax   VARCHAR,
+	size        VARCHAR,
+  is_delete BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP, 
+  updated_at TIMESTAMP,
+  CONSTRAINT product_pk PRIMARY KEY (id)
+);
 
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(
