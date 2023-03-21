@@ -3,7 +3,6 @@ package controllers
 import (
 	"easyshop/functions"
 	"easyshop/model"
-	"easyshop/service"
 	"easyshop/utils"
 	"encoding/json"
 	"fmt"
@@ -14,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"firebase.google.com/go/messaging"
 	"github.com/dustin/go-humanize"
 	"gorm.io/gorm"
 )
@@ -231,15 +229,16 @@ func (orderController *OrderController) HandleOrder(id int64, status, note strin
 			return retval
 		}
 		cust, notifOrder := getDataNotifOrder(orderController)
-		if status == "A" {
+		if status == utils.ORDER_STATUS_ACCEPTED {
 			if validateAcceptOrder(*order, db) {
 				SendEmailNotification(APPROVED_NOTIFICATION, cust, *notifOrder)
 			} else {
 				return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Please input shipping cost for order outside Japan!"}
 			}
-		} else if status == "C" {
+		} else if status == utils.ORDER_STATUS_CANCELED {
 			SendEmailNotification(CANCELED_NOTIFICATION, cust, *notifOrder)
 		}
+		SendStatusOrderPushNotification(status)
 		return utils.StatusReturnOK()
 	})
 }
@@ -468,8 +467,26 @@ func validateAcceptOrder(order model.Order, db *gorm.DB) bool {
 }
 
 func SendNewOrderPushNotification(order *model.Order) {
-	service.SendPushNotification(true, &messaging.Notification{
-		Title: "New order received",
-		Body:  order.Trxno,
-	})
+	model.SendPushNotification("New order received", order.Trxno, true)
+}
+
+func SendStatusOrderPushNotification(status string) {
+	message := GetStatusOrderMessage(status)
+	model.SendPushNotification("Easy Shop Order Notification", message, false)
+}
+
+func GetStatusOrderMessage(status string) string {
+	switch status {
+	case utils.ORDER_STATUS_ACCEPTED:
+		return "Your order has been accepted. Please continue to proceed your payment!"
+	case utils.ORDER_STATUS_PAYMENT_ACCEPTED:
+		return "Your payment has been verified. We will process your order!"
+	case utils.ORDER_STATUS_PAYMENT_REJECTED:
+		return "Your payment has been rejected. Please check again your payment!"
+	case utils.ORDER_STATUS_READY:
+		return "Your order is ready. We will soon deliver your order!"
+	case utils.ORDER_STATUS_SHIPPED:
+		return "Your order is on the way to you. Thanks for using our service!"
+	}
+	return ""
 }

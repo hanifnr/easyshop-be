@@ -15,6 +15,7 @@ import (
 
 func init() {
 	service.InitFirebase()
+	service.InitRedis()
 }
 
 func main() {
@@ -33,6 +34,7 @@ func main() {
 		"/product",
 		"/properties",
 		"/firebase",
+		"/notification",
 	})
 
 	router := mux.NewRouter()
@@ -106,6 +108,7 @@ func main() {
 	router.HandleFunc("/firebase/token/view/{id}", c.ViewFirebaseToken).Methods("GET")
 	router.HandleFunc("/firebase/token/create", c.CreateFirebaseToken).Methods("POST")
 	router.HandleFunc("/firebase/token/update", c.UpdateFirebaseToken).Methods("PUT")
+	router.HandleFunc("/notification", c.ListNotification).Methods("GET")
 	router.HandleFunc("/properties", c.GetProps).Methods("GET")
 
 	router.Use(u.JwtAuthentication)

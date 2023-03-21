@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"easyshop/utils"
 	"fmt"
 	"os"
 
@@ -32,26 +31,11 @@ func InitFirebase() {
 	}
 }
 
-func SendPushNotification(isAdmin bool, notification *messaging.Notification) {
-	db := utils.GetDB()
-
-	var tipe string
-	if isAdmin {
-		tipe = "ADMIN"
-	} else {
-		tipe = "CUST"
-	}
-
-	deviceTokens := make([]string, 0)
-	db.Select("token").Table("firebase_token").Where("is_delete = FALSE AND type = ?", tipe).Scan(&deviceTokens)
+func SendPushNotification(tokens []string, notification *messaging.Notification) {
 
 	_, err := fcmClient.SendMulticast(context.Background(), &messaging.MulticastMessage{
-		// Notification: &messaging.Notification{
-		// 	Title: "Congratulations!!",
-		// 	Body:  "You have just implemented push notification",
-		// },
 		Notification: notification,
-		Tokens:       deviceTokens, // it's an array of device tokens
+		Tokens:       tokens, // it's an array of device tokens
 	})
 
 	if err != nil {

@@ -44,7 +44,7 @@ func (firebaseTokenController *FirebaseTokenController) FDelete() functions.SQLF
 }
 
 func (firebaseTokenController *FirebaseTokenController) CreateModel() map[string]interface{} {
-	isTokenExist, firebaseToken := TokenExist(firebaseTokenController.FirebaseToken.Token)
+	isTokenExist, firebaseToken := TokenExist(firebaseTokenController.FirebaseToken.Uid)
 	if !isTokenExist {
 		if retval := CreateModel(firebaseTokenController, func(m model.Model) {
 			currentTime := time.Now()
@@ -94,10 +94,10 @@ func (firebaseTokenController *FirebaseTokenController) ListModel(param *utils.P
 	return ListModel("firebase_token", "id ASC", &firebaseTokenController.FirebaseToken, make([]*model.FirebaseToken, 0), param)
 }
 
-func TokenExist(token string) (bool, *model.FirebaseToken) {
+func TokenExist(uid string) (bool, *model.FirebaseToken) {
 	db := utils.GetDB()
 
 	firebaseToken := &model.FirebaseToken{}
-	rows := db.Where("token = ?", token).Find(&firebaseToken).RowsAffected
+	rows := db.Where("uid = ?", uid).Find(&firebaseToken).RowsAffected
 	return rows > 0, firebaseToken
 }
