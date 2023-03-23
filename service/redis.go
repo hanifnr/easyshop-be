@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/go-redis/redis"
 )
@@ -23,9 +24,17 @@ func InitRedis() {
 }
 
 func GetRedisClient() *redis.Client {
+	addr := os.Getenv("REDIS_URI")
 	return redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     addr,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
+}
+
+func CloseRedisClient(client *redis.Client) {
+	errClose := client.Close()
+	if errClose != nil {
+		fmt.Println("Error close redis client:", errClose.Error())
+	}
 }

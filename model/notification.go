@@ -5,7 +5,6 @@ import (
 	"easyshop/utils"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
 	"firebase.google.com/go/messaging"
@@ -13,10 +12,11 @@ import (
 )
 
 type Notification struct {
-	Id        string    `json:"id,omitempty"`
+	Id        int64     `json:"id,omitempty"`
 	Title     string    `json:"title,omitempty"`
 	Body      string    `json:"body,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	Read      bool
 }
 
 type UserNotification struct {
@@ -33,10 +33,11 @@ func CreateNotification(title, body string, listUserId []string) {
 			userNotification.Uid = userId
 		}
 		userNotification.Notifications = append(userNotification.Notifications, &Notification{
-			Id:        strconv.FormatInt(client.Incr("notif").Val(), 10),
+			Id:        client.Incr("notif").Val(),
 			Title:     title,
 			Body:      body,
 			CreatedAt: time.Now(),
+			Read:      false,
 		})
 
 		notificationJSON, err := json.Marshal(userNotification)
@@ -44,15 +45,9 @@ func CreateNotification(title, body string, listUserId []string) {
 			fmt.Println(err)
 		}
 
-		err = client.Set(userId, string(notificationJSON), 24*time.Hour).Err()
-		if err != nil {
-			fmt.Println("Redis error set nofication ", err)
-		}
+		SaveNotification(client, userId, string(notificationJSON))
 	}
-	err := client.Close()
-	if err != nil {
-		fmt.Println("Error close redis client:", err.Error())
-	}
+	service.CloseRedisClient(client)
 }
 
 func GetUserNotification(userId string) (bool, *UserNotification) {
@@ -72,11 +67,7 @@ func GetUserNotification(userId string) (bool, *UserNotification) {
 		}
 	}
 
-	// Close Redis client
-	err = client.Close()
-	if err != nil {
-		fmt.Println("Error close redis client:", err.Error())
-	}
+	service.CloseRedisClient(client)
 
 	return true, &notificationFromCache
 }
@@ -87,6 +78,39 @@ func GetNotification(userId string) map[string]interface{} {
 		return utils.MessageErr(false, utils.ErrExist, "Notification not found")
 	}
 	return utils.MessageData(true, retval)
+}
+
+func ReadNotification(userId string, listNotifId []int64) map[string]interface{} {
+	client := service.GetRedisClient()
+
+	exist, userNotification := GetUserNotification(userId)
+	if !exist {
+		return utils.MessageErr(false, utils.ErrExist, "User not found")
+	}
+	for _, notif := range userNotification.Notifications {
+		for _, notifId := range listNotifId {
+			if notif.Id == notifId {
+				notif.Read = true
+			}
+		}
+	}
+
+	notificationJSON, err := json.Marshal(userNotification)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	SaveNotification(client, userId, string(notificationJSON))
+	service.CloseRedisClient(client)
+
+	return utils.MessageData(true, utils.StatusReturnOK())
+}
+
+func SaveNotification(client *redis.Client, key string, value interface{}) {
+	err := client.Set(key, value, 24*7*time.Hour).Err()
+	if err != nil {
+		fmt.Println("Redis error set nofication ", err)
+	}
 }
 
 func SendPushNotification(title, body string, isAdmin bool) {
