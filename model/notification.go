@@ -58,12 +58,12 @@ func GetUserNotification(userId string) (bool, *UserNotification) {
 	if err == redis.Nil {
 		return false, &UserNotification{}
 	} else if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
 	} else {
 		// Unmarshal the notification from JSON
 		err = json.Unmarshal([]byte(notificationString), &notificationFromCache)
 		if err != nil {
-			panic(err)
+			fmt.Println(err.Error())
 		}
 	}
 
