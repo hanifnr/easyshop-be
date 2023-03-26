@@ -13,7 +13,7 @@ func RandInt(max int) string {
 	b := make([]byte, max)
 	n, err := io.ReadAtLeast(rand.Reader, b, max)
 	if n != max {
-		panic(err)
+		fmt.Println("Error generate random int", err)
 	}
 	for i := 0; i < len(b); i++ {
 		b[i] = table[int(b[i])%len(table)]
