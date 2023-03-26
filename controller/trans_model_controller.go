@@ -100,6 +100,9 @@ func ViewTrans(id int64, controller TransController, fLoadDetail func(db *gorm.D
 func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpdate func(modelSrc model.Model, modelTemp model.Model, db *gorm.DB) error) utils.StatusReturn {
 	db := utils.GetDB().Begin()
 	modelTemp := controller.MasterModel()
+	fNew := controller.FNew()
+	fDelete := controller.FDelete()
+
 	if err := modelTemp.Validate(); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: err.Error()}
@@ -119,6 +122,12 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
 	}
+	if fDelete != nil {
+		if retval := fDelete.Run(m, db); retval.ErrCode != 0 {
+			db.Rollback()
+			return retval
+		}
+	}
 	if err := db.Where(controller.MasterField()+"= ?", modelTemp.ID()).Delete(d).Error; err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLDelete, Message: err.Error()}
@@ -133,6 +142,12 @@ func UpdateTrans(controller TransController, m model.Model, d model.Model, fUpda
 		if err := model.Create(data, db); err != nil {
 			db.Rollback()
 			return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
+		}
+	}
+	if fNew != nil {
+		if retval := fNew.Run(m, db); retval.ErrCode != 0 {
+			db.Rollback()
+			return retval
 		}
 	}
 	db.Commit()
