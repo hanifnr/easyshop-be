@@ -475,7 +475,6 @@ func validateAcceptOrder(order model.Order, db *gorm.DB) bool {
 	country := model.GetAddrCountry(order.AddrId, db)
 	return !(strings.ToUpper(country) != "JAPAN" && order.ShippingCost == 0)
 }
-<<<<<<< HEAD
 
 func SendNewOrderPushNotification(order *model.Order) {
 	model.SendPushNotification("New order received", order.Trxno, true)
@@ -501,5 +500,3 @@ func GetStatusOrderMessage(status string) string {
 	}
 	return ""
 }
-=======
->>>>>>> d0106d5de2bda3a5b9a31182f09f0a51d43b2672
