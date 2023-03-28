@@ -79,9 +79,9 @@ var TrackingNumber = func(w http.ResponseWriter, r *http.Request) {
 
 var ShippingCost = func(w http.ResponseWriter, r *http.Request) {
 	orderController := &OrderController{}
-	id, _ := GetInt64Param("id", w, r)
 
 	type Data struct {
+		Id           int64   `json:"id"`
 		ShippingCost float64 `json:"shipping_cost"`
 		ExchangeRate float64 `json:"exchange_rate"`
 	}
@@ -92,7 +92,7 @@ var ShippingCost = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := orderController.ShippingCost(id, data.ShippingCost, data.ExchangeRate)
+	resp := orderController.ShippingCost(data.Id, data.ShippingCost, data.ExchangeRate)
 	utils.Respond(w, resp)
 }
 
