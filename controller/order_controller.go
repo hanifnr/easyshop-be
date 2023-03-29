@@ -17,10 +17,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var adminEmail = "tokyo@easyshop-jp.com"
-
-// var adminEmail = "hanif.nr11@gmail.com"
-
 const (
 	ORDER_NOTIFICATION = iota
 	APPROVED_NOTIFICATION
@@ -258,6 +254,8 @@ func (orderController *OrderController) TrackingNumber(id int64, trackingNumber 
 	return UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		order := m.(*model.Order)
 		order.TrackingNumber = strings.ToUpper(trackingNumber)
+
+		orderController.HandleOrder(id, "IS", "")
 		return utils.StatusReturnOK()
 	})
 }
@@ -365,10 +363,12 @@ type NotifOrder struct {
 	Total    string
 	Shipping string
 	Grand    string
+	Rate     string
 	Orderd   []DetailNotifOrder
 }
 
 func SendEmailNotification(mode int, cust *model.Cust, notifOrder NotifOrder) {
+	adminEmail := os.Getenv("ADMIN_EMAIL")
 	runtime.GOMAXPROCS(1)
 	switch mode {
 	case ORDER_NOTIFICATION:
@@ -415,6 +415,10 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 	db.Where("id = ?", order.CustId).Find(&cust)
 
 	fullAddr := fmt.Sprintf("%s,\n%s, %s, %s - %s", addr.FullAddress, addr.City, addr.Province, addr.CountryCode, addr.ZipCode)
+	var grandTotal string
+	if order.ExchangeRate > 0 {
+		grandTotal = fmt.Sprintf("    (Rp.%s)", humanize.Comma(int64(order.GrandTotal*order.ExchangeRate)))
+	}
 
 	notifOrder := &NotifOrder{
 		Custname: order.CustName,
@@ -426,7 +430,8 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 		Email:    cust.Email,
 		Total:    humanize.Comma(int64(order.Total)),
 		Shipping: humanize.Comma(int64(order.ShippingCost)),
-		Grand:    humanize.Comma(int64(order.GrandTotal)),
+		Grand:    humanize.Comma(int64(order.GrandTotal)) + grandTotal,
+		Rate:     humanize.Comma(int64(order.ExchangeRate)),
 		Orderd:   orderd,
 	}
 
