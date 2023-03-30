@@ -19,6 +19,7 @@ type Purc struct {
 	IsDelete  bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
 	IsActive  bool      `json:"is_active" gorm:"DEFAULT:TRUE"`
 	Refno     string    `json:"refno"`
+	Imported  bool      `json:"imported"`
 	PurcExt   `gorm:"-"`
 }
 
