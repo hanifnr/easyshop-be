@@ -51,6 +51,15 @@ func (f FWhNew) Run(m model.Model, db *gorm.DB) utils.StatusReturn {
 			}
 			foln.Run(order, db)
 		}
+
+		//Update status purc ke imported true apabila semua data telah diimport ke wh
+		var importedPurc bool
+		db.Select("COUNT(*) = 0").Table("purcd").Where("purc_id = ? AND qty <> qtywh", purcd.PurcId).Scan(&importedPurc)
+
+		if err := db.Exec("UPDATE purc SET imported = ? WHERE id = ?", importedPurc, purcd.PurcId).Error; err != nil {
+			return utils.StatusReturn{ErrCode: utils.ErrSQLSave, Message: err.Error()}
+		}
 	}
+
 	return utils.StatusReturnOK()
 }
