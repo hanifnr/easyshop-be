@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-	service.InitFirebase()
+	// service.InitFirebase()
 	service.InitRedis()
 }
 
