@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -31,6 +32,22 @@ var ListPartnership = func(w http.ResponseWriter, r *http.Request) {
 var DeletePartnership = func(w http.ResponseWriter, r *http.Request) {
 	partnershipController := &PartnershipController{}
 	DeleteModelAction(partnershipController, w, r)
+}
+
+var ListComboPartnershipType = func(w http.ResponseWriter, r *http.Request) {
+	paramPage := r.URL.Query().Get("page")
+	if paramPage == "" {
+		paramPage = "0"
+	}
+	page, err := strconv.Atoi(paramPage)
+	if err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	param := utils.ProcessParam(r)
+	resp := ComboPartnershipType(page, param)
+	utils.Respond(w, resp)
 }
 
 type PartnershipController struct {
@@ -96,4 +113,8 @@ func (partnershipController *PartnershipController) DeleteModel(id int64) map[st
 }
 func (partnershipController *PartnershipController) ListModel(param *utils.Param) map[string]interface{} {
 	return ListModel("partnership", "id ASC", &partnershipController.Partnership, make([]*model.Partnership, 0), param)
+}
+
+func ComboPartnershipType(page int, param *utils.Param) map[string]interface{} {
+	return GetCombo(page, "partnership_type", "name ASC", param)
 }
