@@ -158,9 +158,9 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	} else {
 		cust, notifOrder := getDataNotifOrder(orderController)
 		SendEmailNotification(ORDER_NOTIFICATION, cust, *notifOrder)
+		SendNewOrderPushNotification(&orderController.Order)
 		return utils.MessageData(true, orderController)
 	}
-	// SendNewOrderPushNotification(&orderController.Order)
 }
 
 func (orderController *OrderController) ViewTrans(id int64) map[string]interface{} {

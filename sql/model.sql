@@ -379,6 +379,30 @@ CREATE TABLE public.firebase_token(
   CONSTRAINT token_pk PRIMARY KEY (id)
 );
 
+CREATE SEQUENCE public.partnership_type_id_seq;
+CREATE TABLE public.partnership_type(
+  id BIGINT NOT NULL DEFAULT nextval('public.partnership_type_id_seq'),
+  code VARCHAR(10) NOT NULL,
+  name VARCHAR(25) NOT NULL,
+  CONSTRAINT partnership_type_pk PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE public.partnership_id_seq;
+CREATE TABLE public.partnership(
+  id BIGINT NOT NULL DEFAULT nextval('public.partnership_id_seq'),
+  name VARCHAR NOT NULL,
+  partnership_type_id BIGINT,
+  social_media VARCHAR,
+  phone_number VARCHAR,
+  is_delete BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP, 
+  updated_at TIMESTAMP,
+  CONSTRAINT partnership_pk PRIMARY KEY (id)
+);
+ALTER TABLE public.partnership
+ADD CONSTRAINT partnership_rel_partnership_type_fk
+FOREIGN KEY (partnership_type_id) REFERENCES public.partnership_type (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(
 --   id BIGINT NOT NULL DEFAULT nextval('public.grp_id_seq'),

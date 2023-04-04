@@ -140,5 +140,5 @@ func SendPushNotification(title, body string, isAdmin bool) {
 		Title: "New order received",
 		Body:  body,
 	})
-	CreateNotification(title, body, uids)
+	// CreateNotification(title, body, uids)
 }

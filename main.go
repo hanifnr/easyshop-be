@@ -14,8 +14,8 @@ import (
 )
 
 func init() {
-	// service.InitFirebase()
-	service.InitRedis()
+	service.InitFirebase()
+	// service.InitRedis()
 }
 
 func main() {
@@ -35,6 +35,7 @@ func main() {
 		"/properties",
 		"/firebase",
 		"/notification",
+		"/partnership",
 	})
 
 	router := mux.NewRouter()
@@ -108,6 +109,11 @@ func main() {
 	router.HandleFunc("/firebase/token/view/{id}", c.ViewFirebaseToken).Methods("GET")
 	router.HandleFunc("/firebase/token/create", c.CreateFirebaseToken).Methods("POST")
 	router.HandleFunc("/firebase/token/update", c.UpdateFirebaseToken).Methods("PUT")
+	router.HandleFunc("/partnership", c.ListPartnership).Methods("GET")
+	router.HandleFunc("/partnership/view/{id}", c.ViewPartnership).Methods("GET")
+	router.HandleFunc("/partnership/create", c.CreatePartnership).Methods("POST")
+	router.HandleFunc("/partnership/update", c.UpdatePartnership).Methods("PUT")
+	router.HandleFunc("/partnership/delete/{id}", c.DeletePartnership).Methods("DELETE")
 	router.HandleFunc("/notification", c.ListNotification).Methods("GET")
 	router.HandleFunc("/properties", c.GetProps).Methods("GET")
 
