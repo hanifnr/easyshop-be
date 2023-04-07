@@ -36,6 +36,7 @@ func main() {
 		"/firebase",
 		"/notification",
 		"/partnership",
+		"/voucher",
 	})
 
 	router := mux.NewRouter()
@@ -115,6 +116,11 @@ func main() {
 	router.HandleFunc("/partnership/update", c.UpdatePartnership).Methods("PUT")
 	router.HandleFunc("/partnership/delete/{id}", c.DeletePartnership).Methods("DELETE")
 	router.HandleFunc("/partnership/combo", c.ListComboPartnershipType).Methods("GET")
+	router.HandleFunc("/voucher", c.ListVoucher).Methods("GET")
+	router.HandleFunc("/voucher/view/{id}", c.ViewVoucher).Methods("GET")
+	router.HandleFunc("/voucher/create", c.CreateVoucher).Methods("POST")
+	router.HandleFunc("/voucher/update", c.UpdateVoucher).Methods("PUT")
+	router.HandleFunc("/voucher/delete/{id}", c.DeleteVoucher).Methods("DELETE")
 	router.HandleFunc("/notification", c.ListNotification).Methods("GET")
 	router.HandleFunc("/properties", c.GetProps).Methods("GET")
 

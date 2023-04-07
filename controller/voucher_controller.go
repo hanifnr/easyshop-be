@@ -78,8 +78,8 @@ func (voucherController *VoucherController) UpdateModel() map[string]interface{}
 		voucherSrc.Code = voucherTemp.Code
 		voucherSrc.Amount = voucherTemp.Amount
 		voucherSrc.Qty = voucherTemp.Qty
-		voucherSrc.StartDate = voucherTemp.StartDate
-		voucherSrc.EndDate = voucherTemp.EndDate
+		voucherSrc.Startdate = voucherTemp.Startdate
+		voucherSrc.Enddate = voucherTemp.Enddate
 		voucherSrc.PartnershipId = voucherTemp.PartnershipId
 		voucherSrc.Note = voucherTemp.Note
 	})

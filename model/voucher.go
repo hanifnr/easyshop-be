@@ -13,8 +13,8 @@ type Voucher struct {
 	Code          string    `json:"code"`
 	Amount        string    `json:"amount"`
 	Qty           float64   `json:"qty"`
-	StartDate     time.Time `json:"startdate"`
-	EndDate       time.Time `json:"enddate"`
+	Startdate     time.Time `json:"startdate"`
+	Enddate       time.Time `json:"enddate"`
 	PartnershipId int64     `json:"partnership_id"`
 	Note          string    `json:"note"`
 	IsDelete      bool      `json:"is_delete"`
