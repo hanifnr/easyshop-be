@@ -403,6 +403,27 @@ ALTER TABLE public.partnership
 ADD CONSTRAINT partnership_rel_partnership_type_fk
 FOREIGN KEY (partnership_type_id) REFERENCES public.partnership_type (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
+
+CREATE SEQUENCE public.voucher_id_seq;
+CREATE TABLE public.voucher(
+  id BIGINT NOT NULL DEFAULT nextval('public.voucher_id_seq'),
+  code VARCHAR NOT NULL,
+  amount VARCHAR NOT NULL,
+  qty NUMERIC(16,4),
+  startdate TIMESTAMP,
+  enddate TIMESTAMP,
+  partnership_id BIGINT,
+  note TEXT,
+  is_delete BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP, 
+  updated_at TIMESTAMP,
+  CONSTRAINT voucher_pk PRIMARY KEY (id)
+);
+ALTER TABLE public.voucher
+ADD CONSTRAINT voucher_rel_partnership_fk
+FOREIGN KEY (partnership_id) REFERENCES public.partnership (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(
 --   id BIGINT NOT NULL DEFAULT nextval('public.grp_id_seq'),
