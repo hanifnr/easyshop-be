@@ -6,6 +6,8 @@ import (
 	"easyshop/utils"
 	"net/http"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var CreateVoucher = func(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +33,17 @@ var ListVoucher = func(w http.ResponseWriter, r *http.Request) {
 var DeleteVoucher = func(w http.ResponseWriter, r *http.Request) {
 	voucherController := &VoucherController{}
 	DeleteModelAction(voucherController, w, r)
+}
+
+var CheckVoucher = func(w http.ResponseWriter, r *http.Request) {
+	db := utils.GetDB()
+	param := utils.ProcessParam(r)
+	retval, voucher := CheckAvailability(nil, param.Code, *param.CustId, db)
+	if retval.ErrCode != 0 {
+		utils.Respond(w, utils.MessageErr(false, retval.ErrCode, retval.Message))
+	} else {
+		utils.Respond(w, utils.MessageData(true, voucher))
+	}
 }
 
 type VoucherController struct {
@@ -99,4 +112,31 @@ func (voucherController *VoucherController) DeleteModel(id int64) map[string]int
 }
 func (voucherController *VoucherController) ListModel(param *utils.Param) map[string]interface{} {
 	return ListModel("voucher", "id ASC", voucherController.Voucher, make([]*model.Voucher, 0), param)
+}
+
+func CheckAvailability(id *int64, code *string, custId int64, db *gorm.DB) (utils.StatusReturn, *model.Voucher) {
+	currentTime := time.Now()
+
+	voucher := &model.Voucher{}
+	if id != nil {
+		db.Where("id = ?", id).Find(&voucher)
+	} else {
+		db.Where("code = ?", code).Find(&voucher)
+	}
+
+	if voucher.Qty != nil && &voucher.QtyUsed == voucher.Qty {
+		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Voucher limit reached!"}, nil
+	} else if (voucher.Startdate.Valid && voucher.Enddate.Valid) && (currentTime.Before(voucher.Startdate.Time) || currentTime.After(voucher.Enddate.Time)) {
+		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Voucher expired!"}, nil
+	} else if voucher.PartnershipId != nil && IsUsedVoucher(voucher.Id, custId, db) {
+		return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Voucher can only used once!"}, nil
+	} else {
+		return utils.StatusReturnOK(), voucher
+	}
+}
+
+func IsUsedVoucher(voucherId, custId int64, db *gorm.DB) bool {
+	var exist bool
+	db.Select("count(*) > 0").Table("voucher_log").Where("voucher_id = ? AND cust_id = ?", voucherId, custId).Scan(&exist)
+	return exist
 }

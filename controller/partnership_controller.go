@@ -34,6 +34,22 @@ var DeletePartnership = func(w http.ResponseWriter, r *http.Request) {
 	DeleteModelAction(partnershipController, w, r)
 }
 
+var ListComboPartnership = func(w http.ResponseWriter, r *http.Request) {
+	paramPage := r.URL.Query().Get("page")
+	if paramPage == "" {
+		paramPage = "0"
+	}
+	page, err := strconv.Atoi(paramPage)
+	if err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	param := utils.ProcessParam(r)
+	resp := ComboPartnership(page, param)
+	utils.Respond(w, resp)
+}
+
 var ListComboPartnershipType = func(w http.ResponseWriter, r *http.Request) {
 	paramPage := r.URL.Query().Get("page")
 	if paramPage == "" {
@@ -113,6 +129,10 @@ func (partnershipController *PartnershipController) DeleteModel(id int64) map[st
 }
 func (partnershipController *PartnershipController) ListModel(param *utils.Param) map[string]interface{} {
 	return ListModel("partnership", "id ASC", &partnershipController.Partnership, make([]*model.Partnership, 0), param)
+}
+
+func ComboPartnership(page int, param *utils.Param) map[string]interface{} {
+	return GetCombo(page, "partnership", "name ASC", param)
 }
 
 func ComboPartnershipType(page int, param *utils.Param) map[string]interface{} {

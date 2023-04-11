@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/utils"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -146,11 +147,14 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 		order.Trxno = GetOrderTrxno(order, db)
 		order.StatusCode = "W"
 		order.Passport = passport
-		order.GrandTotal = order.Total
+		order.GrandTotal = order.Total - order.DiscAmount
 		for i := range orderController.Orderd {
 			orderd := &orderController.Orderd[i]
 			orderd.Dno = i + 1
 			orderController.Details = append(orderController.Details, orderd)
+		}
+		if retval := ProcessVoucher(order, db); retval.ErrCode != 0 {
+			return errors.New(retval.Message)
 		}
 		return nil
 	}); retval.ErrCode != 0 {
@@ -192,7 +196,10 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 		orderSrc.Date = orderTemp.Date
 		orderSrc.PickDate = orderTemp.PickDate
 		orderSrc.Total = orderTemp.Total
-		orderSrc.GrandTotal = orderTemp.Total + orderSrc.ShippingCost
+		orderSrc.VoucherId = orderTemp.VoucherId
+		orderSrc.Disc = orderTemp.Disc
+		orderSrc.DiscAmount = orderTemp.DiscAmount
+		orderSrc.GrandTotal = orderTemp.Total + orderSrc.ShippingCost - orderTemp.DiscAmount
 		orderSrc.Trxno = orderTemp.Trxno
 		orderSrc.AddrId = orderTemp.AddrId
 		orderSrc.ArrivalDate = orderTemp.ArrivalDate
@@ -505,4 +512,20 @@ func GetStatusOrderMessage(status string) string {
 		return "Your order is on the way to you. Thanks for using our service!"
 	}
 	return ""
+}
+
+func ProcessVoucher(order *model.Order, db *gorm.DB) utils.StatusReturn {
+	if order.VoucherId != nil {
+		retval, _ := CheckAvailability(order.VoucherId, nil, order.CustId, db)
+		if retval.ErrCode == 0 {
+			voucherLog := &model.VoucherLog{
+				VoucherId: *order.VoucherId,
+				CustId:    order.CustId,
+				RedeemAt:  time.Now(),
+			}
+			db.Save(&voucherLog)
+		}
+		return retval
+	}
+	return utils.StatusReturnOK()
 }

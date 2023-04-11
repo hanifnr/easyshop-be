@@ -28,6 +28,9 @@ type Order struct {
 	ShippingCost   float64    `json:"shipping_cost"`
 	GrandTotal     float64    `json:"grand_total"`
 	Taxed          bool       `json:"taxed" gorm:"DEFAULT:FALSE"`
+	VoucherId      *int64     `json:"voucher_id"`
+	Disc           string     `json:"disc"`
+	DiscAmount     float64    `json:"disc_amount"`
 	OrderExt       `gorm:"-"`
 }
 

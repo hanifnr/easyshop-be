@@ -89,6 +89,13 @@ ALTER TABLE public.order ALTER COLUMN status_code TYPE VARCHAR(2);
 ALTER TABLE public.order ADD COLUMN exchange_rate NUMERIC(19,4) DEFAULT 1;
 ALTER TABLE public.order ADD COLUMN shipping_cost NUMERIC(19,4);
 ALTER TABLE public.order ADD COLUMN grand_total NUMERIC(19,4);
+ALTER TABLE public.order ADD COLUMN voucher_id BIGINT;
+ALTER TABLE public.order ADD COLUMN disc VARCHAR;
+ALTER TABLE public.order ADD COLUMN disc_amount NUMERIC(19,4);
+ALTER TABLE public.order
+ADD CONSTRAINT order_rel_voucher_fk
+FOREIGN KEY (voucher_id) REFERENCES public.voucher (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 
@@ -422,6 +429,24 @@ CREATE TABLE public.voucher(
 ALTER TABLE public.voucher
 ADD CONSTRAINT voucher_rel_partnership_fk
 FOREIGN KEY (partnership_id) REFERENCES public.partnership (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+ALTER TABLE public.voucher ADD COLUMN qty_used NUMERIC(16,4);
+
+CREATE SEQUENCE public.voucher_log_id_seq;
+CREATE TABLE public.voucher_log(
+  id BIGINT NOT NULL DEFAULT nextval('public.voucher_log_id_seq'),
+  voucher_id BIGINT NOT NULL,
+  cust_id BIGINT NOT NULL,
+  redeem_at TIMESTAMP,
+  CONSTRAINT voucher_log_pk PRIMARY KEY (id)
+);
+ALTER TABLE public.voucher_log
+ADD CONSTRAINT voucher_log_rel_voucher_fk
+FOREIGN KEY (voucher_id) REFERENCES public.voucher (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+ALTER TABLE public.voucher_log
+ADD CONSTRAINT voucher_log_rel_cust_fk
+FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 
 -- CREATE SEQUENCE public.grp_id_seq;

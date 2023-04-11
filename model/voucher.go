@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"easyshop/utils"
 	"time"
 
@@ -9,17 +10,18 @@ import (
 )
 
 type Voucher struct {
-	Id            int64     `json:"id" gorm:"primary_key;auto_increment"`
-	Code          string    `json:"code"`
-	Amount        string    `json:"amount"`
-	Qty           float64   `json:"qty"`
-	Startdate     time.Time `json:"startdate"`
-	Enddate       time.Time `json:"enddate"`
-	PartnershipId int64     `json:"partnership_id"`
-	Note          string    `json:"note"`
-	IsDelete      bool      `json:"is_delete"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	Id            int64        `json:"id" gorm:"primary_key;auto_increment"`
+	Code          string       `json:"code"`
+	Amount        string       `json:"amount"`
+	Qty           *float32     `json:"qty,omitempty"`
+	QtyUsed       float32      `json:"qty_used,omitempty"`
+	Startdate     sql.NullTime `json:"startdate"`
+	Enddate       sql.NullTime `json:"enddate"`
+	PartnershipId *int64       `json:"partnership_id,omitempty"`
+	Note          string       `json:"note"`
+	IsDelete      bool         `json:"is_delete"`
+	CreatedAt     time.Time    `json:"created_at"`
+	UpdatedAt     time.Time    `json:"updated_at"`
 }
 
 func (voucher Voucher) ID() int64 {
