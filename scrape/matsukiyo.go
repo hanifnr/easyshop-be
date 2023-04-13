@@ -17,13 +17,18 @@ func (m *Matsukiyo) GetProduct(shopId int64, url string) *Product {
 		url,
 		"div.ctBox01.clearfix",
 		func(e *colly.HTMLElement) {
-			code := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.cpde"))
+			code := e.ChildText("div.goodsBox.main > p.cpde")
 			name := e.ChildText("div.goodsBox.main > div.spHide > h3")
 			image := e.ChildAttr("div > div > div > ul > li:nth-of-type(1) > a", "style")
 			price := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.price > span > span:first-of-type"))
 			priceTax := utils.FormatPrice(e.ChildText("div.goodsBox.main > p.price > span > span.small"))
 
 			image = baseUrlImage + image[22:len(image)-3]
+			re := regexp.MustCompile(`JANコード\s*：\s*(\d+)`)
+			matches := re.FindStringSubmatch(code)
+			if len(matches) > 1 {
+				code = matches[1]
+			}
 
 			product = &Product{
 				Code:     code,
