@@ -3,6 +3,7 @@ package controllers
 import (
 	"easyshop/functions"
 	"easyshop/model"
+	"easyshop/scrape"
 	"easyshop/utils"
 	"encoding/json"
 	"fmt"
@@ -74,22 +75,11 @@ var TrackingNumber = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var ShippingCost = func(w http.ResponseWriter, r *http.Request) {
-	orderController := &OrderController{}
-
-	type Data struct {
-		Id           int64   `json:"id"`
-		ShippingCost float64 `json:"shipping_cost"`
-		ExchangeRate float64 `json:"exchange_rate"`
-	}
-	data := &Data{}
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
-		utils.RespondError(w, data, http.StatusBadRequest)
-		return
-	}
-
-	resp := orderController.ShippingCost(data.Id, data.ShippingCost, data.ExchangeRate)
-	utils.Respond(w, resp)
+	scuModel := &model.SingleNumericColumnUpdate{}
+	model.GetSingleColumnUpdate(w, r, scuModel, func() map[string]interface{} {
+		orderController := &OrderController{}
+		return orderController.ShippingCost(scuModel.Id, scuModel.Value)
+	})
 }
 
 var ListOrderd = func(w http.ResponseWriter, r *http.Request) {
@@ -261,10 +251,10 @@ func (orderController *OrderController) TrackingNumber(id int64, trackingNumber 
 	})
 }
 
-func (orderController *OrderController) ShippingCost(id int64, cost, exchangeRate float64) map[string]interface{} {
+func (orderController *OrderController) ShippingCost(id int64, cost float64) map[string]interface{} {
 	return UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		order := m.(*model.Order)
-		order.ExchangeRate = exchangeRate
+		order.ExchangeRate = scrape.GetRupiah()
 		order.ShippingCost = cost
 		order.GrandTotal = order.Total + cost
 		return utils.StatusReturnOK()
