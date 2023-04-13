@@ -118,10 +118,15 @@ func CheckAvailability(id *int64, code *string, custId int64, db *gorm.DB) (util
 	currentTime := time.Now()
 
 	voucher := &model.Voucher{}
+	var rows int
 	if id != nil {
-		db.Where("id = ?", id).Find(&voucher)
+		rows = int(db.Where("id = ?", id).Find(&voucher).RowsAffected)
 	} else {
-		db.Where("code = ?", code).Find(&voucher)
+		rows = int(db.Where("code = ?", code).Find(&voucher).RowsAffected)
+	}
+
+	if rows == 0 {
+		return utils.StatusReturn{ErrCode: utils.ErrExist, Message: "Voucher not found!"}, nil
 	}
 
 	if voucher.Qty != nil && &voucher.QtyUsed == voucher.Qty {
