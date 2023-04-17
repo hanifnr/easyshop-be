@@ -89,6 +89,7 @@ ALTER TABLE public.order ALTER COLUMN status_code TYPE VARCHAR(2);
 ALTER TABLE public.order ADD COLUMN exchange_rate NUMERIC(19,4) DEFAULT 1;
 ALTER TABLE public.order ADD COLUMN shipping_cost NUMERIC(19,4);
 ALTER TABLE public.order ADD COLUMN grand_total NUMERIC(19,4);
+ALTER TABLE public.order ADD COLUMN tax_amount NUMERIC(19,4);
 
 CREATE TABLE public.orderd(
   order_id BIGINT, 
