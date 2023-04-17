@@ -75,6 +75,12 @@
                                                      <th scope="row" colspan="2" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">Total:</th>
                                                      <td style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left"><span><span>¥</span>{{.Total}}</span></td>
                                                   </tr>
+                                                  {{if ne .Voucher ""}}
+                                                  <tr>
+                                                      <th scope="row" colspan="2" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">Voucher:</th>
+                                                      <td style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left"><span><span>- ¥</span>{{.Voucher}}</span></td>
+                                                  </tr>
+                                                  {{end}}
                                                   <tr>
                                                      <th scope="row" colspan="2" style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left">Shipping Cost:</th>
                                                      <td style="color:rgb(99,99,99);border:1px solid rgb(229,229,229);vertical-align:middle;padding:12px;text-align:left" align="left"><span><span>¥</span>{{.Shipping}}</span></td>

@@ -92,6 +92,7 @@ ALTER TABLE public.order ADD COLUMN grand_total NUMERIC(19,4);
 ALTER TABLE public.order ADD COLUMN voucher_id BIGINT;
 ALTER TABLE public.order ADD COLUMN disc VARCHAR;
 ALTER TABLE public.order ADD COLUMN disc_amount NUMERIC(19,4);
+ALTER TABLE public.order ADD COLUMN tax_amount NUMERIC(19,4);
 ALTER TABLE public.order
 ADD CONSTRAINT order_rel_voucher_fk
 FOREIGN KEY (voucher_id) REFERENCES public.voucher (id) ON DELETE RESTRICT ON UPDATE CASCADE

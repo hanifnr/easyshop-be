@@ -263,7 +263,7 @@ func (orderController *OrderController) ShippingCost(id int64, cost float64) map
 		order := m.(*model.Order)
 		order.ExchangeRate = scrape.GetRupiah()
 		order.ShippingCost = cost
-		order.GrandTotal = order.Total + cost
+		order.GrandTotal = order.Total + cost - order.DiscAmount
 		return utils.StatusReturnOK()
 	})
 }
@@ -362,6 +362,7 @@ type NotifOrder struct {
 	Shipping string
 	Grand    string
 	Rate     string
+	Voucher  string
 	Orderd   []DetailNotifOrder
 }
 
@@ -412,6 +413,8 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 	cust := &model.Cust{}
 	db.Where("id = ?", order.CustId).Find(&cust)
 
+	// voucher :=
+
 	fullAddr := fmt.Sprintf("%s,\n%s, %s, %s - %s", addr.FullAddress, addr.City, addr.Province, addr.CountryCode, addr.ZipCode)
 	var grandTotal string
 	if order.ExchangeRate > 0 {
@@ -430,6 +433,7 @@ func getDataNotifOrder(orderController *OrderController) (*model.Cust, *NotifOrd
 		Shipping: humanize.Comma(int64(order.ShippingCost)),
 		Grand:    humanize.Comma(int64(order.GrandTotal)) + grandTotal,
 		Rate:     humanize.Comma(int64(order.ExchangeRate)),
+		Voucher:  GetDataVoucher(&order, db),
 		Orderd:   orderd,
 	}
 
@@ -518,4 +522,13 @@ func ProcessVoucher(order *model.Order, db *gorm.DB) utils.StatusReturn {
 		return retval
 	}
 	return utils.StatusReturnOK()
+}
+
+func GetDataVoucher(order *model.Order, db *gorm.DB) string {
+	if order.VoucherId != nil {
+		voucher := &model.Voucher{}
+		db.Where("id = ?", order.VoucherId).Find(&voucher)
+		return fmt.Sprintf("%s (%s)", humanize.Comma(int64(order.DiscAmount)), voucher.Code)
+	}
+	return ""
 }
