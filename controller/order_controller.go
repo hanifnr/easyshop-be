@@ -193,6 +193,7 @@ func (orderController *OrderController) UpdateTrans() map[string]interface{} {
 		orderSrc.Trxno = orderTemp.Trxno
 		orderSrc.AddrId = orderTemp.AddrId
 		orderSrc.ArrivalDate = orderTemp.ArrivalDate
+		orderSrc.TaxAmount = orderTemp.TaxAmount
 
 		for i := range orderController.Orderd {
 			orderController.Details = append(orderController.Details, &orderController.Orderd[i])

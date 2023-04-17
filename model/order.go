@@ -31,6 +31,7 @@ type Order struct {
 	VoucherId      *int64     `json:"voucher_id"`
 	Disc           string     `json:"disc"`
 	DiscAmount     float64    `json:"disc_amount"`
+	TaxAmount      float64    `json:"tax_amount"`
 	OrderExt       `gorm:"-"`
 }
 
