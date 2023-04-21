@@ -65,7 +65,7 @@ func (emailVerifController *EmailVerifController) FDelete() functions.SQLFunctio
 func (emailVerifController *EmailVerifController) CreateModel() map[string]interface{} {
 	db := utils.GetDB()
 	emailVerif := &emailVerifController.EmailVerif
-	row := db.Where("UPPER(email) = UPPER(?)", emailVerif.Email).Find(emailVerif).RowsAffected
+	row := db.Where("UPPER(email) = UPPER(?) AND UPPER(type) = UPPER(?)", emailVerif.Email, emailVerif.Type).Find(emailVerif).RowsAffected
 	if row > 0 {
 		if emailVerif.Verified {
 			return utils.MessageErr(false, utils.ErrRequest, "This email has already verified!")
@@ -90,7 +90,7 @@ func (emailVerifController *EmailVerifController) AuthEmail(w http.ResponseWrite
 	}
 	db := utils.GetDB()
 	emailVerif := &emailVerifController.EmailVerif
-	row := db.Where("UPPER(email) = UPPER(?) AND verified = TRUE", emailVerif.Email).Find(emailVerif).RowsAffected
+	row := db.Where("UPPER(email) = UPPER(?) AND UPPER(type) = UPPER(?) AND verified = TRUE", emailVerif.Email, emailVerif.Type).Find(emailVerif).RowsAffected
 	if row > 0 {
 		utils.Respond(w, emailVerifController.UpdateModel())
 		return
@@ -144,6 +144,7 @@ func (emailVerifController *EmailVerifController) VerifyEmail(w http.ResponseWri
 	type Email struct {
 		Email string
 		Code  string
+		Type  string
 	}
 	email := &Email{}
 	if err := json.NewDecoder(r.Body).Decode(&email); err != nil {
@@ -155,7 +156,7 @@ func (emailVerifController *EmailVerifController) VerifyEmail(w http.ResponseWri
 	db := utils.GetDB().Begin()
 
 	emailData := &model.EmailVerif{}
-	row := db.Where("UPPER(email) = UPPER(?)", email.Email).Find(&emailData).RowsAffected
+	row := db.Where("UPPER(email) = UPPER(?) AND UPPER(type) = UPPER(?)", email.Email, email.Type).Find(&emailData).RowsAffected
 	if row > 0 {
 		if emailVerifController.Mode == model.EMAIL_VERIF_REGISTER {
 			if emailData.Verified {

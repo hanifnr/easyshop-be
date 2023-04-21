@@ -19,6 +19,7 @@ type EmailVerif struct {
 	GeneratedAt time.Time `json:"generated_at"`
 	AuthCode    string    `json:"auth_code"`
 	WaitTime    int       `json:"wait_time"`
+	Type        string    `json:"type"`
 }
 
 func (email EmailVerif) ID() int64 {

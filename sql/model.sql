@@ -359,6 +359,7 @@ CREATE TABLE public.email_verif(
 );
 ALTER TABLE public.email_verif ADD COLUMN auth_code VARCHAR;
 ALTER TABLE public.email_verif ADD COLUMN wait_time int;
+ALTER TABLE public.email_verif ADD COLUMN type VARCHAR;
 
 CREATE SEQUENCE public.product_id_seq;
 CREATE TABLE public.product(
@@ -407,6 +408,7 @@ CREATE TABLE public.partnership(
   updated_at TIMESTAMP,
   CONSTRAINT partnership_pk PRIMARY KEY (id)
 );
+ALTER TABLE public.partnership ADD COLUMN email VARCHAR;
 ALTER TABLE public.partnership
 ADD CONSTRAINT partnership_rel_partnership_type_fk
 FOREIGN KEY (partnership_type_id) REFERENCES public.partnership_type (id) ON DELETE RESTRICT ON UPDATE CASCADE

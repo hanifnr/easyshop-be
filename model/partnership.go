@@ -11,6 +11,7 @@ import (
 type Partnership struct {
 	Id                int64     `json:"id" gorm:"primary_key;auto_increment"`
 	Name              string    `json:"name"`
+	Email             string    `json:"email"`
 	PartnershipTypeId int64     `json:"partnership_type_id"`
 	SocialMedia       string    `json:"social_media"`
 	PhoneNumber       string    `json:"phone_number"`

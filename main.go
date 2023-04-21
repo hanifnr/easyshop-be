@@ -37,6 +37,7 @@ func main() {
 		"/notification",
 		"/partnership",
 		"/voucher",
+		"/email",
 	})
 
 	router := mux.NewRouter()
@@ -49,10 +50,10 @@ func main() {
 	router.HandleFunc("/cust/update", c.UpdateCust).Methods("PUT")
 	router.HandleFunc("/cust/delete/{id}", c.DeleteCust).Methods("DELETE")
 	router.HandleFunc("/cust/combo", c.ListComboCust).Methods("GET")
-	router.HandleFunc("/cust/email/register", c.RegisterEmail).Methods("POST")
-	router.HandleFunc("/cust/email/verifyregister", c.VerifyRegisterEmail).Methods("POST")
-	router.HandleFunc("/cust/email/auth", c.AuthEmail).Methods("POST")
-	router.HandleFunc("/cust/email/verifyauth", c.VerifyAuthEmail).Methods("POST")
+	router.HandleFunc("/email/register", c.RegisterEmail).Methods("POST")
+	router.HandleFunc("/email/verifyregister", c.VerifyRegisterEmail).Methods("POST")
+	router.HandleFunc("/email/auth", c.AuthEmail).Methods("POST")
+	router.HandleFunc("/email/verifyauth", c.VerifyAuthEmail).Methods("POST")
 	router.HandleFunc("/shop", c.ListShop).Methods("GET")
 	router.HandleFunc("/shop/view/{id}", c.ViewShop).Methods("GET")
 	router.HandleFunc("/shop/combo", c.ListComboShop).Methods("GET")
