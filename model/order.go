@@ -36,8 +36,9 @@ type Order struct {
 }
 
 type OrderExt struct {
-	CustName string `json:"cust_name"`
-	AddrName string `json:"addr_name"`
+	CustName    string `json:"cust_name"`
+	AddrName    string `json:"addr_name"`
+	VoucherCode string `json:"voucher_code"`
 	OrderStatus
 }
 
@@ -84,6 +85,7 @@ func (order *Order) SetUpdatedAt(time time.Time) {
 func (order *Order) SetValueModelExt(db *gorm.DB) {
 	db.Select("name").Table("cust").Where("id = ?", order.CustId).Scan(&order.CustName)
 	db.Select("name").Table("addr").Where("id = ?", order.AddrId).Scan(&order.AddrName)
+	db.Select("code").Table("voucher").Where("id = ?", order.VoucherId).Scan(&order.VoucherCode)
 	db.Select("idx, name").Table("status").Where("code = ?", order.StatusCode).Scan(&order.OrderStatus)
 }
 

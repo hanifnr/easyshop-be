@@ -244,7 +244,7 @@ func (orderController *OrderController) HandleOrder(id int64, status, note strin
 		}
 		cust, notifOrder := getDataNotifOrder(orderController)
 		if status == utils.ORDER_STATUS_ACCEPTED {
-			if validateAcceptOrder(*order, db) {
+			if validateAcceptOrder(order, db) {
 				SendEmailNotification(APPROVED_NOTIFICATION, cust, *notifOrder)
 			} else {
 				return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Please input shipping cost for order outside Japan!"}
@@ -496,8 +496,11 @@ func (orderController *OrderController) ExportOrderXls(orderId int64, w http.Res
 	xls.Write(w)
 }
 
-func validateAcceptOrder(order model.Order, db *gorm.DB) bool {
+func validateAcceptOrder(order *model.Order, db *gorm.DB) bool {
 	country := model.GetAddrCountry(order.AddrId, db)
+	if country == "JAPAN" {
+		order.ExchangeRate = scrape.GetRupiah()
+	}
 	return !(strings.ToUpper(country) != "JAPAN" && order.ShippingCost == 0)
 }
 

@@ -4,3 +4,5 @@ INSERT INTO partnership_type(code,name) VALUES
 UPDATE partnership_type SET code = 'TRVLA' WHERE code = 'TRAVEL';
 INSERT INTO partnership_type(code,name) VALUES 
 ('TRVLG', 'Travel Guide');
+INSERT INTO partnership_type(code,name) VALUES 
+('INDVD', 'Individual');

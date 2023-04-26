@@ -59,6 +59,11 @@ func SendEmailNotifCanceled(toAdmin, toCustomer string, data interface{}, trxno 
 
 func SendEmailNotif(toAdmin, toCustomer, templateName, subject string, data interface{}) {
 	path, _ := os.Getwd()
+	mode := os.Getenv("MODE")
+
+	if mode == "DEV" {
+		subject = "[DEV] " + subject
+	}
 	template := path + "/template/" + templateName
 	err := SendEmail(toAdmin, subject, data, template)
 	err2 := SendEmail(toCustomer, subject, data, template)
