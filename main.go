@@ -119,6 +119,7 @@ func main() {
 	router.HandleFunc("/partnership/delete/{id}", c.DeletePartnership).Methods("DELETE")
 	router.HandleFunc("/partnership/combo", c.ListComboPartnership).Methods("GET")
 	router.HandleFunc("/partnership/type/combo", c.ListComboPartnershipType).Methods("GET")
+	router.HandleFunc("/partnership/approve", c.ApprovePartnership).Methods("PUT")
 	router.HandleFunc("/voucher", c.ListVoucher).Methods("GET")
 	router.HandleFunc("/voucher/view/{id}", c.ViewVoucher).Methods("GET")
 	router.HandleFunc("/voucher/create", c.CreateVoucher).Methods("POST")

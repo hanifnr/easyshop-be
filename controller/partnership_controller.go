@@ -4,6 +4,7 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
@@ -63,6 +64,23 @@ var ListComboPartnershipType = func(w http.ResponseWriter, r *http.Request) {
 	}
 	param := utils.ProcessParam(r)
 	resp := ComboPartnershipType(page, param)
+	utils.Respond(w, resp)
+}
+
+var ApprovePartnership = func(w http.ResponseWriter, r *http.Request) {
+	type Approval struct {
+		Id    int64
+		Value bool
+		Note  string
+	}
+	approval := &Approval{}
+	if err := json.NewDecoder(r.Body).Decode(&approval); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	partnershipController := &PartnershipController{}
+	resp := partnershipController.ApprovePartnership(approval.Id, approval.Value, approval.Note)
 	utils.Respond(w, resp)
 }
 
@@ -137,4 +155,13 @@ func ComboPartnership(page int, param *utils.Param) map[string]interface{} {
 
 func ComboPartnershipType(page int, param *utils.Param) map[string]interface{} {
 	return GetCombo(page, "partnership_type", "name ASC", param)
+}
+
+func (partnershipController *PartnershipController) ApprovePartnership(id int64, approved bool, note string) map[string]interface{} {
+	return UpdateFieldModel(id, partnershipController, func(m model.Model) utils.StatusReturn {
+		partnership := m.(*model.Partnership)
+		partnership.Approved = &approved
+		partnership.Note = note
+		return utils.StatusReturnOK()
+	})
 }

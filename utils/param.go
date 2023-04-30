@@ -28,6 +28,7 @@ type Param struct {
 	Email       *string
 	OrderBy     *string
 	Taxed       *bool
+	Approved    *bool
 }
 
 func ProcessParam(r *http.Request) *Param {
@@ -49,6 +50,7 @@ func ProcessParam(r *http.Request) *Param {
 	paramEmail := ParamToString(r.URL.Query().Get("email"))
 	paramOrderBy := ParamToString(r.URL.Query().Get("order_by"))
 	paramTaxed := ParamToBool(r.URL.Query().Get("taxed"))
+	paramApproved := ParamToBool(r.URL.Query().Get("approved"))
 
 	return &Param{
 		Page:        paramPage,
@@ -69,6 +71,7 @@ func ProcessParam(r *http.Request) *Param {
 		Email:       paramEmail,
 		OrderBy:     paramOrderBy,
 		Taxed:       paramTaxed,
+		Approved:    paramApproved,
 	}
 }
 
@@ -117,6 +120,9 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.Taxed != nil {
 		db.Where("taxed = ?", param.Taxed)
+	}
+	if param.Approved != nil {
+		db.Where("approved = ?", param.Approved)
 	}
 }
 

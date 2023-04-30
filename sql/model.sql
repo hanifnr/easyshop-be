@@ -409,6 +409,8 @@ CREATE TABLE public.partnership(
   CONSTRAINT partnership_pk PRIMARY KEY (id)
 );
 ALTER TABLE public.partnership ADD COLUMN email VARCHAR;
+ALTER TABLE public.partnership ADD COLUMN approved BOOLEAN;
+ALTER TABLE public.partnership ADD COLUMN note TEXT;
 ALTER TABLE public.partnership
 ADD CONSTRAINT partnership_rel_partnership_type_fk
 FOREIGN KEY (partnership_type_id) REFERENCES public.partnership_type (id) ON DELETE RESTRICT ON UPDATE CASCADE

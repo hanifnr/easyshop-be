@@ -62,17 +62,20 @@ func (voucherController *VoucherController) FDelete() functions.SQLFunction {
 }
 
 func (voucherController *VoucherController) CreateModel() map[string]interface{} {
+	if retval := voucherController.ValidateVoucher(); retval.ErrCode == 0 {
+		if retval := CreateModel(voucherController, func(m model.Model) {
+			currentTime := time.Now()
 
-	if retval := CreateModel(voucherController, func(m model.Model) {
-		currentTime := time.Now()
-
-		voucher := m.(*model.Voucher)
-		voucher.CreatedAt = currentTime
-		voucher.UpdatedAt = currentTime
-	}); retval.ErrCode != 0 {
+			voucher := m.(*model.Voucher)
+			voucher.CreatedAt = currentTime
+			voucher.UpdatedAt = currentTime
+		}); retval.ErrCode != 0 {
+			return utils.MessageErr(false, retval.ErrCode, retval.Message)
+		}
+		return utils.MessageData(true, voucherController.Voucher)
+	} else {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
-	return utils.MessageData(true, voucherController.Voucher)
 }
 
 func (voucherController *VoucherController) ViewModel(id int64) map[string]interface{} {
@@ -144,4 +147,19 @@ func IsUsedVoucher(voucherId, custId int64, db *gorm.DB) bool {
 	var exist bool
 	db.Select("count(*) > 0").Table("voucher_log").Where("voucher_id = ? AND cust_id = ?", voucherId, custId).Scan(&exist)
 	return exist
+}
+
+func (voucherController *VoucherController) ValidateVoucher() utils.StatusReturn {
+	voucher := voucherController.Voucher
+	if voucher.PartnershipId != nil {
+		db := utils.GetDB()
+
+		partner := &model.Partnership{}
+		db.Where("id = ?", voucher.PartnershipId).Find(&partner)
+
+		if partner.Approved == nil || !*partner.Approved {
+			return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Partner not yet approved!"}
+		}
+	}
+	return utils.StatusReturnOK()
 }
