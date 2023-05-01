@@ -38,6 +38,7 @@ func main() {
 		"/partnership",
 		"/voucher",
 		"/email",
+		"/req",
 	})
 
 	router := mux.NewRouter()
@@ -126,6 +127,11 @@ func main() {
 	router.HandleFunc("/voucher/update", c.UpdateVoucher).Methods("PUT")
 	router.HandleFunc("/voucher/delete/{id}", c.DeleteVoucher).Methods("DELETE")
 	router.HandleFunc("/voucher/check", c.CheckVoucher).Methods("GET")
+	router.HandleFunc("/req", c.ListReqOrder).Methods("GET")
+	router.HandleFunc("/req/view/{id}", c.ViewReqOrder).Methods("GET")
+	router.HandleFunc("/req/create", c.CreateReqOrder).Methods("POST")
+	router.HandleFunc("/req/update", c.UpdateReqOrder).Methods("PUT")
+	router.HandleFunc("/req/delete/{id}", c.DeleteReqOrder).Methods("DELETE")
 	router.HandleFunc("/notification", c.ListNotification).Methods("GET")
 	router.HandleFunc("/properties", c.GetProps).Methods("GET")
 

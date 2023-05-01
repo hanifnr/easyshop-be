@@ -454,6 +454,29 @@ ADD CONSTRAINT voucher_log_rel_cust_fk
 FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 
+CREATE SEQUENCE public.req_order_id_seq;
+CREATE TABLE public.req_order(
+  id BIGINT NOT NULL DEFAULT nextval('public.req_order_id_seq'),
+  email VARCHAR NOT NULL,
+  created_at TIMESTAMP, 
+  CONSTRAINT req_order_pk PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE public.req_orderd_id_seq;
+CREATE TABLE public.req_orderd(
+  req_order_id BIGINT NOT NULL,
+  dno INT NOT NULL,
+  url VARCHAR NOT NULL,
+  approved BOOLEAN,
+  approval_note TEXT,
+  note TEXT,
+  CONSTRAINT req_orderd_pk PRIMARY KEY (req_order_id, dno)
+);
+ALTER TABLE public.req_orderd
+ADD CONSTRAINT req_orderd_rel_req_order_fk
+FOREIGN KEY (req_order_id) REFERENCES public.req_order (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(
 --   id BIGINT NOT NULL DEFAULT nextval('public.grp_id_seq'),
