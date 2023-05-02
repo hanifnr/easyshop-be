@@ -93,6 +93,7 @@ ALTER TABLE public.order ADD COLUMN voucher_id BIGINT;
 ALTER TABLE public.order ADD COLUMN disc VARCHAR;
 ALTER TABLE public.order ADD COLUMN disc_amount NUMERIC(19,4);
 ALTER TABLE public.order ADD COLUMN tax_amount NUMERIC(19,4);
+ALTER TABLE public.order ALTER COLUMN tax_amount TYPE VARCHAR;
 ALTER TABLE public.order
 ADD CONSTRAINT order_rel_voucher_fk
 FOREIGN KEY (voucher_id) REFERENCES public.voucher (id) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -382,11 +383,13 @@ CREATE TABLE public.firebase_token(
   uid VARCHAR NOT NULL,
   token VARCHAR NOT NULL,
   type VARCHAR NOT NULL,
-  is_deleted BOOLEAN DEFAULT FALSE,
+  is_delete BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP, 
   updated_at TIMESTAMP,
   CONSTRAINT token_pk PRIMARY KEY (id)
 );
+ALTER TABLE public.firebase_token RENAME COLUMN is_deleted TO is_delete;
+
 
 CREATE SEQUENCE public.partnership_type_id_seq;
 CREATE TABLE public.partnership_type(

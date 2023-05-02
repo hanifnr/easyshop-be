@@ -84,7 +84,7 @@ var ShippingCost = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var TaxDuty = func(w http.ResponseWriter, r *http.Request) {
-	scuModel := &model.SingleNumericColumnUpdate{}
+	scuModel := &model.SingleStringColumnUpdate{}
 	model.GetSingleColumnUpdate(w, r, scuModel, func() map[string]interface{} {
 		orderController := &OrderController{}
 		return orderController.TaxDuty(scuModel.Id, scuModel.Value)
@@ -277,7 +277,7 @@ func (orderController *OrderController) ShippingCost(id int64, cost float64) map
 	})
 }
 
-func (orderController *OrderController) TaxDuty(id int64, taxAmount float64) map[string]interface{} {
+func (orderController *OrderController) TaxDuty(id int64, taxAmount string) map[string]interface{} {
 	return UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		order := m.(*model.Order)
 		order.TaxAmount = taxAmount
