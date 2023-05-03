@@ -16,7 +16,7 @@ type Partnership struct {
 	SocialMedia       string    `json:"social_media"`
 	PhoneNumber       string    `json:"phone_number"`
 	IsDelete          bool      `json:"is_delete"`
-	Approved          *bool     `json:"approved"`
+	ApprovalStatus    string    `json:"approval_status"`
 	Note              string    `json:"note"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`

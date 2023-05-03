@@ -70,7 +70,7 @@ var ListComboPartnershipType = func(w http.ResponseWriter, r *http.Request) {
 var ApprovePartnership = func(w http.ResponseWriter, r *http.Request) {
 	type Approval struct {
 		Id    int64
-		Value bool
+		Value string
 		Note  string
 	}
 	approval := &Approval{}
@@ -157,10 +157,10 @@ func ComboPartnershipType(page int, param *utils.Param) map[string]interface{} {
 	return GetCombo(page, "partnership_type", "name ASC", param)
 }
 
-func (partnershipController *PartnershipController) ApprovePartnership(id int64, approved bool, note string) map[string]interface{} {
+func (partnershipController *PartnershipController) ApprovePartnership(id int64, approvalStatus string, note string) map[string]interface{} {
 	return UpdateFieldModel(id, partnershipController, func(m model.Model) utils.StatusReturn {
 		partnership := m.(*model.Partnership)
-		partnership.Approved = &approved
+		partnership.ApprovalStatus = approvalStatus
 		partnership.Note = note
 		return utils.StatusReturnOK()
 	})

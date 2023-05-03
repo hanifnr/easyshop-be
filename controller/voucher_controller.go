@@ -157,7 +157,7 @@ func (voucherController *VoucherController) ValidateVoucher() utils.StatusReturn
 		partner := &model.Partnership{}
 		db.Where("id = ?", voucher.PartnershipId).Find(&partner)
 
-		if partner.Approved == nil || !*partner.Approved {
+		if partner.ApprovalStatus != "A" {
 			return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Partner not yet approved!"}
 		}
 	}

@@ -10,25 +10,26 @@ import (
 )
 
 type Param struct {
-	Page        *int
-	StartDate   *time.Time
-	EndDate     *time.Time
-	Id          *int64
-	Code        *string
-	Name        *string
-	StatusCode  *string
-	CustId      *int64
-	ShopId      *int64
-	Imported    *bool
-	PhoneNumber *string
-	CountryCode *string
-	IsActive    *bool
-	IsDelete    *bool
-	OrderId     *int64
-	Email       *string
-	OrderBy     *string
-	Taxed       *bool
-	Approved    *bool
+	Page           *int
+	StartDate      *time.Time
+	EndDate        *time.Time
+	Id             *int64
+	Code           *string
+	Name           *string
+	StatusCode     *string
+	CustId         *int64
+	ShopId         *int64
+	Imported       *bool
+	PhoneNumber    *string
+	CountryCode    *string
+	IsActive       *bool
+	IsDelete       *bool
+	OrderId        *int64
+	Email          *string
+	OrderBy        *string
+	Taxed          *bool
+	Approved       *bool
+	ApprovalStatus *string
 }
 
 func ProcessParam(r *http.Request) *Param {
@@ -51,27 +52,29 @@ func ProcessParam(r *http.Request) *Param {
 	paramOrderBy := ParamToString(r.URL.Query().Get("order_by"))
 	paramTaxed := ParamToBool(r.URL.Query().Get("taxed"))
 	paramApproved := ParamToBool(r.URL.Query().Get("approved"))
+	paramApprovalStatus := ParamToString(r.URL.Query().Get("approval_status"))
 
 	return &Param{
-		Page:        paramPage,
-		StartDate:   paramStartDate,
-		EndDate:     paramEndDate,
-		Id:          paramId,
-		Code:        paramCode,
-		Name:        paramName,
-		StatusCode:  paramStatusCode,
-		CustId:      paramCustId,
-		ShopId:      paramShopId,
-		Imported:    paramImported,
-		PhoneNumber: paramPhoneNumber,
-		CountryCode: paramCountryCode,
-		IsActive:    paramIsActive,
-		IsDelete:    paramIsDelete,
-		OrderId:     paramOrderId,
-		Email:       paramEmail,
-		OrderBy:     paramOrderBy,
-		Taxed:       paramTaxed,
-		Approved:    paramApproved,
+		Page:           paramPage,
+		StartDate:      paramStartDate,
+		EndDate:        paramEndDate,
+		Id:             paramId,
+		Code:           paramCode,
+		Name:           paramName,
+		StatusCode:     paramStatusCode,
+		CustId:         paramCustId,
+		ShopId:         paramShopId,
+		Imported:       paramImported,
+		PhoneNumber:    paramPhoneNumber,
+		CountryCode:    paramCountryCode,
+		IsActive:       paramIsActive,
+		IsDelete:       paramIsDelete,
+		OrderId:        paramOrderId,
+		Email:          paramEmail,
+		OrderBy:        paramOrderBy,
+		Taxed:          paramTaxed,
+		Approved:       paramApproved,
+		ApprovalStatus: paramApprovalStatus,
 	}
 }
 
@@ -123,6 +126,9 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.Approved != nil {
 		db.Where("approved = ?", param.Approved)
+	}
+	if param.ApprovalStatus != nil {
+		db.Where("approval_status = ?", param.ApprovalStatus)
 	}
 }
 
