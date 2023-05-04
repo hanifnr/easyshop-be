@@ -376,6 +376,12 @@ CREATE TABLE public.product(
   updated_at TIMESTAMP,
   CONSTRAINT product_pk PRIMARY KEY (id)
 );
+ALTER TABLE public.product ADD COLUMN req_order_id BIGINT;
+ALTER TABLE public.product ADD COLUMN req_order_dno INT;
+ALTER TABLE public.product
+ADD CONSTRAINT product_rel_req_orderd_fk
+FOREIGN KEY (req_order_id,req_order_dno) REFERENCES public.req_orderd (req_order_id,dno) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
 
 CREATE SEQUENCE public.firebase_token_id_seq;
 CREATE TABLE public.firebase_token(
@@ -466,6 +472,7 @@ CREATE TABLE public.req_order(
   created_at TIMESTAMP, 
   CONSTRAINT req_order_pk PRIMARY KEY (id)
 );
+ALTER TABLE public.req_order ADD COLUMN status_code VARCHAR DEFAULT 'W';
 
 CREATE SEQUENCE public.req_orderd_id_seq;
 CREATE TABLE public.req_orderd(

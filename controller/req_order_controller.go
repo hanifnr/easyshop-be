@@ -4,6 +4,7 @@ import (
 	"easyshop/functions"
 	"easyshop/model"
 	"easyshop/utils"
+	"encoding/json"
 	"net/http"
 
 	"gorm.io/gorm"
@@ -32,6 +33,40 @@ var ListReqOrder = func(w http.ResponseWriter, r *http.Request) {
 var DeleteReqOrder = func(w http.ResponseWriter, r *http.Request) {
 	reqOrderController := &ReqOrderController{}
 	DeleteTransAction(reqOrderController, w, r)
+}
+
+var HandleReqOrder = func(w http.ResponseWriter, r *http.Request) {
+	type ReqOrder struct {
+		Id    int64
+		Value string
+	}
+	req := &ReqOrder{}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	reqOrderController := &ReqOrderController{}
+	resp := reqOrderController.HandleReqOrder(req.Id, req.Value)
+	utils.Respond(w, resp)
+}
+
+var ApproveReqOrder = func(w http.ResponseWriter, r *http.Request) {
+	type ReqOrder struct {
+		Id    int64
+		Dno   int
+		Value bool
+		Note  string
+	}
+	req := &ReqOrder{}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		data := utils.MessageErr(false, http.StatusBadRequest, err.Error())
+		utils.RespondError(w, data, http.StatusBadRequest)
+		return
+	}
+	reqOrderController := &ReqOrderController{}
+	resp := reqOrderController.ApproveReqOrder(req.Id, req.Dno, req.Value, req.Note)
+	utils.Respond(w, resp)
 }
 
 type ReqOrderController struct {
@@ -112,4 +147,29 @@ func (reqOrderController *ReqOrderController) FNew() functions.SQLFunction {
 
 func (reqOrderController *ReqOrderController) FDelete() functions.SQLFunction {
 	return nil
+}
+
+func (reqOrderController *ReqOrderController) HandleReqOrder(id int64, status string) map[string]interface{} {
+	return UpdateFieldMaster(id, reqOrderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
+		req := m.(*model.ReqOrder)
+		req.StatusCode = status
+		return utils.StatusReturnOK()
+	})
+}
+
+func (reqOrderController *ReqOrderController) ApproveReqOrder(id int64, dno int, value bool, note string) map[string]interface{} {
+	db := utils.GetDB().Begin()
+	m := &model.ReqOrderd{}
+	if err := db.Where("req_order_id = ? AND dno = ?", id, dno).Find(&m).Error; err != nil {
+		db.Rollback()
+		return utils.MessageErr(false, utils.ErrSQLLoad, err.Error())
+	}
+	m.Approved = value
+	m.ApprovalNote = note
+	if err := model.Save(m, db); err != nil {
+		db.Rollback()
+		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
+	}
+	db.Commit()
+	return utils.MessageData(true, m)
 }

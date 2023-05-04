@@ -7,8 +7,8 @@ import (
 )
 
 type ReqOrderd struct {
-	ReqOrderId   int64  `json:"req_order_id"`
-	Dno          int    `json:"dno"`
+	ReqOrderId   int64  `json:"req_order_id" gorm:"primaryKey"`
+	Dno          int    `json:"dno" gorm:"primaryKey"`
 	Url          string `json:"url"`
 	Approved     bool   `json:"approved"`
 	ApprovalNote string `json:"approval_note"`
