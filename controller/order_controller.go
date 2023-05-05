@@ -498,7 +498,7 @@ func (orderController *OrderController) ExportOrderXls(orderId int64, w http.Res
 
 func validateAcceptOrder(order *model.Order, db *gorm.DB) bool {
 	country := model.GetAddrCountry(order.AddrId, db)
-	if country == "JAPAN" {
+	if strings.ToUpper(country) == "JAPAN" {
 		order.ExchangeRate = scrape.GetRupiah()
 	}
 	return !(strings.ToUpper(country) != "JAPAN" && order.ShippingCost == 0)
