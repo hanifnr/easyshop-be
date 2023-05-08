@@ -115,6 +115,28 @@ func DeleteModel(id int64, controller Controller, fAction func(m model.Model) ut
 	return utils.StatusReturnOK()
 }
 
+func RemoveModel(id int64, controller Controller, fAction func(m model.Model) utils.StatusReturn) utils.StatusReturn {
+	db := utils.GetDB().Begin()
+	m := controller.Model()
+	fDelete := controller.FDelete()
+
+	if retval := fAction(m); retval.ErrCode != 0 {
+		db.Rollback()
+		return retval
+	}
+	if fDelete != nil {
+		if retval := fDelete.Run(m, db); retval.ErrCode != 0 {
+			db.Rollback()
+			return retval
+		}
+	}
+	if err := db.Where("id = ?", id).Delete(&m).Error; err != nil {
+		return utils.StatusReturn{ErrCode: utils.ErrSQLDelete, Message: err.Error()}
+	}
+	db.Commit()
+	return utils.StatusReturnOK()
+}
+
 func ListModel(table, order string, m interface{}, list interface{}, param *utils.Param) map[string]interface{} {
 	ProcessDefaultModelParam(m, param)
 	return ListJoinModel(table, order, list, param, func(query *gorm.DB) {}, func(query *gorm.DB) {})

@@ -90,7 +90,7 @@ func (trendingProductController *TrendingProductController) UpdateModel() map[st
 }
 
 func (trendingProductController *TrendingProductController) DeleteModel(id int64) map[string]interface{} {
-	if retval := DeleteModel(id, trendingProductController, func(m model.Model) utils.StatusReturn {
+	if retval := RemoveModel(id, trendingProductController, func(m model.Model) utils.StatusReturn {
 		return utils.StatusReturnOK()
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
