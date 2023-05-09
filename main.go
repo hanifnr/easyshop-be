@@ -109,6 +109,7 @@ func main() {
 	router.HandleFunc("/product/trending/create", c.CreateTrendingProduct).Methods("POST")
 	router.HandleFunc("/product/trending/update", c.UpdateTrendingProduct).Methods("PUT")
 	router.HandleFunc("/product/trending/delete/{id}", c.DeleteTrendingProduct).Methods("DELETE")
+	router.HandleFunc("/product/trending/clean", c.CleanProduct).Methods("DELETE")
 	router.HandleFunc("/firebase/token", c.ListFirebaseToken).Methods("GET")
 	router.HandleFunc("/firebase/token/view/{id}", c.ViewFirebaseToken).Methods("GET")
 	router.HandleFunc("/firebase/token/create", c.CreateFirebaseToken).Methods("POST")

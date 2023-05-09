@@ -34,6 +34,12 @@ var DeleteTrendingProduct = func(w http.ResponseWriter, r *http.Request) {
 	DeleteModelAction(trendingProductController, w, r)
 }
 
+var CleanProduct = func(w http.ResponseWriter, r *http.Request) {
+	trendingProductController := &TrendingProductController{}
+	resp := trendingProductController.RemoveProduct()
+	utils.Respond(w, resp)
+}
+
 type TrendingProductController struct {
 	TrendingProduct scrape.Product
 }
@@ -99,4 +105,13 @@ func (trendingProductController *TrendingProductController) DeleteModel(id int64
 }
 func (trendingProductController *TrendingProductController) ListModel(param *utils.Param) map[string]interface{} {
 	return ListModel("product", "id ASC", &trendingProductController.TrendingProduct, make([]*scrape.Product, 0), param)
+}
+
+func (trendingProductController *TrendingProductController) RemoveProduct() map[string]interface{} {
+	db := utils.GetDB().Begin()
+
+	listProduct := make([]*scrape.Product, 0)
+	db.Debug().Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
+
+	return utils.MessageData(true, listProduct)
 }
