@@ -6,6 +6,7 @@ import (
 	"os"
 
 	c "easyshop/controller"
+	controllers "easyshop/controller"
 	"easyshop/service"
 	u "easyshop/utils"
 
@@ -15,9 +16,9 @@ import (
 
 func init() {
 	service.InitFirebase()
-	// service.InitScheduler([]func(){
-	// 	controllers.CleanProduct,
-	// })
+	service.InitScheduler([]func(){
+		controllers.CleanProduct,
+	})
 	// service.InitRedis()
 }
 
