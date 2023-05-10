@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/scrape"
 	"easyshop/utils"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -112,7 +113,15 @@ func CleanProduct() {
 	db := utils.GetDB().Begin()
 
 	listProduct := make([]*scrape.Product, 0)
-	db.Debug().Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
+	db.Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
 
-	fmt.Println("AUTO CLEAN PRODUCT: \n", fmt.Sprintf("%v", utils.MessageData(true, listProduct)))
+	for _, product := range listProduct {
+		if err := db.Delete(&product).Error; err != nil {
+			db.Rollback()
+		}
+	}
+	b, _ := json.Marshal(utils.MessageData(true, listProduct))
+
+	fmt.Println("AUTO CLEAN PRODUCT: \n", string(b))
+	db.Commit()
 }
