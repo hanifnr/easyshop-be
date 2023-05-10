@@ -14,7 +14,7 @@ func InitScheduler(listAction []func()) {
 	scheduler := cron.New(cron.WithLocation(jakartaTime))
 
 	for _, action := range listAction {
-		scheduler.AddFunc("40 16 * * 3", action)
+		scheduler.AddFunc("*/2 * * * *", action)
 	}
 
 	// start scheduler
