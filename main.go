@@ -15,9 +15,9 @@ import (
 
 func init() {
 	service.InitFirebase()
-	// service.InitScheduler([]func(){
-	// 	controllers.CleanProduct,
-	// })
+	service.InitScheduler([]func(){
+		c.CleanProduct,
+	})
 	// service.InitRedis()
 }
 

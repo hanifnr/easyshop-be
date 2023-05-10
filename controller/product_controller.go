@@ -110,18 +110,17 @@ func (trendingProductController *TrendingProductController) ListModel(param *uti
 }
 
 func CleanProduct() {
-	db := utils.GetDB().Begin()
+	db := utils.GetDB()
 
 	listProduct := make([]*scrape.Product, 0)
 	db.Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
 
 	for _, product := range listProduct {
 		if err := db.Delete(&product).Error; err != nil {
-			db.Rollback()
+			fmt.Println("Err clean product: ", err.Error())
 		}
 	}
 	b, _ := json.Marshal(utils.MessageData(true, listProduct))
 
 	fmt.Println("AUTO CLEAN PRODUCT: \n", string(b))
-	db.Commit()
 }
