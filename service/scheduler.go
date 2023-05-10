@@ -14,11 +14,11 @@ func InitScheduler(listAction []func()) {
 	scheduler := cron.New(cron.WithLocation(jakartaTime))
 
 	for _, action := range listAction {
-		scheduler.AddFunc("0 0 * * 0", action)
+		scheduler.AddFunc("* * * * *", action)
 	}
 
 	// start scheduler
-	go scheduler.Start()
+	scheduler.Start()
 
 	// trap SIGINT untuk trigger shutdown.
 	sig := make(chan os.Signal, 1)

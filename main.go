@@ -15,9 +15,9 @@ import (
 
 func init() {
 	service.InitFirebase()
-	service.InitScheduler([]func(){
-		c.CleanProduct,
-	})
+	// service.InitScheduler([]func(){
+	// 	c.CleanProduct,
+	// })
 	// service.InitRedis()
 }
 
@@ -156,7 +156,6 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
 }
 
 func handlerIndex(w http.ResponseWriter, r *http.Request) {
