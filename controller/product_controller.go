@@ -114,5 +114,5 @@ func CleanProduct() {
 	listProduct := make([]*scrape.Product, 0)
 	db.Debug().Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
 
-	fmt.Println("AUTO CLEAN PRODUCT: \n", utils.MessageData(true, listProduct))
+	fmt.Println("AUTO CLEAN PRODUCT: \n", fmt.Sprintf("%v", utils.MessageData(true, listProduct)))
 }
