@@ -5,6 +5,7 @@ import (
 	"easyshop/model"
 	"easyshop/scrape"
 	"easyshop/utils"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -34,11 +35,11 @@ var DeleteTrendingProduct = func(w http.ResponseWriter, r *http.Request) {
 	DeleteModelAction(trendingProductController, w, r)
 }
 
-var CleanProduct = func(w http.ResponseWriter, r *http.Request) {
-	trendingProductController := &TrendingProductController{}
-	resp := trendingProductController.RemoveProduct()
-	utils.Respond(w, resp)
-}
+// var CleanProduct = func(w http.ResponseWriter, r *http.Request) {
+// 	trendingProductController := &TrendingProductController{}
+// 	resp := trendingProductController.RemoveProduct()
+// 	utils.Respond(w, resp)
+// }
 
 type TrendingProductController struct {
 	TrendingProduct scrape.Product
@@ -107,11 +108,11 @@ func (trendingProductController *TrendingProductController) ListModel(param *uti
 	return ListModel("product", "id ASC", &trendingProductController.TrendingProduct, make([]*scrape.Product, 0), param)
 }
 
-func (trendingProductController *TrendingProductController) RemoveProduct() map[string]interface{} {
+func CleanProduct() {
 	db := utils.GetDB().Begin()
 
 	listProduct := make([]*scrape.Product, 0)
 	db.Debug().Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
 
-	return utils.MessageData(true, listProduct)
+	fmt.Println("AUTO CLEAN PRODUCT: \n", utils.MessageData(true, listProduct))
 }
