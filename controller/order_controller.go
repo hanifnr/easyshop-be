@@ -158,6 +158,7 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	} else {
+		insertVoucherLog(&orderController.Order)
 		cust, notifOrder := getDataNotifOrder(orderController)
 		SendEmailNotification(ORDER_NOTIFICATION, cust, *notifOrder)
 		SendNewOrderPushNotification(&orderController.Order)
@@ -532,15 +533,37 @@ func GetStatusOrderMessage(status string) string {
 func ProcessVoucher(order *model.Order, db *gorm.DB) utils.StatusReturn {
 	if order.VoucherId != nil {
 		retval, _ := CheckAvailability(order.VoucherId, nil, order.CustId, db)
-		if retval.ErrCode == 0 {
-			voucherLog := &model.VoucherLog{
-				VoucherId: *order.VoucherId,
-				CustId:    order.CustId,
-				RedeemAt:  time.Now(),
-			}
-			db.Save(&voucherLog)
-		}
+
 		return retval
+	}
+	return utils.StatusReturnOK()
+}
+
+func insertVoucherLog(order *model.Order) utils.StatusReturn {
+	if order.VoucherId != nil {
+		db := utils.GetDB().Begin()
+		voucher := &model.Voucher{}
+		if err := model.Load(*order.VoucherId, voucher, db); err != nil {
+			db.Rollback()
+			return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+		}
+		voucherLog := &model.VoucherLog{
+			VoucherId: *order.VoucherId,
+			OrderId:   order.Id,
+			CustId:    order.CustId,
+			RedeemAt:  time.Now(),
+		}
+		if voucher.PartnershipId != nil {
+			partnership := &model.Partnership{}
+			if err := model.Load(*voucher.PartnershipId, partnership, db); err != nil {
+				db.Rollback()
+				return utils.StatusReturn{ErrCode: utils.ErrSQLLoad, Message: err.Error()}
+			}
+			voucherLog.PartnershipId = *voucher.PartnershipId
+			voucherLog.RewardAmount = partnership.RewardAmount
+		}
+		db.Save(&voucherLog)
+		db.Commit()
 	}
 	return utils.StatusReturnOK()
 }

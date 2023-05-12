@@ -15,9 +15,6 @@ import (
 
 func init() {
 	service.InitFirebase()
-	// service.InitScheduler([]func(){
-	// 	c.CleanProduct,
-	// })
 	// service.InitRedis()
 }
 
@@ -43,7 +40,9 @@ func main() {
 		"/email",
 		"/req",
 	})
-
+	service.InitScheduler([]func(){
+		c.CleanProduct,
+	})
 	router := mux.NewRouter()
 	router.HandleFunc("/", handlerIndex)
 	router.HandleFunc("/index", handlerIndex)
@@ -131,6 +130,7 @@ func main() {
 	router.HandleFunc("/voucher/update", c.UpdateVoucher).Methods("PUT")
 	router.HandleFunc("/voucher/delete/{id}", c.DeleteVoucher).Methods("DELETE")
 	router.HandleFunc("/voucher/check", c.CheckVoucher).Methods("GET")
+	router.HandleFunc("/voucher/log", c.ListVoucherLog).Methods("GET")
 	router.HandleFunc("/req", c.ListReqOrder).Methods("GET")
 	router.HandleFunc("/req/view/{id}", c.ViewReqOrder).Methods("GET")
 	router.HandleFunc("/req/create", c.CreateReqOrder).Methods("POST")

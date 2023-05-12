@@ -422,6 +422,7 @@ ALTER TABLE public.partnership ADD COLUMN approved BOOLEAN;
 ALTER TABLE public.partnership ADD COLUMN note TEXT;
 ALTER TABLE public.partnership DROP COLUMN approved;
 ALTER TABLE public.partnership ADD COLUMN approval_status VARCHAR DEFAULT 'W';
+ALTER TABLE public.partnership ADD COLUMN reward_amount NUMERIC(19,4) DEFAULT 250;
 ALTER TABLE public.partnership
 ADD CONSTRAINT partnership_rel_partnership_type_fk
 FOREIGN KEY (partnership_type_id) REFERENCES public.partnership_type (id) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -456,6 +457,9 @@ CREATE TABLE public.voucher_log(
   redeem_at TIMESTAMP,
   CONSTRAINT voucher_log_pk PRIMARY KEY (id)
 );
+ALTER TABLE public.voucher_log ADD COLUMN order_id BIGINT NOT NULL;
+ALTER TABLE public.voucher_log ADD COLUMN reward_amount NUMERIC(19,4) NOT NULL;
+ALTER TABLE public.voucher_log ADD COLUMN partnership_id BIGINT;
 ALTER TABLE public.voucher_log
 ADD CONSTRAINT voucher_log_rel_voucher_fk
 FOREIGN KEY (voucher_id) REFERENCES public.voucher (id) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -463,6 +467,14 @@ NOT DEFERRABLE;
 ALTER TABLE public.voucher_log
 ADD CONSTRAINT voucher_log_rel_cust_fk
 FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+ALTER TABLE public.voucher_log
+ADD CONSTRAINT voucher_log_rel_order_fk
+FOREIGN KEY (order_id) REFERENCES public.order (id) ON DELETE RESTRICT ON UPDATE CASCADE
+NOT DEFERRABLE;
+ALTER TABLE public.voucher_log
+ADD CONSTRAINT voucher_log_rel_partnership_fk
+FOREIGN KEY (partnership_id) REFERENCES public.partnership (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
 
 CREATE SEQUENCE public.req_order_id_seq;
@@ -488,6 +500,29 @@ ALTER TABLE public.req_orderd
 ADD CONSTRAINT req_orderd_rel_req_order_fk
 FOREIGN KEY (req_order_id) REFERENCES public.req_order (id) ON DELETE RESTRICT ON UPDATE CASCADE
 NOT DEFERRABLE;
+
+-- CREATE SEQUENCE public.voucher_used_id_seq;
+-- CREATE TABLE public.voucher_used(
+--   id BIGINT NOT NULL DEFAULT nextval('public.voucher_used_id_seq'),
+--   voucher_id BIGINT NOT NULL,
+--   order_id BIGINT NOT NULL,
+--   cust_id BIGINT NOT NULL,
+--   reward_amount NUMERIC(19,4) NOT NULL,
+--   created_at TIMESTAMP DEFAULT NOW(),
+--   CONSTRAINT voucher_used_pk PRIMARY KEY (id)
+-- );
+-- ALTER TABLE public.voucher_used
+-- ADD CONSTRAINT voucher_used_rel_voucher_fk
+-- FOREIGN KEY (voucher_id) REFERENCES public.voucher (id) ON DELETE RESTRICT ON UPDATE CASCADE
+-- NOT DEFERRABLE;
+-- ALTER TABLE public.voucher_used
+-- ADD CONSTRAINT voucher_used_rel_order_fk
+-- FOREIGN KEY (order_id) REFERENCES public.order (id) ON DELETE RESTRICT ON UPDATE CASCADE
+-- NOT DEFERRABLE;
+-- ALTER TABLE public.voucher_used
+-- ADD CONSTRAINT voucher_used_rel_cust_fk
+-- FOREIGN KEY (cust_id) REFERENCES public.cust (id) ON DELETE RESTRICT ON UPDATE CASCADE
+-- NOT DEFERRABLE;
 
 -- CREATE SEQUENCE public.grp_id_seq;
 -- CREATE TABLE public.grp(

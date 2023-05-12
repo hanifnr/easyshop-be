@@ -33,6 +33,7 @@ type Param struct {
 	ReqOrderId     *int64
 	ReqOrderDno    *int
 	PartnershipId  *int64
+	VoucherId      *int64
 }
 
 func ProcessParam(r *http.Request) *Param {
@@ -59,6 +60,7 @@ func ProcessParam(r *http.Request) *Param {
 	paramReqOrderId := ParamToInt64(r.URL.Query().Get("req_order_id"))
 	paramReqOrderDno := ParamToInt(r.URL.Query().Get("req_order_dno"))
 	paramPartnershipId := ParamToInt64(r.URL.Query().Get("partnership_id"))
+	paramVoucherId := ParamToInt64(r.URL.Query().Get("voucher_id"))
 
 	return &Param{
 		Page:           paramPage,
@@ -84,6 +86,7 @@ func ProcessParam(r *http.Request) *Param {
 		ReqOrderId:     paramReqOrderId,
 		ReqOrderDno:    paramReqOrderDno,
 		PartnershipId:  paramPartnershipId,
+		VoucherId:      paramVoucherId,
 	}
 }
 
@@ -147,6 +150,9 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.PartnershipId != nil {
 		db.Where("partnership_id = ?", param.PartnershipId)
+	}
+	if param.PartnershipId != nil {
+		db.Where("voucher_id = ?", param.VoucherId)
 	}
 }
 

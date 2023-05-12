@@ -1,9 +1,6 @@
 package service
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/robfig/cron/v3"
@@ -14,14 +11,14 @@ func InitScheduler(listAction []func()) {
 	scheduler := cron.New(cron.WithLocation(jakartaTime))
 
 	for _, action := range listAction {
-		scheduler.AddFunc("* * * * *", action)
+		scheduler.AddFunc("0 0 * * 0", action)
 	}
 
 	// start scheduler
 	scheduler.Start()
 
-	// trap SIGINT untuk trigger shutdown.
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-	<-sig
+	// // trap SIGINT untuk trigger shutdown.
+	// sig := make(chan os.Signal, 1)
+	// signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	// <-sig
 }

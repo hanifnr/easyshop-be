@@ -17,6 +17,7 @@ type Partnership struct {
 	PhoneNumber       string    `json:"phone_number"`
 	IsDelete          bool      `json:"is_delete"`
 	ApprovalStatus    string    `json:"approval_status"`
+	RewardAmount      float64   `json:"reward_amount"`
 	Note              string    `json:"note"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`
