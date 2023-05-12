@@ -151,7 +151,7 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	if param.PartnershipId != nil {
 		db.Where("partnership_id = ?", param.PartnershipId)
 	}
-	if param.PartnershipId != nil {
+	if param.VoucherId != nil {
 		db.Where("voucher_id = ?", param.VoucherId)
 	}
 }
