@@ -89,6 +89,7 @@ func (reqOrderController *ReqOrderController) DetailsModel() []model.Model {
 
 func (reqOrderController *ReqOrderController) CreateTrans() map[string]interface{} {
 	if retval := CreateTrans(reqOrderController, func(db *gorm.DB) error {
+		reqOrderController.ReqOrder.StatusCode = "W"
 		for i := range reqOrderController.ReqOrderd {
 			reqOrder := &reqOrderController.ReqOrderd[i]
 			reqOrder.Dno = i + 1

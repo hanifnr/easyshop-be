@@ -116,8 +116,22 @@ func CleanProduct() {
 	db.Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
 
 	for _, product := range listProduct {
+		reqOrder := &model.ReqOrder{}
+		rows := db.Where("id = ?", product.ReqOrderId).Find(&reqOrder).RowsAffected
 		if err := db.Delete(&product).Error; err != nil {
 			db.Rollback()
+		}
+		if rows > 0 {
+			reqOrderds := make([]*model.ReqOrderd, 0)
+			db.Where("req_order_id = ?", reqOrder.Id).Find(&reqOrderds)
+			for _, reqOrderd := range reqOrderds {
+				if err := db.Delete(&reqOrderd).Error; err != nil {
+					db.Rollback()
+				}
+			}
+			if err := db.Delete(&reqOrder).Error; err != nil {
+				db.Rollback()
+			}
 		}
 	}
 	b, _ := json.Marshal(utils.MessageData(true, listProduct))
