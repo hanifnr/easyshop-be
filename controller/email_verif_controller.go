@@ -77,7 +77,11 @@ func (emailVerifController *EmailVerifController) CreateModel() map[string]inter
 		}); retval.ErrCode != 0 {
 			return utils.MessageErr(false, retval.ErrCode, retval.Message)
 		}
-		SendOtp(emailVerif.Email, emailVerif.VerifCode)
+		if emailVerif.Type == "R" {
+			SendOtp(emailVerif.Email, emailVerif.AuthCode)
+		} else {
+			SendOtp(emailVerif.Email, emailVerif.VerifCode)
+		}
 		return utils.Message(true)
 	}
 }
@@ -90,9 +94,12 @@ func (emailVerifController *EmailVerifController) AuthEmail(w http.ResponseWrite
 	}
 	db := utils.GetDB()
 	emailVerif := &emailVerifController.EmailVerif
-	row := db.Where("UPPER(email) = UPPER(?) AND UPPER(type) = UPPER(?) AND verified = TRUE", emailVerif.Email, emailVerif.Type).Find(emailVerif).RowsAffected
+	row := db.Where("UPPER(email) = UPPER(?) AND UPPER(type) = UPPER(?) AND (verified = TRUE OR type = 'R')", emailVerif.Email, emailVerif.Type).Find(emailVerif).RowsAffected
 	if row > 0 {
 		utils.Respond(w, emailVerifController.UpdateModel())
+		return
+	} else if emailVerif.Type == "R" {
+		utils.Respond(w, emailVerifController.CreateModel())
 		return
 	}
 	utils.Respond(w, utils.MessageErr(false, utils.ErrRequest, "This email not yet verified!"))
