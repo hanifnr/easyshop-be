@@ -207,3 +207,20 @@ func SendOtp(to, code string) {
 	runtime.GOMAXPROCS(1)
 	go utils.SendEmailOtp(to, templateData)
 }
+
+func CleanEmail() {
+	db := utils.GetDB().Begin()
+
+	listEmail := make([]*model.EmailVerif, 0)
+	db.Debug().Where("EXTRACT(DAY FROM (?::date - generated_at))::integer >= 7 AND type = 'R'", time.Now()).Find(&listEmail)
+
+	for _, email := range listEmail {
+		if err := db.Delete(&email).Error; err != nil {
+			db.Rollback()
+		}
+	}
+	b, _ := json.Marshal(utils.MessageData(true, listEmail))
+
+	fmt.Println("AUTO CLEAN EMAIL: \n", string(b))
+	db.Commit()
+}

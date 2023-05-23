@@ -113,7 +113,7 @@ func CleanProduct() {
 	db := utils.GetDB().Begin()
 
 	listProduct := make([]*scrape.Product, 0)
-	db.Where("EXTRACT(DAY FROM (?::date - created_at))::integer > 1 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
+	db.Where("EXTRACT(DAY FROM (?::date - created_at))::integer >= 7 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
 
 	for _, product := range listProduct {
 		reqOrder := &model.ReqOrder{}

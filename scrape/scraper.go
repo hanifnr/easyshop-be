@@ -29,7 +29,7 @@ func GetProduct(shopId int64, url string) map[string]interface{} {
 		easyShop := &EasyShop{}
 		data = easyShop.GetProduct(shopId, url)
 	}
-	if data.Code != "" {
+	if data != nil && data.Code != "" {
 		return utils.MessageData(true, data)
 	}
 	return utils.MessageErr(false, utils.ErrExist, "Product not found!")

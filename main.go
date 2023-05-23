@@ -42,6 +42,7 @@ func main() {
 	})
 	service.InitScheduler([]func(){
 		c.CleanProduct,
+		c.CleanEmail,
 	})
 	router := mux.NewRouter()
 	router.HandleFunc("/", handlerIndex)
