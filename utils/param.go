@@ -144,6 +144,8 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 	}
 	if param.ReqOrderId != nil {
 		db.Where("req_order_id = ?", param.ReqOrderId)
+	} else {
+		db.Where("req_order_id IS NULL")
 	}
 	if param.ReqOrderDno != nil {
 		db.Where("req_order_dno = ?", param.ReqOrderDno)

@@ -18,8 +18,8 @@ type Product struct {
 	PriceTax    string    `json:"price_tax"`
 	Url         string    `json:"url,omitempty" gorm:"-"`
 	Size        string    `json:"size"`
-	ReqOrderId  int64     `json:"req_order_id"`
-	ReqOrderDno int       `json:"req_order_dno"`
+	ReqOrderId  *int64    `json:"req_order_id"`
+	ReqOrderDno *int      `json:"req_order_dno"`
 	IsDelete    bool      `json:"is_delete" gorm:"DEFAULT:FALSE"`
 	CreatedAt   time.Time `json:"created_at,omitempty" gorm:"CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty" gorm:"CURRENT_TIMESTAMP"`

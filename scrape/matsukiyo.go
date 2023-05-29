@@ -15,7 +15,7 @@ func (m *Matsukiyo) GetProduct(shopId int64, url string) *Product {
 	baseUrlImage := "https://www.matsukiyo.co.jp"
 	doScrap(
 		url,
-		"div.ctBox01.clearfix",
+		"body",
 		func(e *colly.HTMLElement) {
 			code := e.ChildText("div.goodsBox.main > p.cpde")
 			name := e.ChildText("div.goodsBox.main > div.spHide > h3")
