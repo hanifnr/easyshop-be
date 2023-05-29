@@ -106,6 +106,10 @@ func (trendingProductController *TrendingProductController) DeleteModel(id int64
 	return utils.Message(true)
 }
 func (trendingProductController *TrendingProductController) ListModel(param *utils.Param) map[string]interface{} {
+	if param.ReqOrderId == nil {
+		all := param.Int64All()
+		param.ReqOrderId = &all
+	}
 	return ListModel("product", "id ASC", &trendingProductController.TrendingProduct, make([]*scrape.Product, 0), param)
 }
 

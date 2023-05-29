@@ -143,9 +143,11 @@ func (param *Param) ProcessFilter(db *gorm.DB) {
 		db.Where("approval_status = ?", param.ApprovalStatus)
 	}
 	if param.ReqOrderId != nil {
-		db.Where("req_order_id = ?", param.ReqOrderId)
-	} else {
-		db.Where("req_order_id IS NULL OR req_order_id = 0")
+		if *param.ReqOrderId == param.Int64All() {
+			db.Where("req_order_id IS NULL OR req_order_id = 0")
+		} else {
+			db.Where("req_order_id = ?", param.ReqOrderId)
+		}
 	}
 	if param.ReqOrderDno != nil {
 		db.Where("req_order_dno = ?", param.ReqOrderDno)
@@ -223,4 +225,8 @@ func (param *Param) SetDefaultDelete() {
 		isDelete := false
 		param.IsDelete = &isDelete
 	}
+}
+
+func (param *Param) Int64All() int64 {
+	return int64(0)
 }
