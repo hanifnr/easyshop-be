@@ -165,7 +165,7 @@ func (reqOrderController *ReqOrderController) ApproveReqOrder(id int64, dno int,
 		db.Rollback()
 		return utils.MessageErr(false, utils.ErrSQLLoad, err.Error())
 	}
-	m.Approved = value
+	m.Approved = &value
 	m.ApprovalNote = note
 	if err := model.Save(m, db); err != nil {
 		db.Rollback()
