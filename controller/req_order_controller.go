@@ -69,6 +69,12 @@ var ApproveReqOrder = func(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, resp)
 }
 
+var CountWaitingReqOrder = func(w http.ResponseWriter, r *http.Request) {
+	reqOrderController := &ReqOrderController{}
+	resp := reqOrderController.CountWaitingReqOrder()
+	utils.Respond(w, resp)
+}
+
 type ReqOrderController struct {
 	ReqOrder  model.ReqOrder    `json:"req_order"`
 	ReqOrderd []model.ReqOrderd `json:"req_orderd"`
@@ -173,4 +179,13 @@ func (reqOrderController *ReqOrderController) ApproveReqOrder(id int64, dno int,
 	}
 	db.Commit()
 	return utils.MessageData(true, m)
+}
+
+func (reqOrderController *ReqOrderController) CountWaitingReqOrder() map[string]interface{} {
+	db := utils.GetDB()
+
+	var retval int64
+	db.Select("COUNT(*)").Table("req_order").Where("status_code = 'W'").Scan(&retval)
+
+	return utils.MessageData(true, retval)
 }

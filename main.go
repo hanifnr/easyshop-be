@@ -139,6 +139,7 @@ func main() {
 	router.HandleFunc("/req/delete/{id}", c.DeleteReqOrder).Methods("DELETE")
 	router.HandleFunc("/req/handle", c.HandleReqOrder).Methods("PUT")
 	router.HandleFunc("/req/approve", c.ApproveReqOrder).Methods("PUT")
+	router.HandleFunc("/req/count", c.CountWaitingReqOrder).Methods("GET")
 	router.HandleFunc("/notification", c.ListNotification).Methods("GET")
 	router.HandleFunc("/properties", c.GetProps).Methods("GET")
 
