@@ -57,6 +57,26 @@ func SendEmailNotifCanceled(toAdmin, toCustomer string, data interface{}, trxno 
 	)
 }
 
+func SendEmailNotifReqOrder(toAdmin, toCustomer string, data interface{}, trxdate string) {
+	SendEmailNotif(
+		toAdmin,
+		toCustomer,
+		"req-order-received.html",
+		"[Easyshop]: Request Order Received #"+trxdate,
+		data,
+	)
+}
+
+func SendEmailNotifReqOrderProcessed(toAdmin, toCustomer string, data interface{}, trxdate string) {
+	SendEmailNotif(
+		toAdmin,
+		toCustomer,
+		"req-order-processed.html",
+		"[Easyshop]: Request Order Processed #"+trxdate,
+		data,
+	)
+}
+
 func SendEmailNotif(toAdmin, toCustomer, templateName, subject string, data interface{}) {
 	path, _ := os.Getwd()
 	mode := os.Getenv("MODE")

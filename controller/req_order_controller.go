@@ -6,8 +6,15 @@ import (
 	"easyshop/utils"
 	"encoding/json"
 	"net/http"
+	"os"
+	"runtime"
 
 	"gorm.io/gorm"
+)
+
+const (
+	REQ_ORDER_NOTIFICATION = iota
+	REQ_ORDER_PROCESSED_NOTIFICATION
 )
 
 var CreateReqOrder = func(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +112,7 @@ func (reqOrderController *ReqOrderController) CreateTrans() map[string]interface
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
+	SendEmailReqOrderNotification(REQ_ORDER_NOTIFICATION, getDataNotifReqOrder(reqOrderController))
 	return utils.MessageData(true, reqOrderController)
 }
 
@@ -157,9 +165,14 @@ func (reqOrderController *ReqOrderController) FDelete() functions.SQLFunction {
 }
 
 func (reqOrderController *ReqOrderController) HandleReqOrder(id int64, status string) map[string]interface{} {
-	return UpdateFieldMaster(id, reqOrderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
+	return UpdateFieldMasterWithPostSave(id, reqOrderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		req := m.(*model.ReqOrder)
 		req.StatusCode = status
+		return utils.StatusReturnOK()
+	}, func(m model.Model) utils.StatusReturn {
+		req := m.(*model.ReqOrder)
+		reqOrderController.ViewTrans(req.Id)
+		SendEmailReqOrderNotification(REQ_ORDER_PROCESSED_NOTIFICATION, getDataNotifReqOrder(reqOrderController))
 		return utils.StatusReturnOK()
 	})
 }
@@ -188,4 +201,39 @@ func (reqOrderController *ReqOrderController) CountWaitingReqOrder() map[string]
 	db.Select("COUNT(*)").Table("req_order").Where("status_code = 'W'").Scan(&retval)
 
 	return utils.MessageData(true, retval)
+}
+
+type NotifReqOrder struct {
+	Email   string
+	Reqlink string
+	Trxdate string
+}
+
+func SendEmailReqOrderNotification(mode int, notifReqOrder *NotifReqOrder) {
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+
+	runtime.GOMAXPROCS(1)
+	switch mode {
+	case REQ_ORDER_NOTIFICATION:
+		go utils.SendEmailNotifReqOrder(adminEmail, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
+	case REQ_ORDER_PROCESSED_NOTIFICATION:
+		go utils.SendEmailNotifReqOrderProcessed(adminEmail, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
+	}
+}
+
+func getDataNotifReqOrder(reqOrderController *ReqOrderController) *NotifReqOrder {
+	reqOrder := reqOrderController.ReqOrder
+
+	var reqLink string
+	for _, reqOrderd := range reqOrderController.ReqOrderd {
+		reqLink = reqLink + reqOrderd.Url + "\n"
+	}
+
+	notifReqOrder := &NotifReqOrder{
+		Email:   reqOrder.Email,
+		Trxdate: utils.FormatTimeToDate(reqOrder.CreatedAt),
+		Reqlink: reqLink,
+	}
+
+	return notifReqOrder
 }

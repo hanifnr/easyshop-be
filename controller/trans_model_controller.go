@@ -209,6 +209,10 @@ func ListTrans(table, order string, m interface{}, list interface{}, param *util
 }
 
 func UpdateFieldMaster(id int64, controller TransController, fAction func(m model.Model, db *gorm.DB) utils.StatusReturn) map[string]interface{} {
+	return UpdateFieldMasterWithPostSave(id, controller, fAction, func(m model.Model) utils.StatusReturn { return utils.StatusReturnOK() })
+}
+
+func UpdateFieldMasterWithPostSave(id int64, controller TransController, fAction func(m model.Model, db *gorm.DB) utils.StatusReturn, fPostSave func(m model.Model) utils.StatusReturn) map[string]interface{} {
 	db := utils.GetDB().Begin()
 	m := controller.MasterModel()
 	if retval := ViewModel(id, m); retval.ErrCode != 0 {
@@ -222,6 +226,10 @@ func UpdateFieldMaster(id int64, controller TransController, fAction func(m mode
 	if err := model.Save(m, db); err != nil {
 		db.Rollback()
 		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
+	}
+	if retval := fPostSave(m); retval.ErrCode != 0 {
+		db.Rollback()
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	db.Commit()
 	return utils.MessageData(true, m)

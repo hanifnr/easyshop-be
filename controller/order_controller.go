@@ -160,7 +160,7 @@ func (orderController *OrderController) CreateTrans() map[string]interface{} {
 	} else {
 		insertVoucherLog(&orderController.Order)
 		cust, notifOrder := getDataNotifOrder(orderController)
-		SendEmailNotification(ORDER_NOTIFICATION, cust, *notifOrder)
+		SendEmailOrderNotification(ORDER_NOTIFICATION, cust, *notifOrder)
 		SendNewOrderPushNotification(&orderController.Order)
 		return utils.MessageData(true, orderController)
 	}
@@ -246,12 +246,12 @@ func (orderController *OrderController) HandleOrder(id int64, status, note strin
 		cust, notifOrder := getDataNotifOrder(orderController)
 		if status == utils.ORDER_STATUS_ACCEPTED {
 			if validateAcceptOrder(order, db) {
-				SendEmailNotification(APPROVED_NOTIFICATION, cust, *notifOrder)
+				SendEmailOrderNotification(APPROVED_NOTIFICATION, cust, *notifOrder)
 			} else {
 				return utils.StatusReturn{ErrCode: utils.ErrValidate, Message: "Please input shipping cost for order outside Japan!"}
 			}
 		} else if status == utils.ORDER_STATUS_CANCELED {
-			SendEmailNotification(CANCELED_NOTIFICATION, cust, *notifOrder)
+			SendEmailOrderNotification(CANCELED_NOTIFICATION, cust, *notifOrder)
 		}
 		SendStatusOrderPushNotification(status)
 		return utils.StatusReturnOK()
@@ -385,7 +385,7 @@ type NotifOrder struct {
 	Orderd   []DetailNotifOrder
 }
 
-func SendEmailNotification(mode int, cust *model.Cust, notifOrder NotifOrder) {
+func SendEmailOrderNotification(mode int, cust *model.Cust, notifOrder NotifOrder) {
 	adminEmail := os.Getenv("ADMIN_EMAIL")
 	runtime.GOMAXPROCS(1)
 	switch mode {

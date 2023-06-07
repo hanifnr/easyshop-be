@@ -1,0 +1,67 @@
+<table border="1" cellspacing="0" cellpadding="0" width="600" style="width:450pt;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;border:1pt solid rgb(222,222,222)">
+    <tbody>
+      <tr>
+        <td valign="top" style="border:none;padding:0mm">
+          <div align="center">
+            <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width:600px;background:rgb(150,88,138)">
+              <tbody>
+                <tr>
+                  <td style="padding:27pt 36pt">
+                    <p class="MsoNormal" align="left" style="margin:0mm;line-height:33.75pt;font-size:10.5pt;font-family:游明朝,serif">
+                      <span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;color:white">Request order received on </span>
+                      <span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;">
+                        <font color="#000000">#{{.Trxdate}}</font>
+                      </span>
+                      <span lang="EN-US" style="font-size:22pt;font-family:Helvetica,sans-serif"></span>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" style="border:none;padding:0mm">
+          <div align="center">
+            <table border="0" cellspacing="0" cellpadding="0" width="600" style="width:450pt">
+              <tbody>
+                <tr>
+                  <td valign="top" style="background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0mm">
+                    <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width:600px">
+                      <tbody>
+                        <tr>
+                          <td valign="top" style="padding:36pt 36pt 24pt">
+                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">
+                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial">Dear&nbsp;&nbsp;</span>
+                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;">customer</span>
+                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black">&nbsp;</span>
+                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">Thank you for shopping with easyshop. This&nbsp;email confirms that we received your request order on #{{.Trxdate}}&nbsp; Our admin will check information from your link and if everything goes well, we will inform you by email so you can purchase your item in our application.&nbsp; </span>
+                            </p>
+                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">
+                              <span style="background-color:rgb(255,255,255)">Customer email :</span>
+                              {{.Email}}
+                            </p>
+                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">Request order link :&nbsp; &nbsp; {{.Reqlink}}
+                            </p>
+                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt">
+                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">&nbsp;</span>
+                              <span style="font-family:Helvetica,sans-serif;color:rgb(99,99,99);font-size:10.5pt">Please co</span>
+                              <font face="arial, sans-serif">
+                                <span style="color:rgb(99,99,99);font-size:10.5pt">ntact our admin or send </span>us an email <span style="color:rgb(99,99,99);font-size:10.5pt"> if you have any inquirie</span>
+                              </font>
+                              <span style="font-family:Helvetica,sans-serif;color:rgb(99,99,99);font-size:10.5pt">s.</span>
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
