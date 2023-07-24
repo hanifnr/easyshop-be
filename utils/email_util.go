@@ -27,9 +27,10 @@ func SendEmailOtp(to string, data interface{}) {
 	}
 }
 
-func SendEmailNotifOrder(toAdmin, toCustomer string, data interface{}, trxno string) {
+func SendEmailNotifOrder(toAdmin, toAdmin2, toCustomer string, data interface{}, trxno string) {
 	SendEmailNotif(
 		toAdmin,
+		toAdmin2,
 		toCustomer,
 		"order-notif.html",
 		"[Easyshop]: New order #"+trxno,
@@ -37,9 +38,10 @@ func SendEmailNotifOrder(toAdmin, toCustomer string, data interface{}, trxno str
 	)
 }
 
-func SendEmailNotifApprove(toAdmin, toCustomer string, data interface{}, trxno string) {
+func SendEmailNotifApprove(toAdmin, toAdmin2, toCustomer string, data interface{}, trxno string) {
 	SendEmailNotif(
 		toAdmin,
+		toAdmin2,
 		toCustomer,
 		"order-approved-notif.html",
 		"[Easyshop] Payment request for your order #"+trxno,
@@ -47,9 +49,10 @@ func SendEmailNotifApprove(toAdmin, toCustomer string, data interface{}, trxno s
 	)
 }
 
-func SendEmailNotifCanceled(toAdmin, toCustomer string, data interface{}, trxno string) {
+func SendEmailNotifCanceled(toAdmin, toAdmin2, toCustomer string, data interface{}, trxno string) {
 	SendEmailNotif(
 		toAdmin,
+		toAdmin2,
 		toCustomer,
 		"order-canceled-notif.html",
 		"[Easyshop] Cancellation of your order #"+trxno,
@@ -57,9 +60,10 @@ func SendEmailNotifCanceled(toAdmin, toCustomer string, data interface{}, trxno 
 	)
 }
 
-func SendEmailNotifReqOrder(toAdmin, toCustomer string, data interface{}, trxdate string) {
+func SendEmailNotifReqOrder(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
 	SendEmailNotif(
 		toAdmin,
+		toAdmin2,
 		toCustomer,
 		"req-order-received.html",
 		"[Easyshop]: Request Order Received #"+trxdate,
@@ -67,9 +71,10 @@ func SendEmailNotifReqOrder(toAdmin, toCustomer string, data interface{}, trxdat
 	)
 }
 
-func SendEmailNotifReqOrderProcessed(toAdmin, toCustomer string, data interface{}, trxdate string) {
+func SendEmailNotifReqOrderProcessed(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
 	SendEmailNotif(
 		toAdmin,
+		toAdmin2,
 		toCustomer,
 		"req-order-processed.html",
 		"[Easyshop]: Request Order Processed #"+trxdate,
@@ -77,7 +82,7 @@ func SendEmailNotifReqOrderProcessed(toAdmin, toCustomer string, data interface{
 	)
 }
 
-func SendEmailNotif(toAdmin, toCustomer, templateName, subject string, data interface{}) {
+func SendEmailNotif(toAdmin, toAdmin2, toCustomer, templateName, subject string, data interface{}) {
 	path, _ := os.Getwd()
 	mode := os.Getenv("MODE")
 
@@ -86,16 +91,22 @@ func SendEmailNotif(toAdmin, toCustomer, templateName, subject string, data inte
 	}
 	template := path + "/template/" + templateName
 	err := SendEmail(toAdmin, subject, data, template)
-	err2 := SendEmail(toCustomer, subject, data, template)
+	err2 := SendEmail(toAdmin2, subject, data, template)
+	err3 := SendEmail(toCustomer, subject, data, template)
 	if err == nil {
 		fmt.Println("send email '" + subject + toAdmin + "' success")
 	} else {
 		fmt.Println(err)
 	}
 	if err2 == nil {
+		fmt.Println("send email '" + subject + toAdmin2 + "' success")
+	} else {
+		fmt.Println(err2)
+	}
+	if err3 == nil {
 		fmt.Println("send email '" + subject + toCustomer + "' success")
 	} else {
-		fmt.Println(err)
+		fmt.Println(err3)
 	}
 }
 

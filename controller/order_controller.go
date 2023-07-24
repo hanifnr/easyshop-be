@@ -387,14 +387,15 @@ type NotifOrder struct {
 
 func SendEmailOrderNotification(mode int, cust *model.Cust, notifOrder NotifOrder) {
 	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminEmail2 := os.Getenv("ADMIN_EMAIL2")
 	runtime.GOMAXPROCS(1)
 	switch mode {
 	case ORDER_NOTIFICATION:
-		go utils.SendEmailNotifOrder(adminEmail, cust.Email, notifOrder, notifOrder.Trxno)
+		go utils.SendEmailNotifOrder(adminEmail, adminEmail2, cust.Email, notifOrder, notifOrder.Trxno)
 	case APPROVED_NOTIFICATION:
-		go utils.SendEmailNotifApprove(adminEmail, cust.Email, notifOrder, notifOrder.Trxno)
+		go utils.SendEmailNotifApprove(adminEmail, adminEmail2, cust.Email, notifOrder, notifOrder.Trxno)
 	case CANCELED_NOTIFICATION:
-		go utils.SendEmailNotifCanceled(adminEmail, cust.Email, notifOrder, notifOrder.Trxno)
+		go utils.SendEmailNotifCanceled(adminEmail, adminEmail2, cust.Email, notifOrder, notifOrder.Trxno)
 	}
 
 }

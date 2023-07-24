@@ -9,3 +9,4 @@ env_variables:
   MODE: DEV
   FIREBASE_AUTH_KEY: "BPEUDC9XFKTasZ7XLocVf1WXAg_SYRizlCDpHQ0Mvu2JeQwn4Wx9vi6RrN4nWlay_I_VIU-E1CUe1QWZ7qXuEPU"
   ADMIN_EMAIL: tokyo@easyshop-jp.com
+  ADMIN_EMAIL2: singapore@easyshop-jp.com

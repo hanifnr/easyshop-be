@@ -211,13 +211,14 @@ type NotifReqOrder struct {
 
 func SendEmailReqOrderNotification(mode int, notifReqOrder *NotifReqOrder) {
 	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminEmail2 := os.Getenv("ADMIN_EMAIL2")
 
 	runtime.GOMAXPROCS(1)
 	switch mode {
 	case REQ_ORDER_NOTIFICATION:
-		go utils.SendEmailNotifReqOrder(adminEmail, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
+		go utils.SendEmailNotifReqOrder(adminEmail, adminEmail2, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
 	case REQ_ORDER_PROCESSED_NOTIFICATION:
-		go utils.SendEmailNotifReqOrderProcessed(adminEmail, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
+		go utils.SendEmailNotifReqOrderProcessed(adminEmail, adminEmail2, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
 	}
 }
 
