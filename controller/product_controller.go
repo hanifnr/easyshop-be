@@ -36,11 +36,11 @@ var DeleteTrendingProduct = func(w http.ResponseWriter, r *http.Request) {
 	DeleteModelAction(trendingProductController, w, r)
 }
 
-// var CleanProduct = func(w http.ResponseWriter, r *http.Request) {
-// 	trendingProductController := &TrendingProductController{}
-// 	resp := trendingProductController.RemoveProduct()
-// 	utils.Respond(w, resp)
-// }
+var CleanProduct = func(w http.ResponseWriter, r *http.Request) {
+	trendingProductController := &TrendingProductController{}
+	trendingProductController.CleanProduct()
+	CleanEmail()
+}
 
 type TrendingProductController struct {
 	TrendingProduct scrape.Product
@@ -113,33 +113,34 @@ func (trendingProductController *TrendingProductController) ListModel(param *uti
 	return ListModel("product", "id ASC", &trendingProductController.TrendingProduct, make([]*scrape.Product, 0), param)
 }
 
-func CleanProduct() {
-	db := utils.GetDB().Begin()
+func (trendingProductController *TrendingProductController) CleanProduct() {
+	db := utils.GetDB()
 
 	listProduct := make([]*scrape.Product, 0)
 	db.Where("EXTRACT(DAY FROM (?::date - created_at))::integer >= 7 AND req_order_id IS NOT NULL", time.Now()).Find(&listProduct)
 
 	for _, product := range listProduct {
+		tx := db.Begin()
 		reqOrder := &model.ReqOrder{}
-		rows := db.Where("id = ?", product.ReqOrderId).Find(&reqOrder).RowsAffected
-		if err := db.Delete(&product).Error; err != nil {
-			db.Rollback()
+		rows := tx.Where("id = ?", product.ReqOrderId).Find(&reqOrder).RowsAffected
+		if err := tx.Delete(&product).Error; err != nil {
+			tx.Rollback()
 		}
 		if rows > 0 {
 			reqOrderds := make([]*model.ReqOrderd, 0)
-			db.Where("req_order_id = ?", reqOrder.Id).Find(&reqOrderds)
+			tx.Where("req_order_id = ?", reqOrder.Id).Find(&reqOrderds)
 			for _, reqOrderd := range reqOrderds {
-				if err := db.Delete(&reqOrderd).Error; err != nil {
-					db.Rollback()
+				if err := tx.Delete(&reqOrderd).Error; err != nil {
+					tx.Rollback()
 				}
 			}
-			if err := db.Delete(&reqOrder).Error; err != nil {
-				db.Rollback()
+			if err := tx.Delete(&reqOrder).Error; err != nil {
+				tx.Rollback()
 			}
 		}
+		tx.Commit()
 	}
 	b, _ := json.Marshal(utils.MessageData(true, listProduct))
 
 	fmt.Println("AUTO CLEAN PRODUCT: \n", string(b))
-	db.Commit()
 }
