@@ -130,6 +130,7 @@ func (partnershipController *PartnershipController) UpdateModel() map[string]int
 		partnershipSrc.PartnershipTypeId = partnershipTemp.PartnershipTypeId
 		partnershipSrc.SocialMedia = partnershipTemp.SocialMedia
 		partnershipSrc.PhoneNumber = partnershipTemp.PhoneNumber
+		partnershipSrc.Email = partnershipTemp.Email
 	})
 	if retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
