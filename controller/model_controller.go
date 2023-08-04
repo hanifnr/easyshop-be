@@ -10,6 +10,12 @@ import (
 )
 
 func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils.StatusReturn {
+	return CreateModelWithPostSave(controller, fDefaultValue, func(db *gorm.DB) utils.StatusReturn {
+		return utils.StatusReturnOK()
+	})
+}
+
+func CreateModelWithPostSave(controller Controller, fDefaultValue func(m model.Model), fPostSave func(db *gorm.DB) utils.StatusReturn) utils.StatusReturn {
 	fDefaultValue(controller.Model())
 
 	db := utils.GetDB().Begin()
@@ -35,6 +41,10 @@ func CreateModel(controller Controller, fDefaultValue func(m model.Model)) utils
 	if err := model.Create(m, db); err != nil {
 		db.Rollback()
 		return utils.StatusReturn{ErrCode: utils.ErrSQLCreate, Message: err.Error()}
+	}
+	if retval := fPostSave(db); retval.ErrCode != 0 {
+		db.Rollback()
+		return utils.StatusReturn{ErrCode: retval.ErrCode, Message: retval.Message}
 	}
 	if modelExt, ok := m.(model.ModelExt); ok {
 		modelExt.SetValueModelExt(db)
@@ -178,6 +188,12 @@ func ProcessExtField(list interface{}, db *gorm.DB) {
 }
 
 func UpdateFieldModel(id int64, controller Controller, fAction func(m model.Model) utils.StatusReturn) map[string]interface{} {
+	return UpdateFieldModelWithPostSave(id, controller, fAction, func() utils.StatusReturn {
+		return utils.StatusReturnOK()
+	})
+}
+
+func UpdateFieldModelWithPostSave(id int64, controller Controller, fAction func(m model.Model) utils.StatusReturn, fPostSave func() utils.StatusReturn) map[string]interface{} {
 	db := utils.GetDB().Begin()
 	m := controller.Model()
 	if retval := ViewModel(id, m); retval.ErrCode != 0 {
@@ -191,6 +207,10 @@ func UpdateFieldModel(id int64, controller Controller, fAction func(m model.Mode
 	if err := model.Save(m, db); err != nil {
 		db.Rollback()
 		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
+	}
+	if retval := fPostSave(); retval.ErrCode != 0 {
+		db.Rollback()
+		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
 	db.Commit()
 	return utils.MessageData(true, m)

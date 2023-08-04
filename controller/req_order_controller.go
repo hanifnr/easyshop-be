@@ -191,6 +191,7 @@ func (reqOrderController *ReqOrderController) ApproveReqOrder(id int64, dno int,
 		return utils.MessageErr(false, utils.ErrSQLSave, err.Error())
 	}
 	db.Commit()
+	SendEmailReqOrderNotification(REQ_ORDER_PROCESSED_NOTIFICATION, getDataNotifReqOrder(reqOrderController))
 	return utils.MessageData(true, m)
 }
 

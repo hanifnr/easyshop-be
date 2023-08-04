@@ -19,7 +19,8 @@
                 "MODE": "DEV",
                 "REDIS_URI": "localhost:6379",
                 "SERVICE_ACCOUNT_PATH":"/Users/hanifnr/Project/easyshop-be/easy-shop-364408-firebase-adminsdk-zruul-ada4ee1fcf.json",
-                "ADMIN_EMAIL":"hanif.nr11@gmail.com"
+                "ADMIN_EMAIL":"hanif.nr11@gmail.com",
+                "ADMIN_EMAIL2":"hanif.nr9@gmail.com"
             }
         }
     ]

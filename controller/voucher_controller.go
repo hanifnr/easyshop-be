@@ -63,12 +63,22 @@ func (voucherController *VoucherController) FDelete() functions.SQLFunction {
 
 func (voucherController *VoucherController) CreateModel() map[string]interface{} {
 	if retval := voucherController.ValidateVoucher(); retval.ErrCode == 0 {
-		if retval := CreateModel(voucherController, func(m model.Model) {
+		if retval := CreateModelWithPostSave(voucherController, func(m model.Model) {
 			currentTime := time.Now()
 
 			voucher := m.(*model.Voucher)
 			voucher.CreatedAt = currentTime
 			voucher.UpdatedAt = currentTime
+		}, func(db *gorm.DB) utils.StatusReturn {
+			partnershipId := voucherController.Voucher.PartnershipId
+			voucherCode := voucherController.Voucher.Code
+			if partnershipId != nil {
+				partnership := &model.Partnership{}
+				db.Where("id = ?", partnershipId).Find(&partnership)
+				notifPartnership := getDataNotifPartnership(partnership, &voucherCode)
+				SendEmailPartnership(PARTNERSHIP_REFERRAL, partnership, *notifPartnership)
+			}
+			return utils.StatusReturnOK()
 		}); retval.ErrCode != 0 {
 			return utils.MessageErr(false, retval.ErrCode, retval.Message)
 		}

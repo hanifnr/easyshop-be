@@ -6,8 +6,16 @@ import (
 	"easyshop/utils"
 	"encoding/json"
 	"net/http"
+	"os"
+	"runtime"
 	"strconv"
 	"time"
+)
+
+const (
+	PARTNERSHIP_REQUEST = iota
+	PARTNERSHIP_APPROVED
+	PARTNERSHIP_REFERRAL
 )
 
 var CreatePartnership = func(w http.ResponseWriter, r *http.Request) {
@@ -110,6 +118,8 @@ func (partnershipController *PartnershipController) CreateModel() map[string]int
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
+	notifPartnership := getDataNotifPartnership(&partnershipController.Partnership, nil)
+	SendEmailPartnership(PARTNERSHIP_REQUEST, &partnershipController.Partnership, *notifPartnership)
 	return utils.MessageData(true, partnershipController.Partnership)
 }
 
@@ -159,10 +169,54 @@ func ComboPartnershipType(page int, param *utils.Param) map[string]interface{} {
 }
 
 func (partnershipController *PartnershipController) ApprovePartnership(id int64, approvalStatus string, note string) map[string]interface{} {
-	return UpdateFieldModel(id, partnershipController, func(m model.Model) utils.StatusReturn {
+	return UpdateFieldModelWithPostSave(id, partnershipController, func(m model.Model) utils.StatusReturn {
 		partnership := m.(*model.Partnership)
 		partnership.ApprovalStatus = approvalStatus
 		partnership.Note = note
 		return utils.StatusReturnOK()
+	}, func() utils.StatusReturn {
+		partnership := partnershipController.Partnership
+		if partnership.ApprovalStatus == "A" {
+			notifPartnership := getDataNotifPartnership(&partnership, nil)
+			SendEmailPartnership(PARTNERSHIP_APPROVED, &partnership, *notifPartnership)
+		}
+		return utils.StatusReturnOK()
 	})
+}
+
+func SendEmailPartnership(mode int, partnership *model.Partnership, notifPartnership NotifPartnership) {
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminEmail2 := os.Getenv("ADMIN_EMAIL2")
+	runtime.GOMAXPROCS(1)
+	switch mode {
+	case PARTNERSHIP_REQUEST:
+		go utils.SendEmailNotifPartnershipRequest(adminEmail, adminEmail2, partnership.Email, notifPartnership, notifPartnership.Trxdate)
+	case PARTNERSHIP_APPROVED:
+		go utils.SendEmailNotifPartnershipApproved(adminEmail, adminEmail2, partnership.Email, notifPartnership, notifPartnership.Trxdate)
+	case PARTNERSHIP_REFERRAL:
+		go utils.SendEmailNotifPartnershipReferral(adminEmail, adminEmail2, partnership.Email, notifPartnership)
+	}
+
+}
+
+type NotifPartnership struct {
+	Name    string
+	Code    string
+	Trxdate string
+	Social  string
+	Phone   string
+	Email   string
+}
+
+func getDataNotifPartnership(partnership *model.Partnership, code *string) *NotifPartnership {
+	notifPartnership := &NotifPartnership{
+		Name:    partnership.Name,
+		Trxdate: utils.FormatTimeToDate(partnership.CreatedAt),
+		Social:  partnership.SocialMedia,
+		Phone:   partnership.PhoneNumber,
+		Email:   partnership.Email,
+		Code:    *code,
+	}
+
+	return notifPartnership
 }

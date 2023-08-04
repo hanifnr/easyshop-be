@@ -82,6 +82,39 @@ func SendEmailNotifReqOrderProcessed(toAdmin, toAdmin2, toCustomer string, data 
 	)
 }
 
+func SendEmailNotifPartnershipRequest(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
+	SendEmailNotif(
+		toAdmin,
+		toAdmin2,
+		toCustomer,
+		"partnership-request.html",
+		"[Easyshop] Partnership request received #"+trxdate,
+		data,
+	)
+}
+
+func SendEmailNotifPartnershipApproved(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
+	SendEmailNotif(
+		toAdmin,
+		toAdmin2,
+		toCustomer,
+		"partnership-approved.html",
+		"[Easyshop] Partnership request approved #"+trxdate,
+		data,
+	)
+}
+
+func SendEmailNotifPartnershipReferral(toAdmin, toAdmin2, toCustomer string, data interface{}) {
+	SendEmailNotif(
+		toAdmin,
+		toAdmin2,
+		toCustomer,
+		"partnership-referral.html",
+		"[Easyshop] Partnership referral code generated",
+		data,
+	)
+}
+
 func SendEmailNotif(toAdmin, toAdmin2, toCustomer, templateName, subject string, data interface{}) {
 	path, _ := os.Getwd()
 	mode := os.Getenv("MODE")
