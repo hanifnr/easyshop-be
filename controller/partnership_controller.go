@@ -118,7 +118,7 @@ func (partnershipController *PartnershipController) CreateModel() map[string]int
 	}); retval.ErrCode != 0 {
 		return utils.MessageErr(false, retval.ErrCode, retval.Message)
 	}
-	notifPartnership := getDataNotifPartnership(&partnershipController.Partnership, nil)
+	notifPartnership := getDataNotifPartnership(&partnershipController.Partnership, "")
 	SendEmailPartnership(PARTNERSHIP_REQUEST, &partnershipController.Partnership, *notifPartnership)
 	return utils.MessageData(true, partnershipController.Partnership)
 }
@@ -177,7 +177,7 @@ func (partnershipController *PartnershipController) ApprovePartnership(id int64,
 	}, func() utils.StatusReturn {
 		partnership := partnershipController.Partnership
 		if partnership.ApprovalStatus == "A" {
-			notifPartnership := getDataNotifPartnership(&partnership, nil)
+			notifPartnership := getDataNotifPartnership(&partnership, "")
 			SendEmailPartnership(PARTNERSHIP_APPROVED, &partnership, *notifPartnership)
 		}
 		return utils.StatusReturnOK()
@@ -208,14 +208,14 @@ type NotifPartnership struct {
 	Email   string
 }
 
-func getDataNotifPartnership(partnership *model.Partnership, code *string) *NotifPartnership {
+func getDataNotifPartnership(partnership *model.Partnership, code string) *NotifPartnership {
 	notifPartnership := &NotifPartnership{
 		Name:    partnership.Name,
 		Trxdate: utils.FormatTimeToDate(partnership.CreatedAt),
 		Social:  partnership.SocialMedia,
 		Phone:   partnership.PhoneNumber,
 		Email:   partnership.Email,
-		Code:    *code,
+		Code:    code,
 	}
 
 	return notifPartnership

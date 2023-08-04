@@ -75,7 +75,7 @@ func (voucherController *VoucherController) CreateModel() map[string]interface{}
 			if partnershipId != nil {
 				partnership := &model.Partnership{}
 				db.Where("id = ?", partnershipId).Find(&partnership)
-				notifPartnership := getDataNotifPartnership(partnership, &voucherCode)
+				notifPartnership := getDataNotifPartnership(partnership, voucherCode)
 				SendEmailPartnership(PARTNERSHIP_REFERRAL, partnership, *notifPartnership)
 			}
 			return utils.StatusReturnOK()
