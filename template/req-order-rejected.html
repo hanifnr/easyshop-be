@@ -8,7 +8,7 @@
                 <tr>
                   <td style="padding:27pt 36pt">
                     <p class="MsoNormal" align="left" style="margin:0mm;line-height:33.75pt;font-size:10.5pt;font-family:游明朝,serif">
-                      <span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;color:white">Request order processed on </span>
+                      <span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;color:white">Request order rejected on </span>
                       <span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;">
                         <font color="#000000">#{{.Trxdate}}</font>
                       </span>
@@ -36,21 +36,13 @@
                               <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial">Dear&nbsp;&nbsp;</span>
                               <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;">customer</span>
                               <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black">&nbsp;</span>
-                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">Thank you for shopping with easyshop. This&nbsp;email confirms that we processed your request order on #{{.Trxdate}}&nbsp; Please check latest status in our application and you can proceed to "add to cart".&nbsp; </span>
+                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">Thank you for shopping with easyshop. This&nbsp;email confirms that we processed your request order on #{{.Trxdate}}</span>
                             </p>
-                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">
-                              <span style="background-color:rgb(255,255,255)">Customer email :</span>
-                              {{.Email}}
-                            </p>
-                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">Request order link :&nbsp; &nbsp; {{.Reqlink}}
+                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">Request order link :&nbsp; {{.Reqlink}} &nbsp; &nbsp; is rejected with reason &nbsp; {{.Note}}.
                             </p>
                             <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt">
                               <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">&nbsp;</span>
-                              <span style="font-family:Helvetica,sans-serif;color:rgb(99,99,99);font-size:10.5pt">Please co</span>
-                              <font face="arial, sans-serif">
-                                <span style="color:rgb(99,99,99);font-size:10.5pt">ntact our admin or send </span>us an email <span style="color:rgb(99,99,99);font-size:10.5pt"> if you have any inquirie</span>
-                              </font>
-                              <span style="font-family:Helvetica,sans-serif;color:rgb(99,99,99);font-size:10.5pt">s.</span>
+                              <span style="font-family:Helvetica,sans-serif;color:rgb(99,99,99);font-size:10.5pt">Please contact our admin or send </span>us an email <span style="color:rgb(99,99,99);font-size:10.5pt"> if you have any inquiries</span>
                             </p>
                           </td>
                         </tr>

@@ -71,13 +71,24 @@ func SendEmailNotifReqOrder(toAdmin, toAdmin2, toCustomer string, data interface
 	)
 }
 
-func SendEmailNotifReqOrderProcessed(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
+func SendEmailNotifReqOrderApproved(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
 	SendEmailNotif(
 		toAdmin,
 		toAdmin2,
 		toCustomer,
-		"req-order-processed.html",
-		"[Easyshop]: Request Order Processed #"+trxdate,
+		"req-order-approved.html",
+		"[Easyshop]: Request Order Approved #"+trxdate,
+		data,
+	)
+}
+
+func SendEmailNotifReqOrderRejected(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
+	SendEmailNotif(
+		toAdmin,
+		toAdmin2,
+		toCustomer,
+		"req-order-rejected.html",
+		"[Easyshop]: Request Order Rejected #"+trxdate,
 		data,
 	)
 }

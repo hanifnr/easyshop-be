@@ -14,7 +14,8 @@ import (
 
 const (
 	REQ_ORDER_NOTIFICATION = iota
-	REQ_ORDER_PROCESSED_NOTIFICATION
+	REQ_ORDER_APPROVED_NOTIFICATION
+	REQ_ORDER_REJECTED_NOTIFICATION
 )
 
 var CreateReqOrder = func(w http.ResponseWriter, r *http.Request) {
@@ -172,7 +173,7 @@ func (reqOrderController *ReqOrderController) HandleReqOrder(id int64, status st
 	}, func(m model.Model) utils.StatusReturn {
 		req := m.(*model.ReqOrder)
 		reqOrderController.ViewTrans(req.Id)
-		SendEmailReqOrderNotification(REQ_ORDER_PROCESSED_NOTIFICATION, getDataNotifReqOrder(reqOrderController))
+		SendEmailReqOrderNotification(REQ_ORDER_APPROVED_NOTIFICATION, getDataNotifReqOrder(reqOrderController))
 		return utils.StatusReturnOK()
 	})
 }
@@ -192,7 +193,11 @@ func (reqOrderController *ReqOrderController) ApproveReqOrder(id int64, dno int,
 	}
 	db.Commit()
 	reqOrderController.ViewTrans(id)
-	SendEmailReqOrderNotification(REQ_ORDER_PROCESSED_NOTIFICATION, getDataNotifReqOrder(reqOrderController))
+	if value {
+		SendEmailReqOrderNotification(REQ_ORDER_APPROVED_NOTIFICATION, getDataNotifReqOrderd(reqOrderController, dno))
+	} else {
+		SendEmailReqOrderNotification(REQ_ORDER_REJECTED_NOTIFICATION, getDataNotifReqOrderd(reqOrderController, dno))
+	}
 	return utils.MessageData(true, m)
 }
 
@@ -209,6 +214,7 @@ type NotifReqOrder struct {
 	Email   string
 	Reqlink string
 	Trxdate string
+	Note    string
 }
 
 func SendEmailReqOrderNotification(mode int, notifReqOrder *NotifReqOrder) {
@@ -219,8 +225,10 @@ func SendEmailReqOrderNotification(mode int, notifReqOrder *NotifReqOrder) {
 	switch mode {
 	case REQ_ORDER_NOTIFICATION:
 		go utils.SendEmailNotifReqOrder(adminEmail, adminEmail2, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
-	case REQ_ORDER_PROCESSED_NOTIFICATION:
-		go utils.SendEmailNotifReqOrderProcessed(adminEmail, adminEmail2, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
+	case REQ_ORDER_APPROVED_NOTIFICATION:
+		go utils.SendEmailNotifReqOrderApproved(adminEmail, adminEmail2, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
+	case REQ_ORDER_REJECTED_NOTIFICATION:
+		go utils.SendEmailNotifReqOrderRejected(adminEmail, adminEmail2, notifReqOrder.Email, notifReqOrder, notifReqOrder.Trxdate)
 	}
 }
 
@@ -236,6 +244,28 @@ func getDataNotifReqOrder(reqOrderController *ReqOrderController) *NotifReqOrder
 		Email:   reqOrder.Email,
 		Trxdate: utils.FormatTimeToDate(reqOrder.CreatedAt),
 		Reqlink: reqLink,
+	}
+
+	return notifReqOrder
+}
+
+func getDataNotifReqOrderd(reqOrderController *ReqOrderController, dno int) *NotifReqOrder {
+	reqOrder := reqOrderController.ReqOrder
+
+	var reqLink, note string
+	for _, reqOrderd := range reqOrderController.ReqOrderd {
+		if reqOrderd.Dno == dno {
+			reqLink = reqOrderd.Url
+			note = reqOrderd.ApprovalNote
+			break
+		}
+	}
+
+	notifReqOrder := &NotifReqOrder{
+		Email:   reqOrder.Email,
+		Trxdate: utils.FormatTimeToDate(reqOrder.CreatedAt),
+		Reqlink: reqLink,
+		Note:    note,
 	}
 
 	return notifReqOrder
