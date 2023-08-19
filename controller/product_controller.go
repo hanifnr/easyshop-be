@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -27,7 +28,14 @@ var ViewTrendingProduct = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var ListTrendingProduct = func(w http.ResponseWriter, r *http.Request) {
-	trendingProductController := &TrendingProductController{}
+	var isAdmin bool
+	paramIsAdmin := r.URL.Query().Get("is_admin")
+	if paramIsAdmin == "" {
+		isAdmin = false
+	} else {
+		isAdmin, _ = strconv.ParseBool(paramIsAdmin)
+	}
+	trendingProductController := &TrendingProductController{IsAdmin: isAdmin}
 	ListModelAction(trendingProductController, w, r)
 }
 
@@ -44,6 +52,7 @@ var CleanProduct = func(w http.ResponseWriter, r *http.Request) {
 
 type TrendingProductController struct {
 	TrendingProduct scrape.Product
+	IsAdmin         bool
 }
 
 func (trendingProductController *TrendingProductController) Model() model.Model {
@@ -106,7 +115,7 @@ func (trendingProductController *TrendingProductController) DeleteModel(id int64
 	return utils.Message(true)
 }
 func (trendingProductController *TrendingProductController) ListModel(param *utils.Param) map[string]interface{} {
-	if param.ReqOrderId == nil {
+	if param.ReqOrderId == nil && !trendingProductController.IsAdmin {
 		all := param.Int64All()
 		param.ReqOrderId = &all
 	}
