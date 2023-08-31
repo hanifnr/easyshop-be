@@ -2,9 +2,14 @@ package utils
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"html/template"
+	"io/ioutil"
+	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"gopkg.in/gomail.v2"
 )
@@ -167,6 +172,25 @@ func SendEmail(to string, subject string, data interface{}, templateFile string)
 	d := gomail.NewDialer(EmailHost, EmailPort, EmailUsername, EmailPassword)
 	err = d.DialAndSend(m)
 	return err
+}
+
+func GetLogoImage() string {
+	_, currentFile, _, ok := runtime.Caller(0)
+	if !ok {
+		fmt.Println("failed to determine current file")
+	}
+	moduleDir := filepath.Dir(currentFile)
+	parentDir := filepath.Dir(moduleDir)
+	imagePath := filepath.Join(parentDir, "resources", "img", "es-logo.png")
+
+	imageData, err := ioutil.ReadFile(imagePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	base64ImageData := base64.StdEncoding.EncodeToString(imageData)
+
+	return base64ImageData
 }
 
 func ParseTemplate(templateFileName string, data interface{}) (string, error) {
