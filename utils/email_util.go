@@ -65,6 +65,17 @@ func SendEmailNotifCanceled(toAdmin, toAdmin2, toCustomer string, data interface
 	)
 }
 
+func SendEmailNotifPayment(toAdmin, toAdmin2, toCustomer string, data interface{}, date string) {
+	SendEmailNotif(
+		toAdmin,
+		toAdmin2,
+		toCustomer,
+		"order-payment-received.html",
+		"[Easyshop] Proof of Payment Upload Received on #"+date,
+		data,
+	)
+}
+
 func SendEmailNotifReqOrder(toAdmin, toAdmin2, toCustomer string, data interface{}, trxdate string) {
 	SendEmailNotif(
 		toAdmin,

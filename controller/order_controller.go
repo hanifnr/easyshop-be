@@ -23,6 +23,7 @@ const (
 	ORDER_NOTIFICATION = iota
 	APPROVED_NOTIFICATION
 	CANCELED_NOTIFICATION
+	PAYMENT_NOTIFICATION
 )
 
 var CreateOrder = func(w http.ResponseWriter, r *http.Request) {
@@ -300,6 +301,8 @@ func (orderController *OrderController) ListDetail(param *utils.Param) map[strin
 
 func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, r *http.Request) {
 	mode := os.Getenv("MODE")
+	currentTime := time.Now()
+
 	id, err := GetInt64Param("id", w, r)
 	if err != nil {
 		utils.RespondError(w, utils.MessageErr(false, utils.ErrRequest, err.Error()), http.StatusBadRequest)
@@ -318,7 +321,6 @@ func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, 
 			return
 		}
 		imageWritter := utils.GetImageWritter()
-		currentTime := time.Now()
 
 		retval = ViewModel(id, &orderController.Order)
 		if retval.ErrCode != 0 {
@@ -343,6 +345,10 @@ func (orderController *OrderController) UploadOrderProof(w http.ResponseWriter, 
 	resp := UpdateFieldMaster(id, orderController, func(m model.Model, db *gorm.DB) utils.StatusReturn {
 		order := m.(*model.Order)
 		order.ProofLink = fileName
+
+		cust, notifOrder := getDataNotifOrder(orderController)
+		notifOrder.Trxdate = utils.FormatTimeToDate(currentTime)
+		SendEmailOrderNotification(PAYMENT_NOTIFICATION, cust, *notifOrder)
 
 		return utils.StatusReturnOK()
 	})
@@ -396,6 +402,8 @@ func SendEmailOrderNotification(mode int, cust *model.Cust, notifOrder NotifOrde
 		go utils.SendEmailNotifApprove(adminEmail, adminEmail2, cust.Email, notifOrder, notifOrder.Trxno)
 	case CANCELED_NOTIFICATION:
 		go utils.SendEmailNotifCanceled(adminEmail, adminEmail2, cust.Email, notifOrder, notifOrder.Trxno)
+	case PAYMENT_NOTIFICATION:
+		go utils.SendEmailNotifPayment(adminEmail, adminEmail2, cust.Email, notifOrder, notifOrder.Trxdate)
 	}
 
 }

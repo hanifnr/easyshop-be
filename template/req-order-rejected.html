@@ -1,59 +1,22 @@
-<table border="1" cellspacing="0" cellpadding="0" width="600" style="width:450pt;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;border:1pt solid rgb(222,222,222)">
-    <tbody>
-      <tr>
-        <td valign="top" style="border:none;padding:0mm">
-          <div align="center">
-            <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width:600px;background:rgb(150,88,138)">
-              <tbody>
-                <tr>
-                  <td style="padding:27pt 36pt">
-                    <p class="MsoNormal" align="left" style="margin:0mm;line-height:33.75pt;font-size:10.5pt;font-family:游明朝,serif">
-                      <span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;color:white">Request order rejected on </span>
-                      <span lang="EN-US" style="font-size:18pt;font-family:Helvetica,sans-serif;">
-                        <font color="#000000">#{{.Trxdate}}</font>
-                      </span>
-                      <span lang="EN-US" style="font-size:22pt;font-family:Helvetica,sans-serif"></span>
-                    </p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td valign="top" style="border:none;padding:0mm">
-          <div align="center">
-            <table border="0" cellspacing="0" cellpadding="0" width="600" style="width:450pt">
-              <tbody>
-                <tr>
-                  <td valign="top" style="background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0mm">
-                    <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width:600px">
-                      <tbody>
-                        <tr>
-                          <td valign="top" style="padding:36pt 36pt 24pt">
-                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">
-                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial">Dear&nbsp;&nbsp;</span>
-                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black;">customer</span>
-                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:black">&nbsp;</span>
-                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">Thank you for shopping with easyshop. This&nbsp;email confirms that we processed your request order on #{{.Trxdate}}</span>
-                            </p>
-                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt;font-family:游明朝,serif">Request order link :&nbsp; {{.Reqlink}} &nbsp; &nbsp; is rejected with reason &nbsp; {{.Note}}.
-                            </p>
-                            <p class="MsoNormal" align="left" style="margin:0mm 0mm 12pt;line-height:15.75pt;font-size:10.5pt">
-                              <span lang="EN-US" style="font-family:Helvetica,sans-serif;color:rgb(99,99,99)">&nbsp;</span>
-                              <span style="font-family:Helvetica,sans-serif;color:rgb(99,99,99);font-size:10.5pt">Please contact our admin or send </span>us an email <span style="color:rgb(99,99,99);font-size:10.5pt"> if you have any inquiries</span>
-                            </p>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </td>
-      </tr>
-    </tbody>
+<table style="width:78.7471%;height:38px">
+  <tbody>
+  <tr style="height:38px">
+  <td style="width:26.7091%;height:38px" width="168"><span style="font-family:tahoma,arial,helvetica,sans-serif;font-size:18pt"><img src="https://storage.googleapis.com/es-resources/images/es-logo.png" alt="Embedded Image" /></span></td>
+  <td style="width:72.337%;height:38px" width="455">
+  <p><span style="font-family:tahoma,arial,helvetica,sans-serif;font-size:18pt">Request Order Rejected on {{.Trxdate}}</span></p>
+  </td>
+  </tr>
+  </tbody>
   </table>
+  <p><br></p>
+  <p>Dear Customer,</p>
+  <p>Thank you for shopping with Easyshop. This email confirms that we have received your request order on {{.Trxdate}}.</p>
+  <p><br></p>
+  <p>Request order link: {{.Reqlink}} is rejected with reason &nbsp;{{.Note}}.</p>
+  <p><br></p>
+  <p>Please contact our admin or send us an email if you have any inquiries.</p>
+  <p>Phone: (+81) 70-8331-9095</p>
+  <p>Email: <a href="mailto:tokyo@easyshop-jp.com" target="_blank">tokyo@easyshop-jp.com</a></p>
+  <p><br></p>
+  <p>Thank you for shopping with us,</p>
+  <p><a href="http://www.easyshop-jp.com" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://www.easyshop-jp.com&amp;source=gmail&amp;ust=1693735220653000&amp;usg=AOvVaw3tUBpdvqv4PNUwcXpv_W06">www.easyshop-jp.com</a></p>
